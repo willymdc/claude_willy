@@ -1,1044 +1,622 @@
 <title>Povo Enviado</title>
-<meta name="description" content="Linha do tempo interativa da evolução do pensamento missional, de Gênesis aos dias de hoje, na leitura de Michael Goheen e Lesslie Newbigin.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Literata:opsz,wght@7..72,400;7..72,600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
 :root{
-  --bg:#EDF0EC;
-  --surface:#F8FAF6;
-  --surface-2:#E1E6DF;
-  --ink:#15211C;
-  --muted:#55645D;
-  --line:#C6CFC7;
-  --accent:#2A3C9E;
-  --accent-soft:#DCE0F4;
-  --c-biblia:#94570F;
-  --c-pais:#8C2F4B;
-  --c-missiologia:#5A4A8C;
-  --c-newbigin:#2A3C9E;
-  --c-evangelicos:#0B6782;
-  --c-sociologia:#4A6A60;
-  --c-al:#2E7535;
-  --display:"IM Fell English", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
-  --body:"Literata", "Source Serif Pro", Georgia, "Times New Roman", serif;
-  --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    color-scheme: dark;
-    --bg:#0E1512; --surface:#151E1A; --surface-2:#1C2722; --ink:#E3EAE5; --muted:#99A9A0; --line:#2D3A34;
-    --accent:#9AA8FF; --accent-soft:#232B55;
-    --c-biblia:#E2A457; --c-pais:#E88DA8; --c-missiologia:#B6A7EE; --c-newbigin:#9AA8FF;
-    --c-evangelicos:#5CC3E0; --c-sociologia:#93B8AC; --c-al:#86CB7B;
-  }
-}
-:root[data-theme="dark"]{
   color-scheme: dark;
-  --bg:#0E1512; --surface:#151E1A; --surface-2:#1C2722; --ink:#E3EAE5; --muted:#99A9A0; --line:#2D3A34;
-  --accent:#9AA8FF; --accent-soft:#232B55;
-  --c-biblia:#E2A457; --c-pais:#E88DA8; --c-missiologia:#B6A7EE; --c-newbigin:#9AA8FF;
-  --c-evangelicos:#5CC3E0; --c-sociologia:#93B8AC; --c-al:#86CB7B;
+  --bg:#0B1020;
+  --panel:#121A33;
+  --panel-2:#18213F;
+  --line:#26305A;
+  --ink:#ECE8DC;
+  --muted:#8D95B3;
+  --gold:#F0C46C;
+  --display:"IM Fell English","Iowan Old Style",Palatino,Georgia,serif;
+  --body:"Literata",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
 }
-
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;padding-inline:16px}
-.wrap{max-width:1100px;margin:0 auto;padding-block:40px 80px;display:grid;gap:72px}
-h1,h2,h3{font-family:var(--display);font-weight:400;text-wrap:balance;margin:0;line-height:1.12}
-h2{font-size:clamp(28px,4vw,40px)}
-h3{font-size:22px}
-p{margin:0}
-a{color:var(--accent)}
+html,body{background:var(--bg)}
+body{color:var(--ink);font-family:var(--body);padding-inline:16px}
+.app{max-width:1400px;margin:0 auto;padding-block:22px 40px;display:grid;gap:14px}
 button{font:inherit;color:inherit}
-:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
-.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-.lede{max-width:65ch;color:var(--muted)}
-.ref{font-family:var(--mono);font-size:13px;color:var(--c-biblia)}
-.sec-head{display:grid;gap:10px;max-width:70ch}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 
-/* ---------- Hero ---------- */
-.hero{display:grid;gap:22px;padding-top:12px}
-.hero h1{font-size:clamp(52px,9vw,104px);letter-spacing:-.01em}
-.hero h1 em{font-style:italic;color:var(--accent)}
-.hero .lede{font-size:18px}
-.hero-meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-family:var(--mono);font-size:12.5px;color:var(--muted)}
-.hero-meta b{color:var(--ink);font-weight:500}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 24px}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(34px,5vw,54px);line-height:1;margin:0}
+h1 em{color:var(--gold)}
+.sub{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:8px}
 
-/* ---------- Acts (Goheen) ---------- */
-.acts-rail{display:grid;grid-template-columns:repeat(6,1fr);gap:0;position:relative;margin-top:6px}
-.acts-rail::before{content:"";position:absolute;left:0;right:0;top:21px;height:2px;background:var(--line)}
-.act-btn{position:relative;background:none;border:0;padding:0 4px 8px;cursor:pointer;display:grid;justify-items:center;gap:8px;text-align:center}
-.act-btn .num{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--surface);border:2px solid var(--line);font-family:var(--display);font-size:22px;transition:background .2s,border-color .2s,color .2s}
-.act-btn .nm{font-size:13.5px;line-height:1.3;color:var(--muted)}
-.act-btn[aria-selected="true"] .num{background:var(--c-biblia);border-color:var(--c-biblia);color:var(--bg)}
-.act-btn[aria-selected="true"] .nm{color:var(--ink);font-weight:600}
-.act-btn:hover .num{border-color:var(--c-biblia)}
-.here{position:absolute;top:-22px;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);white-space:nowrap}
-.act-panel{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:28px;display:grid;grid-template-columns:1.3fr 1fr;gap:28px}
-.act-panel h3{font-size:30px}
-.act-main{display:grid;gap:14px;align-content:start}
-.act-side{display:grid;gap:16px;align-content:start}
-.note{border-left:3px solid var(--accent);padding:4px 0 4px 14px;display:grid;gap:4px}
-.note .who{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
-.note.bible{border-color:var(--c-biblia)} .note.bible .who{color:var(--c-biblia)}
-.note.keller{border-color:var(--c-evangelicos)} .note.keller .who{color:var(--c-evangelicos)}
-.mode{display:inline-flex;gap:6px;align-items:center;font-family:var(--mono);font-size:12px;color:var(--muted)}
-.mode b{color:var(--ink);font-weight:500}
-.fn{font-size:13.5px;color:var(--muted)}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{background:var(--panel);border:1px solid var(--line);border-radius:6px;height:36px;min-width:36px;padding:0 12px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--mono);font-size:13px}
+.btn:hover{border-color:var(--muted)}
+.btn.play{background:var(--gold);border-color:var(--gold);color:#1A1406;font-weight:500}
+.btn[aria-pressed="true"]{border-color:var(--gold);color:var(--gold)}
+.sep{width:1px;height:24px;background:var(--line);margin:0 4px}
 
-/* ---------- Timeline ---------- */
-.tl-layout{display:grid;grid-template-columns:230px 1fr;gap:40px;align-items:start}
-.tl-side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);display:grid;gap:22px}
-.filters{display:flex;flex-wrap:wrap;gap:8px}
-.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px 5px 10px;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;line-height:1.3}
-.chip .dot{width:9px;height:9px;border-radius:50%;background:var(--c)}
-.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.chip[aria-pressed="true"] .dot{box-shadow:0 0 0 2px var(--bg)}
-.era-nav{display:grid;gap:2px;border-left:1px solid var(--line)}
-.era-nav a{text-decoration:none;color:var(--muted);font-size:13.5px;padding:4px 0 4px 12px;display:grid;line-height:1.3}
-.era-nav a span{font-family:var(--mono);font-size:11px}
-.era-nav a:hover{color:var(--ink)}
-.tl-tools{display:flex;gap:8px;flex-wrap:wrap}
-.btn-ghost{background:none;border:1px solid var(--line);border-radius:4px;padding:5px 10px;font-size:13px;cursor:pointer;color:var(--muted)}
-.btn-ghost:hover{color:var(--ink);border-color:var(--ink)}
-.count{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.lanes-legend{display:flex;flex-wrap:wrap;gap:6px}
+.lchip{background:none;border:1px solid var(--line);border-radius:999px;padding:4px 11px 4px 9px;font-family:var(--mono);font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;color:var(--muted)}
+.lchip i{width:9px;height:9px;border-radius:50%;background:var(--c)}
+.lchip:hover{color:var(--ink)}
+.lchip[aria-pressed="true"]{color:var(--ink);border-color:var(--c);background:var(--panel)}
 
-.era{display:grid;gap:0;scroll-margin-top:20px}
-.era + .era{margin-top:40px}
-.era-head{display:grid;gap:10px;padding:0 0 22px 0}
-.era-head .span{font-family:var(--mono);font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
-.era-head h3{font-size:32px}
-.paradigm{font-size:14px;color:var(--muted)}
-.paradigm i{color:var(--ink)}
-.lens{background:var(--surface-2);border-radius:4px;padding:14px 16px;font-size:14.5px;display:grid;gap:4px;max-width:70ch}
-.lens .lab{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--c-sociologia)}
+.stage{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.scroller{overflow-x:auto;overflow-y:hidden;cursor:grab;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.scroller.dragging{cursor:grabbing}
+.scroller svg{display:block}
+.lane-labels{position:absolute;left:0;top:0;bottom:0;width:112px;pointer-events:none;background:linear-gradient(90deg,var(--panel) 72%,transparent)}
+.lane-labels div{position:absolute;left:12px;transform:translateY(-50%);font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;display:flex;align-items:center;gap:7px;color:var(--muted)}
+.lane-labels div i{width:8px;height:8px;border-radius:50%;background:var(--c);flex:none}
+.lane-labels .river-lab{color:var(--gold)}
 
-.events{display:grid;gap:0;position:relative}
-.ev{display:grid;grid-template-columns:92px 22px 1fr;column-gap:12px;scroll-margin-top:20px}
-.ev-year{font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums;color:var(--muted);text-align:right;padding-top:3px;line-height:1.35}
-.ev-rail{position:relative;display:flex;justify-content:center}
-.ev-rail::before{content:"";position:absolute;top:0;bottom:0;width:2px;background:var(--line)}
-.ev-dot{position:relative;margin-top:6px;width:13px;height:13px;border-radius:50%;background:var(--bg);border:3px solid var(--c)}
-.ev.key .ev-dot{width:17px;height:17px;margin-top:4px;background:var(--c)}
-.ev-body{padding-bottom:26px;display:grid;gap:8px;min-width:0}
-.ev-tags{display:flex;flex-wrap:wrap;gap:6px 12px}
-.tag{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--c)}
-.ev h4{font-family:var(--display);font-weight:400;font-size:21px;line-height:1.2;margin:0;text-wrap:balance}
-.ev.key h4{font-size:24px}
-.ev-sum{max-width:65ch}
-.ev-more{justify-self:start;background:none;border:0;padding:2px 0;cursor:pointer;color:var(--accent);font-size:14px;display:inline-flex;align-items:center;gap:6px}
-.ev-more .car{display:inline-block;transition:transform .2s}
-.ev-more[aria-expanded="true"] .car{transform:rotate(90deg)}
-.ev-detail{display:grid;gap:12px;max-width:65ch;padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-radius:4px;font-size:15px}
-.ev-detail .lab{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:2px}
-blockquote{margin:0;font-family:var(--display);font-style:italic;font-size:19px;line-height:1.4;border-left:3px solid var(--c, var(--accent));padding-left:14px}
-blockquote cite{display:block;font-family:var(--mono);font-style:normal;font-size:12px;color:var(--muted);margin-top:6px}
-.ev.flash .ev-body{animation:flash 1.6s ease}
-@keyframes flash{0%{background:var(--accent-soft)}100%{background:transparent}}
-.empty{color:var(--muted);font-style:italic;padding:12px 0}
+.tip{position:absolute;pointer-events:none;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 9px;font-size:13px;max-width:240px;transform:translate(-50%,calc(-100% - 12px));opacity:0;transition:opacity .12s;z-index:3}
+.tip.on{opacity:1}
+.tip small{display:block;font-family:var(--mono);font-size:11px;color:var(--muted)}
 
-/* ---------- Shifts ---------- */
-.shifts{display:grid;gap:0;border-top:1px solid var(--line)}
-.shift{display:grid;grid-template-columns:1fr 48px 1fr auto;gap:16px;align-items:center;padding:18px 0;border-bottom:1px solid var(--line)}
-.shift .from{color:var(--muted);text-decoration:line-through;text-decoration-color:color-mix(in srgb,var(--muted) 50%,transparent)}
-.shift .to{font-weight:600}
-.shift .arrow{font-family:var(--display);font-size:28px;color:var(--accent);text-align:center}
-.shift .when{font-family:var(--mono);font-size:12px;color:var(--muted);display:block;font-weight:400;margin-top:2px}
-.shift .go{white-space:nowrap}
+/* svg */
+.band{fill:transparent}
+.band.alt{fill:rgba(255,255,255,.022)}
+.era-t{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;fill:var(--muted)}
+.act-l{stroke:var(--gold);stroke-width:1;opacity:.55}
+.act-t{font-family:var(--display);font-size:14px;fill:var(--gold)}
+.tick-t{font-family:var(--mono);font-size:10.5px;fill:#5E6789}
+.tick-t.now{fill:var(--gold)}
+.tick-l{stroke:var(--line);stroke-width:1}
+.now-l{stroke:var(--gold);stroke-width:1;stroke-dasharray:3 4;opacity:.7}
+.lane-l{stroke:rgba(255,255,255,.045);stroke-width:1}
+.phase-t{font-family:var(--mono);font-size:10.5px;fill:var(--gold);opacity:.85}
+.phase-l{stroke:var(--gold);opacity:.35}
+.link{fill:none;stroke-width:1.4;opacity:.2;transition:opacity .2s}
+.link.rea{stroke-dasharray:4 4}
+.node{cursor:pointer;transition:opacity .2s}
+.node .dot{stroke:var(--panel);stroke-width:2}
+.node .ring{fill:none;stroke-width:1.2;opacity:.6}
+.node .hit{fill:transparent}
+.node text{font-family:var(--mono);font-size:11px;fill:var(--ink);opacity:.82;pointer-events:none}
+.node:hover .dot{stroke:var(--ink)}
+.node:focus{outline:none}
+.node:focus-visible .dot{stroke:var(--gold);stroke-width:3}
+.node.sel .dot{stroke:var(--ink);stroke-width:3}
+.node.sel text{opacity:1;font-weight:500}
+.node .halo{fill:none;stroke:var(--gold);stroke-width:2;opacity:0}
+.node.sel .halo{opacity:1;animation:pulse 1.8s ease-out infinite}
+@keyframes pulse{0%{r:10;opacity:.9}100%{r:22;opacity:0}}
+svg.has-sel .node:not(.sel):not(.rel){opacity:.2}
+svg.has-sel .link{opacity:.05}
+svg.has-sel .link.rel{opacity:.95;stroke-width:2;stroke-dasharray:5 5;animation:flow 1s linear infinite}
+svg.has-sel .link.rel.rea{stroke-dasharray:2 6}
+@keyframes flow{to{stroke-dashoffset:-10}}
+svg.nolinks .link:not(.rel){display:none}
+svg.lf .node:not(.on){opacity:.14}
+svg.lf .link:not(.on){opacity:.03}
 
-/* ---------- Newbigin ---------- */
-.nb{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:36px;align-items:start}
-.tri-wrap{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:18px;display:grid;gap:12px}
-.tri-wrap svg{width:100%;height:auto;display:block}
-.tri-edge{cursor:pointer}
-.tri-edge line{stroke:var(--line);stroke-width:3;transition:stroke .2s}
-.tri-edge .hit{stroke:transparent;stroke-width:26}
-.tri-edge:hover line.vis,.tri-edge.on line.vis{stroke:var(--accent)}
-.tri-edge:focus{outline:none}
-.tri-edge:focus-visible line.vis{stroke:var(--accent);stroke-dasharray:6 4}
-.tri-node circle{fill:var(--surface-2);stroke:var(--ink);stroke-width:1.5}
-.tri-node text{fill:var(--ink);font-family:var(--display);font-size:19px}
-.tri-lab{fill:var(--muted);font-family:var(--mono);font-size:11px}
-.tri-out{min-height:96px;display:grid;gap:6px;font-size:15px}
-.tri-out h4{margin:0;font-family:var(--display);font-weight:400;font-size:20px}
-.concepts{display:grid;gap:14px}
-.ctabs{display:flex;flex-wrap:wrap;gap:6px}
-.ctab{border:1px solid var(--line);background:none;border-radius:4px;padding:6px 10px;font-size:13.5px;cursor:pointer;color:var(--muted)}
-.ctab[aria-selected="true"]{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
-.cpanel{display:grid;gap:12px;padding-top:4px}
-.cpanel h3{font-size:28px}
-.life{display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--line);border-radius:4px;overflow:hidden;margin-top:6px}
-.life div{flex:1 1 120px;padding:10px 12px;border-right:1px solid var(--line);font-size:13.5px;display:grid;gap:2px;background:var(--surface)}
-.life div:last-child{border-right:0}
-.life b{font-family:var(--mono);font-weight:500;font-size:12px;color:var(--accent)}
+.mini{position:relative;height:34px;border-radius:6px;overflow:hidden;background:var(--panel);border:1px solid var(--line);cursor:pointer;touch-action:none}
+.mini .blk{position:absolute;top:0;bottom:0;border-right:1px solid var(--bg)}
+.mini .blk:nth-child(odd){background:rgba(255,255,255,.03)}
+.mini .md{position:absolute;width:3px;height:3px;border-radius:50%;background:var(--c)}
+.mini .win{position:absolute;top:0;bottom:0;border:1.5px solid var(--gold);border-radius:4px;background:rgba(240,196,108,.08)}
 
-/* ---------- Sociology ---------- */
-.socio{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
-.sc{background:var(--bg);padding:20px;display:grid;gap:8px;align-content:start}
-.sc .yr{font-family:var(--mono);font-size:12px;color:var(--c-sociologia)}
-.sc h4{margin:0;font-family:var(--display);font-weight:400;font-size:21px;line-height:1.2}
-.sc .concept{font-style:italic}
-.sc p{font-size:14.5px}
-.sc .use{font-size:13.5px;color:var(--muted)}
+.card{display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px;min-height:150px}
+.card .nav{width:40px;height:40px;border-radius:50%;padding:0;font-size:18px}
+.card-body{display:grid;gap:8px;min-width:0}
+.meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.meta i{width:10px;height:10px;border-radius:50%;background:var(--c)}
+.meta b{color:var(--c);font-weight:500}
+.card h2{font-family:var(--display);font-weight:400;font-size:clamp(24px,3vw,32px);line-height:1.1;margin:0;text-wrap:balance}
+.card p{margin:0;font-size:16px;line-height:1.5;max-width:70ch}
+.card q{display:block;font-family:var(--display);font-style:italic;font-size:18px;color:var(--gold);quotes:"“" "”"}
+.card q small{font-family:var(--mono);font-style:normal;font-size:11px;color:var(--muted);margin-left:8px}
+.rels{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:2px}
+.rels .lab{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-right:2px}
+.rels .lab + .rc{margin-left:0}
+.rc{background:var(--panel-2);border:1px solid var(--line);border-radius:999px;padding:3px 10px 3px 8px;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.rc i{width:7px;height:7px;border-radius:50%;background:var(--c)}
+.rc:hover{border-color:var(--c)}
+.rels .gap{width:10px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 22px;font-size:14px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.legend svg{flex:none}
+.count{font-family:var(--mono);font-size:12px;color:var(--muted);text-align:center}
 
-/* ---------- Voices ---------- */
-.voices{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
-.voice{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:18px 18px 16px;display:grid;gap:8px;align-content:start}
-.voice .dates{font-family:var(--mono);font-size:12px;color:var(--muted)}
-.voice h4{margin:0;font-family:var(--display);font-weight:400;font-size:23px}
-.voice p{font-size:14.5px}
-.voice .work{font-size:13.5px;color:var(--muted)}
-.voice .work i{color:var(--ink)}
+.foot{font-size:12.5px;color:var(--muted);max-width:90ch}
 
-/* ---------- Today ---------- */
-.today{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 36px}
-.cur{display:grid;gap:8px;align-content:start;padding-top:14px;border-top:3px solid var(--c)}
-.cur h4{margin:0;font-family:var(--display);font-weight:400;font-size:24px}
-.cur .who{font-family:var(--mono);font-size:12px;color:var(--c)}
-.cur p{font-size:15px}
-.challenges{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
-.ch{background:var(--surface-2);border-radius:4px;padding:14px 16px;display:grid;gap:4px;font-size:14.5px}
-.ch b{font-family:var(--display);font-weight:400;font-size:19px}
-.qs{display:grid;gap:10px;counter-reset:q;padding:0;margin:0;list-style:none;max-width:70ch}
-.qs li{counter-increment:q;display:grid;grid-template-columns:34px 1fr;gap:8px}
-.qs li::before{content:counter(q);font-family:var(--display);font-size:24px;line-height:1.1;color:var(--accent)}
-
-/* ---------- Bibliography ---------- */
-.bib{columns:2 320px;column-gap:40px;font-size:14px;padding:0;margin:0;list-style:none}
-.bib li{break-inside:avoid;padding:0 0 10px 0;color:var(--muted)}
-.bib li b{color:var(--ink);font-weight:600}
-.bib li i{color:var(--ink)}
-footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:18px;max-width:75ch}
-
-/* ---------- Responsive ---------- */
-@media (max-width:860px){
-  .tl-layout{grid-template-columns:1fr;gap:24px}
-  .tl-side{position:static}
-  .era-nav{display:none}
-  .act-panel{grid-template-columns:1fr;padding:20px}
-  .nb{grid-template-columns:1fr}
-  .today{grid-template-columns:1fr}
-  .shift{grid-template-columns:1fr;gap:4px}
-  .shift .arrow{text-align:left;font-size:20px;line-height:1}
-}
-@media (max-width:560px){
-  .acts-rail{grid-template-columns:repeat(3,1fr);row-gap:26px}
-  .acts-rail::before{display:none}
-  .ev{grid-template-columns:18px 1fr;column-gap:10px}
-  .ev-year{grid-column:2;text-align:left;padding-top:0}
-  .ev-rail{grid-row:1 / span 2;grid-column:1}
-  .ev-body{grid-column:2}
-  .wrap{gap:56px;padding-block:24px 60px}
+@media (max-width:700px){
+  .card{grid-template-columns:1fr;padding:16px}
+  .card .nav{display:none}
+  .lane-labels{width:44px}
+  .lane-labels div span{display:none}
+  .sep{display:none}
 }
 @media (prefers-reduced-motion:reduce){
-  *{transition:none!important;animation:none!important}
-  html{scroll-behavior:auto}
+  *{animation:none!important;transition:none!important}
 }
 </style>
 
-<div class="wrap">
-
-  <header class="hero">
-    <div class="eyebrow">Missio Dei · de Gênesis a 2024</div>
-    <h1>Povo <em>Enviado</em></h1>
-    <p class="lede">Como a igreja passou a entender que ela não <i>tem</i> uma missão, mas <i>existe</i> por causa da missão de Deus. Uma linha do tempo do conceito de missionalidade: a narrativa bíblica lida por Michael Goheen, a história da igreja, as viradas teológicas, as leituras sociológicas e o debate atual, com Lesslie Newbigin no centro.</p>
-    <div class="hero-meta">
-      <span><b>6</b> atos do drama bíblico</span>
-      <span><b>6</b> eras da história</span>
-      <span>Autores-base: <b>Newbigin · Goheen · Stott · Keller · Wright · Bosch</b></span>
+<div class="app">
+  <header>
+    <div>
+      <h1>Povo <em>Enviado</em></h1>
+      <div class="sub">A evolução do pensamento missional · de Gênesis a hoje · Goheen &amp; Newbigin</div>
+    </div>
+    <div class="bar" role="toolbar" aria-label="Controles">
+      <button class="btn play" id="play" type="button" aria-pressed="false">▶ Percorrer</button>
+      <span class="sep"></span>
+      <button class="btn" id="zout" type="button" aria-label="Afastar">−</button>
+      <button class="btn" id="zfit" type="button">Ver tudo</button>
+      <button class="btn" id="zin" type="button" aria-label="Aproximar">+</button>
+      <span class="sep"></span>
+      <button class="btn" id="links" type="button" aria-pressed="true">Influências</button>
     </div>
   </header>
 
-  <!-- ================= ATOS ================= -->
-  <section id="drama" class="sec" aria-labelledby="drama-t">
-    <div class="sec-head">
-      <div class="eyebrow">Parte I · A história que a igreja habita</div>
-      <h2 id="drama-t">O drama das Escrituras em seis atos</h2>
-      <p class="lede">Goheen, com Craig Bartholomew (<i>The Drama of Scripture</i>, 2004), lê a Bíblia como um drama único, ampliando o modelo em atos de N. T. Wright. Missão não é um tema entre outros: é o fio que liga os atos. A igreja vive no quinto ato, entre a ressurreição e a nova criação. Escolha um ato.</p>
-    </div>
-    <div style="height:28px"></div>
-    <div class="acts-rail" role="tablist" aria-label="Atos do drama bíblico" id="acts-rail"></div>
-    <div style="height:18px"></div>
-    <div class="act-panel" id="act-panel" role="tabpanel" aria-live="polite"></div>
+  <div class="lanes-legend" id="legend" role="group" aria-label="Destacar trilha"></div>
+
+  <div class="stage" id="stage">
+    <div class="scroller" id="scroller" tabindex="0" aria-label="Linha do tempo. Use as setas para percorrer."></div>
+    <div class="lane-labels" id="lane-labels" aria-hidden="true"></div>
+    <div class="tip" id="tip" role="status"></div>
+  </div>
+
+  <div class="mini" id="mini" aria-hidden="true"></div>
+
+  <section class="card" id="card" aria-live="polite">
+    <button class="btn nav" id="prev" type="button" aria-label="Marco anterior">‹</button>
+    <div class="card-body" id="card-body"></div>
+    <button class="btn nav" id="next" type="button" aria-label="Próximo marco">›</button>
   </section>
 
-  <!-- ================= LINHA DO TEMPO ================= -->
-  <section id="linha" aria-labelledby="linha-t">
-    <div class="sec-head">
-      <div class="eyebrow">Parte II · A história do conceito</div>
-      <h2 id="linha-t">Linha do tempo da missionalidade</h2>
-      <p class="lede">Dos pais da igreja ao movimento missional. Filtre por lente, abra cada marco para ver o que mudou, a citação-chave e a fonte. As eras seguem, de forma aproximada, os paradigmas de David Bosch em <i>Transforming Mission</i> (1991).</p>
-    </div>
-    <div style="height:28px"></div>
-    <div class="tl-layout">
-      <aside class="tl-side">
-        <div style="display:grid;gap:10px">
-          <div class="eyebrow">Lentes</div>
-          <div class="filters" id="filters" role="group" aria-label="Filtrar por lente"></div>
-        </div>
-        <div class="tl-tools">
-          <button class="btn-ghost" id="expand-all" type="button">Abrir todos</button>
-          <button class="btn-ghost" id="collapse-all" type="button">Fechar todos</button>
-        </div>
-        <div class="count" id="count" aria-live="polite"></div>
-        <nav class="era-nav" id="era-nav" aria-label="Eras"></nav>
-      </aside>
-      <div id="timeline"></div>
-    </div>
-  </section>
-
-  <!-- ================= VIRADAS ================= -->
-  <section id="viradas" aria-labelledby="viradas-t">
-    <div class="sec-head">
-      <div class="eyebrow">Parte III · Mudanças de pensamento</div>
-      <h2 id="viradas-t">Sete viradas que formaram o pensamento missional</h2>
-      <p class="lede">Cada virada foi um incremento sobre a anterior, não uma substituição total. Clique em “Ver marco” para abrir o momento correspondente na linha do tempo.</p>
-    </div>
-    <div style="height:24px"></div>
-    <div class="shifts" id="shifts"></div>
-  </section>
-
-  <!-- ================= NEWBIGIN ================= -->
-  <section id="newbigin" aria-labelledby="nb-t">
-    <div class="sec-head">
-      <div class="eyebrow">Parte IV · A leitura de Lesslie Newbigin (1909–1998)</div>
-      <h2 id="nb-t">Um missionário que voltou para casa e encontrou um campo missionário</h2>
-      <p class="lede">Depois de quase quatro décadas na Índia, Newbigin voltou à Inglaterra em 1974 e concluiu que o Ocidente era a cultura mais difícil de alcançar, porque se julgava já conhecedora do cristianismo. Goheen dedicou sua tese e boa parte da obra a sistematizar essa eclesiologia missionária.</p>
-      <div class="life">
-        <div><b>1909</b>Nasce em Newcastle</div>
-        <div><b>1936</b>Parte para a Índia</div>
-        <div><b>1947</b>Bispo na Igreja do Sul da Índia</div>
-        <div><b>1959–65</b>IMC e CMME, Genebra</div>
-        <div><b>1974</b>Volta à Inglaterra</div>
-        <div><b>1998</b>Morre em Londres</div>
-      </div>
-    </div>
-    <div style="height:28px"></div>
-    <div class="nb">
-      <div class="tri-wrap">
-        <div class="eyebrow">O encontro missionário · clique em uma aresta</div>
-        <svg viewBox="0 0 380 320" role="group" aria-label="Triângulo evangelho, cultura e igreja">
-          <g class="tri-edge" data-edge="ec" tabindex="0" role="button" aria-label="Evangelho e cultura">
-            <line class="hit" x1="190" y1="50" x2="55" y2="262"/>
-            <line class="vis" x1="190" y1="50" x2="55" y2="262"/>
-            <text class="tri-lab" x="88" y="148" text-anchor="middle" transform="rotate(-57 88 148)">encarnação</text>
-          </g>
-          <g class="tri-edge" data-edge="eg" tabindex="0" role="button" aria-label="Evangelho e igreja">
-            <line class="hit" x1="190" y1="50" x2="325" y2="262"/>
-            <line class="vis" x1="190" y1="50" x2="325" y2="262"/>
-            <text class="tri-lab" x="292" y="148" text-anchor="middle" transform="rotate(57 292 148)">conversão da igreja</text>
-          </g>
-          <g class="tri-edge" data-edge="gc" tabindex="0" role="button" aria-label="Igreja e cultura">
-            <line class="hit" x1="55" y1="262" x2="325" y2="262"/>
-            <line class="vis" x1="55" y1="262" x2="325" y2="262"/>
-            <text class="tri-lab" x="190" y="288" text-anchor="middle">encontro missionário</text>
-          </g>
-          <g class="tri-node"><circle cx="190" cy="50" r="34"/><text x="190" y="56" text-anchor="middle">Evangelho</text></g>
-          <g class="tri-node"><circle cx="55" cy="262" r="34"/><text x="55" y="268" text-anchor="middle">Cultura</text></g>
-          <g class="tri-node"><circle cx="325" cy="262" r="34"/><text x="325" y="268" text-anchor="middle">Igreja</text></g>
-        </svg>
-        <div class="tri-out" id="tri-out" aria-live="polite"></div>
-        <p class="fn">Modelo triangular formulado a partir de <i>Foolishness to the Greeks</i> (1986) e sistematizado por George Hunsberger em <i>Bearing the Witness of the Spirit</i> (1998).</p>
-      </div>
-      <div class="concepts">
-        <div class="eyebrow">Conceitos-chave</div>
-        <div class="ctabs" id="ctabs" role="tablist" aria-label="Conceitos de Newbigin"></div>
-        <div class="cpanel" id="cpanel" role="tabpanel" aria-live="polite"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= SOCIOLOGIA ================= -->
-  <section id="sociologia" aria-labelledby="soc-t">
-    <div class="sec-head">
-      <div class="eyebrow">Parte V · Análises sociológicas</div>
-      <h2 id="soc-t">O que as ciências sociais ajudaram a ver</h2>
-      <p class="lede">O pensamento missional incorporou ferramentas da sociologia e da filosofia para entender por que a fé cresce, por que perde plausibilidade e como uma minoria pode influenciar uma cultura sem dominá-la.</p>
-    </div>
-    <div style="height:24px"></div>
-    <div class="socio" id="socio"></div>
-  </section>
-
-  <!-- ================= VOZES ================= -->
-  <section id="vozes" aria-labelledby="vozes-t">
-    <div class="sec-head">
-      <div class="eyebrow">Parte VI · Autores da mesma linha</div>
-      <h2 id="vozes-t">Vozes que construíram a conversa</h2>
-    </div>
-    <div style="height:24px"></div>
-    <div class="voices" id="voices"></div>
-  </section>
-
-  <!-- ================= HOJE ================= -->
-  <section id="hoje" aria-labelledby="hoje-t">
-    <div class="sec-head">
-      <div class="eyebrow">Parte VII · Como está hoje</div>
-      <h2 id="hoje-t">Uma palavra popular, quatro correntes e alguns alertas</h2>
-      <p class="lede">“Missional” virou jargão e passou a significar coisas diferentes. Van Gelder e Zscheile (<i>The Missional Church in Perspective</i>, 2011) mostraram que a conversa se ramificou. Estas são as correntes mais visíveis, lidas a partir da linha Newbigin–Goheen–Keller.</p>
-    </div>
-    <div style="height:28px"></div>
-    <div class="today" id="today"></div>
-    <div style="height:44px"></div>
-    <div class="sec-head"><div class="eyebrow">Desafios do presente</div></div>
-    <div style="height:14px"></div>
-    <div class="challenges" id="challenges"></div>
-    <div style="height:44px"></div>
-    <div class="sec-head">
-      <div class="eyebrow">Para estudo em grupo</div>
-      <h3>Perguntas para a igreja local</h3>
-    </div>
-    <div style="height:16px"></div>
-    <ol class="qs">
-      <li>Se Êxodo 19.6 e 1 Pedro 2.9 definem nossa identidade, o que em nossa vida comunitária seria visível e atraente para quem está de fora?</li>
-      <li>Onde nossa igreja funciona como “igreja com um departamento de missões” e não como “povo enviado”?</li>
-      <li>Newbigin diz que a congregação é a hermenêutica do evangelho. Que leitura do evangelho um vizinho faria observando a nossa?</li>
-      <li>Quais pressupostos da cultura brasileira (consumo, prosperidade, polarização, religiosidade difusa) precisam ser confrontados pelo evangelho, e quais podem ser afirmados?</li>
-      <li>Como manter juntos anúncio e serviço, sem transformar tudo em “missão” (Neill) e sem reduzir missão a evangelismo verbal?</li>
-    </ol>
-  </section>
-
-  <!-- ================= BIBLIOGRAFIA ================= -->
-  <section id="fontes" aria-labelledby="fontes-t">
-    <div class="sec-head">
-      <div class="eyebrow">Para aprofundar</div>
-      <h2 id="fontes-t">Bibliografia essencial</h2>
-    </div>
-    <div style="height:20px"></div>
-    <ul class="bib">
-      <li><b>Newbigin, Lesslie.</b> <i>The Household of God</i> (1953).</li>
-      <li><b>Newbigin, Lesslie.</b> <i>The Open Secret</i> (1978; ed. rev. 1995).</li>
-      <li><b>Newbigin, Lesslie.</b> <i>The Other Side of 1984</i> (1983).</li>
-      <li><b>Newbigin, Lesslie.</b> <i>Foolishness to the Greeks</i> (1986).</li>
-      <li><b>Newbigin, Lesslie.</b> <i>The Gospel in a Pluralist Society</i> (1989). Ed. bras.: <i>O evangelho em uma sociedade pluralista</i>.</li>
-      <li><b>Newbigin, Lesslie.</b> <i>Proper Confidence</i> (1995).</li>
-      <li><b>Goheen, Michael W.</b> <i>“As the Father Has Sent Me, I Am Sending You”: J. E. Lesslie Newbigin’s Missionary Ecclesiology</i> (2000).</li>
-      <li><b>Bartholomew, C.; Goheen, M.</b> <i>The Drama of Scripture</i> (2004). Ed. bras.: <i>O drama das Escrituras</i>.</li>
-      <li><b>Goheen, Michael W.</b> <i>A Light to the Nations</i> (2011). Ed. bras.: <i>A igreja missional na Bíblia: luz para as nações</i>.</li>
-      <li><b>Goheen, Michael W.</b> <i>Introducing Christian Mission Today</i> (2014).</li>
-      <li><b>Goheen, Michael W.</b> <i>The Church and Its Vocation</i> (2018).</li>
-      <li><b>Stott, John.</b> <i>Christian Mission in the Modern World</i> (1975). Ed. bras.: <i>A missão cristã no mundo moderno</i>.</li>
-      <li><b>Bosch, David J.</b> <i>Transforming Mission</i> (1991). Ed. bras.: <i>Missão transformadora</i>.</li>
-      <li><b>Guder, Darrell (org.).</b> <i>Missional Church</i> (1998).</li>
-      <li><b>Wright, Christopher J. H.</b> <i>The Mission of God</i> (2006). Ed. bras.: <i>A missão de Deus</i>.</li>
-      <li><b>Keller, Timothy.</b> <i>Center Church</i> (2012). Ed. bras.: <i>Igreja centrada</i>.</li>
-      <li><b>Keller, Timothy.</b> <i>How to Reach the West Again</i> (2020).</li>
-      <li><b>Padilla, C. René.</b> <i>Mission Between the Times</i> (1985). Ed. bras.: <i>Missão integral</i>.</li>
-      <li><b>Hunsberger, George.</b> <i>Bearing the Witness of the Spirit</i> (1998).</li>
-      <li><b>Van Gelder, C.; Zscheile, D.</b> <i>The Missional Church in Perspective</i> (2011).</li>
-      <li><b>Stark, Rodney.</b> <i>The Rise of Christianity</i> (1996).</li>
-      <li><b>Kreider, Alan.</b> <i>The Patient Ferment of the Early Church</i> (2016).</li>
-      <li><b>Taylor, Charles.</b> <i>A Secular Age</i> (2007).</li>
-      <li><b>Hunter, James Davison.</b> <i>To Change the World</i> (2010).</li>
-    </ul>
-  </section>
-
-  <footer>
-    As citações diretas vêm das obras indicadas; os demais textos são sínteses. Datas de concílios e livros seguem as edições originais. Material preparado para estudo; confira as edições em português para citações formais.
-  </footer>
+  <p class="foot">A espessura do fio dourado mostra o quanto a missão define a identidade da igreja em cada período. É uma leitura interpretativa, na linha de Bosch, Newbigin e Goheen. As linhas entre os pontos indicam influência (contínuas) ou reação (tracejadas).</p>
 </div>
 
 <script>
 (function(){
 "use strict";
 
-/* ---------------- Lentes ---------------- */
-var LENSES = [
-  {id:"biblia",      label:"Bíblia"},
-  {id:"pais",        label:"Pais da igreja"},
-  {id:"missiologia", label:"Teologia da missão"},
-  {id:"newbigin",    label:"Newbigin"},
-  {id:"evangelicos", label:"Stott, Keller, Goheen"},
-  {id:"sociologia",  label:"Sociologia"},
-  {id:"al",          label:"Brasil e América Latina"}
+var LANES=[
+ {id:"biblia",name:"Bíblia",c:"#F0C46C"},
+ {id:"pais",name:"Pais da igreja",c:"#EE8FA5"},
+ {id:"missiologia",name:"Missiologia",c:"#AE9FF5"},
+ {id:"newbigin",name:"Newbigin",c:"#6FA8FF"},
+ {id:"evangelicos",name:"Stott · Keller · Goheen",sh:"Evangélicos",c:"#4FD1C5"},
+ {id:"sociologia",name:"Sociologia",c:"#A9BDB2"},
+ {id:"al",name:"Brasil e A. Latina",sh:"Brasil / AL",c:"#93D67F"}
 ];
-var LENS_LABEL = {}; LENSES.forEach(function(l){ LENS_LABEL[l.id]=l.label; });
+var LANE={}; LANES.forEach(function(l,i){l.i=i;LANE[l.id]=l;});
 
-/* ---------------- Atos (Goheen) ---------------- */
-var ACTS = [
-  {n:"1", name:"Criação", refs:"Gn 1–2 · Sl 24.1",
-   text:"Deus estabelece seu reino sobre uma criação boa e dá à humanidade o mandato de cultivá-la e governá-la em seu nome (Gn 1.26-28). O palco da missão é a criação inteira: trabalho, cultura, família e vida pública.",
-   mode:"Horizonte da missão: <b>toda a criação</b>",
-   nb:"Para Newbigin, a Bíblia não é um livro de religião privada, mas “história universal”: a narrativa que dá sentido a toda a história humana. Por isso a fé cristã reivindica verdade pública.",
-   keller:"Keller (Every Good Endeavor, 2012) extrai daqui a teologia do trabalho: a vocação cotidiana é parte da missão, não um intervalo entre atividades “espirituais”."},
-  {n:"2", name:"Rebelião", refs:"Gn 3–11",
-   text:"A rebelião humana corrompe tudo o que foi criado: relação com Deus, com o próximo, com a terra. Babel termina com as nações dispersas (Gn 10–11), e é justamente a elas que o capítulo 12 responde.",
-   mode:"Consequência: <b>nada fica fora do alcance da redenção</b>",
-   nb:"Nenhuma cultura é neutra. Toda cultura, inclusive a ocidental “cristã”, carrega idolatrias e precisa ser confrontada pelo evangelho. O missionário não exporta uma cultura pura.",
-   keller:"Keller descreve o pecado como idolatria: transformar coisas boas em coisas supremas. Contextualizar é identificar os ídolos de cada cultura (Counterfeit Gods, 2009)."},
-  {n:"3", name:"Israel", refs:"Gn 12.1-3 · Êx 19.3-6 · Is 49.6",
-   text:"Deus escolhe Abraão para que nele “sejam benditas todas as famílias da terra”. No Sinai, Israel recebe sua identidade: “reino de sacerdotes e nação santa” (Êx 19.6). Sua vida comunitária diante das nações é o testemunho. Isaías chama o servo de “luz para as nações”.",
-   mode:"Modo missionário: <b>centrípeto</b>, as nações vêm a Sião",
-   nb:"“A lógica da eleição”: ser escolhido não é privilégio exclusivo, mas responsabilidade. Deus elege um para alcançar muitos. A eleição é para a missão.",
-   keller:"Goheen trata Êx 19.3-6 como texto-chave: a identidade missional vem antes das tarefas missionárias. Wright (A missão de Deus, 2006) faz de Gn 12.1-3 o eixo de toda a Bíblia."},
-  {n:"4", name:"Jesus", refs:"Mc 1.14-15 · Lc 4.18-19 · Jo 20.21",
-   text:"Jesus anuncia e manifesta o reino de Deus, reúne o Israel renovado em torno dos Doze, morre na cruz e ressuscita. A cruz derrota o mal; a ressurreição inaugura a nova criação no meio da história.",
-   mode:"Centro da história: <b>o reino chega em Jesus</b>",
-   nb:"“É um fato de significado inesgotável que o que nosso Senhor deixou não foi um livro, nem um credo, nem um sistema de pensamento, mas uma comunidade visível” (The Household of God, 1953).",
-   keller:"Stott vê em Jo 20.21 (“Assim como o Pai me enviou, eu também vos envio”) a forma da missão: a igreja é enviada ao modo de Jesus, em palavra e serviço."},
-  {n:"5", name:"Igreja", refs:"At 1.8 · 1Pe 2.9-12 · Ef 3.10",
-   text:"Pelo Espírito, a comunidade é enviada “até os confins da terra”. 1 Pedro 2.9 aplica à igreja as palavras de Êx 19: ela herda a vocação de Israel. É o ato em que vivemos, entre a ressurreição e a volta de Cristo.",
-   mode:"Modo missionário: <b>centrífugo</b>, a igreja vai às nações",
-   nb:"A igreja é “sinal, instrumento e antegozo” do reino. Não é o reino, mas aponta para ele, serve a ele e já prova um pouco dele.",
-   keller:"Goheen: a igreja só entende a si mesma quando sabe em que ponto da história está. Perder o quinto ato é virar clube religioso ou ONG.",
-   here:true},
-  {n:"6", name:"Nova criação", refs:"Is 65.17 · Ap 7.9 · Ap 21–22",
-   text:"Deus renova todas as coisas. Uma multidão “de todas as nações, tribos, povos e línguas” adora o Cordeiro. A redenção não é fuga do mundo, mas restauração da criação.",
-   mode:"Destino: <b>céus novos e terra nova</b>",
-   nb:"A missão acontece no “tempo entre os tempos”. É a esperança escatológica que dá à história um sentido, e à missão sua urgência e sua paciência.",
-   keller:"Porque o fim é uma cidade renovada (Ap 21), Keller defende uma igreja que ama a cidade e busca o seu bem (Jr 29.7), antecipando a nova criação."}
+/* Zonas: narrativa bíblica, história (anos), futuro */
+var ZONES=[
+ {k:"b",w:420,name:"Narrativa bíblica",short:"Bíblia"},
+ {y0:30,y1:313,w:200,name:"Igreja antiga",short:"Antiga"},
+ {y0:313,y1:1500,w:240,name:"Cristandade",short:"Crist."},
+ {y0:1500,y1:1900,w:320,name:"Reforma e missões modernas",short:"Modernidade"},
+ {y0:1900,y1:1974,w:440,name:"Do Ocidente à missio Dei",short:"Missio Dei"},
+ {y0:1974,y1:1998,w:440,name:"Newbigin e Lausanne",short:"Newbigin"},
+ {y0:1998,y1:2026,w:480,name:"Movimento missional",short:"Missional"},
+ {k:"f",w:210,name:"Nova criação",short:"Futuro"}
+];
+var TOTAL=0; ZONES.forEach(function(z){z.s=TOTAL;TOTAL+=z.w;});
+function pos(a){
+  if(typeof a==="string"){
+    var z=a[0]==="b"?ZONES[0]:ZONES[ZONES.length-1];
+    return z.s+parseFloat(a.slice(2))*z.w;
+  }
+  for(var i=1;i<ZONES.length-1;i++){
+    var z2=ZONES[i];
+    if(a<=z2.y1||i===ZONES.length-2) return z2.s+Math.max(0,Math.min(1,(a-z2.y0)/(z2.y1-z2.y0)))*z2.w;
+  }
+}
+
+var ACTS=[
+ {a:"b:0",b:"b:.15",n:"1",t:"Criação"},
+ {a:"b:.15",b:"b:.29",n:"2",t:"Queda"},
+ {a:"b:.29",b:"b:.78",n:"3",t:"Israel"},
+ {a:"b:.78",b:"b:1",n:"4",t:"Jesus"},
+ {a:30,b:2026,n:"5",t:"Igreja · estamos aqui"},
+ {a:"f:0",b:"f:1",n:"6",t:"Nova criação"}
 ];
 
-/* ---------------- Eras e marcos ---------------- */
-var ERAS = [
- {id:"era-antiga", span:"c. 30 – 313", title:"Igreja antiga: uma minoria que cresce",
-  paradigm:"Paradigmas <i>apocalíptico</i> e <i>helenístico</i> (Bosch)",
-  lens:"Rodney Stark estima um crescimento de cerca de 40% por década, sustentado por redes de relacionamento, cuidado mútuo durante epidemias e pela dignidade dada às mulheres. Alan Kreider fala de uma “fermentação paciente”: a igreja crescia pelo modo de vida da comunidade (habitus), não por campanhas públicas.",
-  events:[
-   {id:"pentecostes", year:"c. 30–60", tags:["biblia"], key:true, title:"Pentecostes e a igreja em Atos",
-    sum:"O Espírito forma uma comunidade multiétnica que testemunha de Jerusalém a Roma. A missão é espontânea, conduzida por leigos, famílias e comerciantes, não apenas por apóstolos.",
-    shift:"Da missão centrípeta de Israel para a missão centrífuga da igreja.",
-    quote:"Recebereis poder, ao descer sobre vós o Espírito Santo, e sereis minhas testemunhas.", cite:"Atos 1.8",
-    src:"Goheen, Light to the Nations, cap. 5–6."},
-   {id:"justino", year:"c. 150", tags:["pais"], title:"Justino Mártir e o Logos semeado",
-    sum:"Justino afirma que sementes do Logos (logos spermatikos) estão presentes na filosofia grega. É uma das primeiras tentativas de falar o evangelho na linguagem da cultura.",
-    shift:"Primeiros passos de contextualização: afirmar o que há de verdadeiro numa cultura e confrontar o que é falso.",
-    src:"Justino, II Apologia 13; Bosch, Transforming Mission, cap. 6."},
-   {id:"diogneto", year:"séc. II", tags:["pais"], key:true, title:"Carta a Diogneto: estrangeiros residentes",
-    sum:"Um texto anônimo descreve os cristãos vivendo em todas as cidades, seguindo os costumes locais, mas com uma cidadania diferente. É a imagem mais citada do povo de Deus como presença alternativa na cultura.",
-    shift:"A missão como forma de vida pública visível, não como poder político.",
-    quote:"O que a alma é no corpo, isso são os cristãos no mundo.", cite:"Carta a Diogneto, 6",
-    src:"Citada por Goheen e Keller como modelo de engajamento cultural."},
-   {id:"irineu", year:"c. 180", tags:["pais","biblia"], title:"Irineu de Lyon e a recapitulação",
-    sum:"Contra os gnósticos, que desprezavam a matéria, Irineu lê a Bíblia como uma única história: da criação à consumação, Cristo recapitula e restaura tudo. É uma antecipação da leitura narrativa de Goheen.",
-    shift:"Redenção é restauração da criação, não fuga dela.",
-    quote:"A glória de Deus é o ser humano plenamente vivo.", cite:"Irineu, Contra as Heresias IV.20.7",
-    src:"Bartholomew e Goheen, The Drama of Scripture, introdução."},
-   {id:"tertuliano", year:"197", tags:["pais"], title:"Tertuliano, Apologético",
-    sum:"A perseguição não detém a igreja. Tertuliano defende publicamente os cristãos diante de Roma e interpreta o martírio como testemunho fecundo.",
-    shift:"O sofrimento fiel como parte do testemunho.",
-    quote:"O sangue dos cristãos é semente.", cite:"Tertuliano, Apologético 50",
-    src:"Kreider, The Patient Ferment of the Early Church."}
-  ]},
- {id:"era-cristandade", span:"313 – 1500", title:"Cristandade: a igreja vira o centro",
-  paradigm:"Paradigma <i>católico-romano medieval</i> (Bosch)",
-  lens:"A fé passa de minoria perseguida a religião oficial. Sociologicamente, a igreja deixa de ser um grupo voluntário e passa a coincidir com a sociedade (corpus christianum). Missão vira expansão de fronteiras, e ser cristão se confunde com ser cidadão. Newbigin, Guder e Stuart Murray chamam esse arranjo de Cristandade, e é ele que o pensamento missional vai questionar.",
-  events:[
-   {id:"constantino", year:"313 / 380", tags:["pais","sociologia"], key:true, title:"Constantino e Teodósio",
-    sum:"O Edito de Milão (313) dá liberdade aos cristãos; em 380 o cristianismo torna-se religião oficial do Império. A igreja ganha proteção, prédios e influência.",
-    shift:"De povo enviado para instituição estabelecida. A missão passa a ser tarefa de especialistas nas fronteiras do império.",
-    src:"Newbigin, Foolishness to the Greeks; Murray, Post-Christendom (2004)."},
-   {id:"agostinho", year:"413–426", tags:["pais"], key:true, title:"Agostinho, A Cidade de Deus",
-    sum:"Após o saque de Roma (410), Agostinho distingue duas cidades entrelaçadas na história. A igreja é peregrina: serve a cidade terrena sem confundir-se com ela.",
-    shift:"Uma teologia pública: amar e servir a cidade sem idolatrá-la. Keller retoma essa tensão.",
-    quote:"Dois amores fizeram duas cidades: o amor de si até o desprezo de Deus, a terrena; o amor de Deus até o desprezo de si, a celestial.", cite:"Agostinho, A Cidade de Deus XIV.28",
-    src:"Keller, Center Church, parte 5."},
-   {id:"monasticos", year:"séc. V–IX", tags:["pais"], title:"Monges peregrinos e missões celtas",
-    sum:"Patrício na Irlanda, Columba em Iona e missionários enviados por Gregório Magno (596) levam o evangelho à Europa. Comunidades monásticas funcionam como centros de oração, ensino e hospitalidade.",
-    shift:"A comunidade como base missionária: pertencer antes de crer.",
-    src:"Bosch, Transforming Mission, cap. 7; G. Hunter III, The Celtic Way of Evangelism (2000)."},
-   {id:"francisco", year:"1219", tags:["pais"], title:"Francisco de Assis diante do sultão",
-    sum:"Em meio às Cruzadas, Francisco atravessa as linhas em Damieta para falar de Cristo ao sultão al-Kamil. É um contraponto à missão pela espada.",
-    shift:"Testemunho pela humildade e pela palavra em lugar da conquista.",
-    src:"Goheen, Introducing Christian Mission Today, cap. 4."}
-  ]},
- {id:"era-moderna", span:"1500 – 1900", title:"Reforma, missões modernas e colonialismo",
-  paradigm:"Paradigmas da <i>Reforma</i> e do <i>Iluminismo</i> (Bosch)",
-  lens:"Modernidade significa Estado-nação, diferenciação das esferas sociais (Weber) e expansão colonial. A missão protestante se organiza em sociedades voluntárias, espelhando as companhias de comércio da época. Resultado sociológico: igreja e missão ficam separadas em instituições diferentes, divisão que Newbigin tentará curar no século XX.",
-  events:[
-   {id:"reforma", year:"1517", tags:["missiologia"], title:"A Reforma Protestante",
-    sum:"Lutero e Calvino recuperam a centralidade da Palavra, o sacerdócio de todos os crentes e a vocação no trabalho comum. Mas a Reforma produz pouca estrutura missionária para além da Europa.",
-    shift:"Ganho: vocação de todo cristão. Lacuna: a Grande Comissão é muitas vezes lida como tarefa já cumprida pelos apóstolos.",
-    src:"Bosch, Transforming Mission, cap. 8; Keller, Every Good Endeavor."},
-   {id:"jesuitas", year:"1540s", tags:["missiologia","al"], title:"Jesuítas e o sentido moderno de “missão”",
-    sum:"Segundo Bosch, os jesuítas são os primeiros a usar “missão” no sentido de enviar pessoas a terras distantes. Em 1549, Manuel da Nóbrega chega ao Brasil.",
-    shift:"Até aqui, missio designava o envio do Filho e do Espírito pelo Pai. A palavra passa a nomear uma atividade da igreja.",
-    src:"Bosch, Transforming Mission, p. 1."},
-   {id:"guanabara", year:"1557–1558", tags:["al","missiologia"], title:"Calvinistas na Baía de Guanabara",
-    sum:"Genebra envia pastores à colônia francesa no Rio de Janeiro. Dali sai a Confissão de Fé da Guanabara (1558), primeira confissão protestante escrita nas Américas, redigida sob ameaça de morte.",
-    shift:"A primeira presença reformada no Brasil nasce já como testemunho sob pressão.",
-    src:"Historiografia protestante brasileira."},
-   {id:"moravios", year:"1732", tags:["missiologia"], title:"Os morávios de Herrnhut",
-    sum:"Sob Zinzendorf, uma comunidade inteira se organiza para enviar missionários ao Caribe e à Groenlândia, sustentada por oração contínua.",
-    shift:"Uma comunidade toda comprometida com a missão, não apenas indivíduos.",
-    src:"Goheen, Introducing Christian Mission Today, cap. 4."},
-   {id:"carey", year:"1792", tags:["missiologia"], key:true, title:"William Carey, An Enquiry",
-    sum:"Carey argumenta que a Grande Comissão continua obrigatória e propõe “meios”: uma sociedade missionária. Nasce o modelo das sociedades de missão que dominará o século XIX, o “grande século” (Latourette).",
-    shift:"A missão ganha estrutura, mas separada da igreja local: “igreja” aqui, “missão” lá fora.",
-    quote:"Esperai grandes coisas de Deus; empreendei grandes coisas para Deus.", cite:"Sermão de Carey, 1792",
-    src:"Newbigin critica essa dicotomia em The Open Secret."},
-   {id:"tres-autos", year:"1850s", tags:["missiologia","sociologia"], title:"Venn e Anderson: igrejas “três-autos”",
-    sum:"Henry Venn e Rufus Anderson propõem que as igrejas plantadas sejam autogovernadas, autossustentadas e autopropagadoras. Ao mesmo tempo, a missão se mistura com o projeto colonial (“cristianismo, comércio e civilização”).",
-    shift:"Primeira reflexão sistemática sobre igrejas locais maduras e não dependentes.",
-    src:"Goheen, Introducing Christian Mission Today, cap. 4."}
-  ]},
- {id:"era-missiodei", span:"1900 – 1973", title:"Do Ocidente cristão à missio Dei",
-  paradigm:"Transição para o paradigma <i>ecumênico emergente</i> (Bosch)",
-  lens:"Duas guerras mundiais e a descolonização abalam a ideia de um “Ocidente cristão” que envia ao “resto”. Peter Berger descreve como o pluralismo dissolve a plausibilidade automática da fé. A teologia responde colocando a missão em Deus, não na civilização ocidental.",
-  events:[
-   {id:"edimburgo", year:"1910", tags:["missiologia"], key:true, title:"Conferência Missionária de Edimburgo",
-    sum:"Sob John R. Mott, delegados das sociedades missionárias sonham com a “evangelização do mundo nesta geração”. É o auge do otimismo missionário ocidental e o berço do movimento ecumênico.",
-    shift:"O mundo ainda dividido em “cristão” e “não cristão”. Essa geografia vai ruir.",
-    src:"Goheen, Introducing Christian Mission Today, cap. 5."},
-   {id:"barth", year:"1932", tags:["missiologia"], title:"Karl Barth em Brandemburgo",
-    sum:"Numa conferência missionária, Barth apresenta a missão como atividade do próprio Deus. Bosch o considera um dos primeiros a formular isso de modo claro.",
-    shift:"A semente da missio Dei: a missão começa em Deus, não na igreja.",
-    src:"Bosch, Transforming Mission, p. 389."},
-   {id:"nb-india", year:"1936", tags:["newbigin"], title:"Newbigin parte para a Índia",
-    sum:"Ordenado pela Igreja da Escócia, Newbigin vai para Madras. Aprende tâmil, estuda os Upanishads com monges hindus e vive a experiência que moldará sua teologia: ver a própria cultura de fora.",
-    shift:"O olhar do missionário transcultural que ele depois voltará para o Ocidente.",
-    src:"Goheen, The Church and Its Vocation, cap. 1."},
-   {id:"csi", year:"1947", tags:["newbigin"], title:"Igreja do Sul da Índia",
-    sum:"Newbigin torna-se um dos primeiros bispos da recém-unida Igreja do Sul da Índia. Para ele, a divisão das igrejas é um escândalo que contradiz a missão (Jo 17.21).",
-    shift:"Unidade da igreja e missão caminham juntas.",
-    src:"Newbigin, The Reunion of the Church (1948)."},
-   {id:"willingen", year:"1952", tags:["missiologia"], key:true, title:"Willingen: a missão vem do Deus trino",
-    sum:"A conferência do Conselho Missionário Internacional em Willingen, Alemanha, ancora a missão na Trindade. Karl Hartenstein resume a ideia na expressão missio Dei.",
-    shift:"Da missão da igreja para a missão de Deus, da qual a igreja participa. É a virada fundamental.",
-    quote:"O movimento missionário do qual fazemos parte tem sua fonte no próprio Deus trino.", cite:"Declaração de Willingen, 1952",
-    src:"Bosch, Transforming Mission, p. 390; Goheen, Introducing Christian Mission Today, cap. 3."},
-   {id:"household", year:"1953", tags:["newbigin"], title:"Newbigin, The Household of God",
-    sum:"Newbigin descreve a igreja como povo peregrino, definido pela missão e pela esperança escatológica. Integra as tradições católica, protestante e pentecostal numa eclesiologia missionária.",
-    shift:"A missão deixa de ser um departamento e passa a definir a natureza da igreja.",
-    quote:"O que nosso Senhor deixou não foi um livro, nem um credo, mas uma comunidade visível.", cite:"The Household of God (1953), trecho abreviado",
-    src:"Goheen, “As the Father Has Sent Me” (2000)."},
-   {id:"newdelhi", year:"1961", tags:["newbigin","missiologia"], title:"Nova Délhi: missão e igreja num só corpo",
-    sum:"Como secretário-geral do Conselho Missionário Internacional, Newbigin conduz sua integração ao Conselho Mundial de Igrejas. Estrutura e teologia dizem o mesmo: a missão pertence à igreja.",
-    shift:"Fim institucional da separação entre “igreja” e “missão” no movimento ecumênico.",
-    src:"Goheen, The Church and Its Vocation, cap. 1."},
-   {id:"adgentes", year:"1965", tags:["missiologia"], title:"Vaticano II, Ad Gentes",
-    sum:"A Igreja Católica assume a linguagem trinitária da missão: a igreja nasce da missão do Filho e do Espírito.",
-    shift:"Convergência entre católicos e protestantes sobre a natureza missionária da igreja.",
-    quote:"A Igreja peregrina é, por sua natureza, missionária.", cite:"Ad Gentes 2",
-    src:"Bosch, Transforming Mission, cap. 12."},
-   {id:"berger", year:"1967", tags:["sociologia"], title:"Peter Berger, The Sacred Canopy",
-    sum:"Berger mostra que as crenças parecem óbvias quando sustentadas por “estruturas de plausibilidade” sociais. O pluralismo moderno enfraquece essas estruturas.",
-    shift:"Newbigin adota o conceito: a igreja precisa ser uma estrutura de plausibilidade alternativa.",
-    src:"Newbigin, The Gospel in a Pluralist Society, cap. 1."},
-   {id:"uppsala", year:"1968", tags:["missiologia"], title:"Uppsala e a secularização da missio Dei",
-    sum:"Com Hoekendijk e o relatório The Church for Others, parte do movimento ecumênico passa a ver Deus agindo na história secular independentemente da igreja. Associa-se ao período a fórmula “o mundo estabelece a agenda”.",
-    shift:"Desvio: a igreja fica à margem e o evangelismo é eclipsado. A reação evangélica leva a Lausanne. Newbigin critica esse caminho.",
-    src:"Goheen, Introducing Christian Mission Today, cap. 3; Bosch, p. 392."},
-   {id:"ftl", year:"1970", tags:["al"], title:"Fraternidade Teológica Latino-Americana",
-    sum:"Em Cochabamba, Bolívia, René Padilla, Samuel Escobar, Orlando Costas e outros criam a FTL para pensar a fé a partir da realidade latino-americana, nem importada dos EUA nem capturada pela teologia da libertação.",
-    shift:"Nasce a reflexão que vai se chamar missão integral.",
-    src:"Padilla, Missão integral."}
-  ]},
- {id:"era-newbigin", span:"1974 – 1998", title:"Lausanne e o Ocidente como campo missionário",
-  paradigm:"Paradigma <i>ecumênico emergente</i> (Bosch)",
-  lens:"O Ocidente se torna campo missionário. Newbigin aplica as ferramentas de um missionário transcultural à própria cultura: identifica o dogma iluminista que separa fatos públicos de valores privados e empurra a fé para o segundo grupo. Recorre a Michael Polanyi para mostrar que todo conhecimento envolve compromisso pessoal.",
-  events:[
-   {id:"lausanne", year:"1974", tags:["evangelicos","al"], key:true, title:"Congresso de Lausanne",
-    sum:"Stott é o principal redator do Pacto de Lausanne. Padilla e Escobar pressionam para que a responsabilidade social faça parte da missão. O evangelicalismo global assume, com ênfases próprias, uma visão ampla de missão.",
-    shift:"Evangelismo e ação social juntos, com prioridade ao evangelismo.",
-    quote:"O evangelismo e o envolvimento sociopolítico são ambos parte do nosso dever cristão.", cite:"Pacto de Lausanne, §5",
-    src:"Stott, A missão cristã no mundo moderno."},
-   {id:"nb-volta", year:"1974", tags:["newbigin","sociologia"], key:true, title:"Newbigin volta à Inglaterra",
-    sum:"Ao se aposentar e voltar à Grã-Bretanha, Newbigin encontra uma sociedade secular e confiante em si mesma. Conclui que é mais difícil evangelizar ali do que na Índia, porque o Ocidente acha que já conhece e já descartou o cristianismo.",
-    shift:"O Ocidente deixa de ser “base” e passa a ser “campo”. A pergunta vira: pode o Ocidente ser convertido?",
-    src:"Newbigin, Unfinished Agenda (autobiografia, 1985)."},
-   {id:"stott75", year:"1975", tags:["evangelicos"], key:true, title:"Stott, Christian Mission in the Modern World",
-    sum:"Stott propõe João 20.21 como forma primária da Grande Comissão: a igreja é enviada como Jesus foi enviado. Missão inclui evangelismo e serviço social como parceiros.",
-    shift:"Missão definida pela forma do envio de Jesus, não só pela tarefa de pregar.",
-    quote:"‘Missão’ descreve tudo aquilo que a igreja é enviada ao mundo para fazer.", cite:"Stott, Christian Mission in the Modern World, cap. 1",
-    src:"Ed. bras.: A missão cristã no mundo moderno."},
-   {id:"opensecret", year:"1978", tags:["newbigin"], title:"Newbigin, The Open Secret",
-    sum:"Uma missiologia trinitária: missão como proclamar o reino do Pai, compartilhar a vida do Filho e dar testemunho do Espírito. O Espírito é o agente da missão; a igreja, a testemunha.",
-    shift:"A missio Dei é recuperada de forma trinitária e centrada na igreja, contra a versão secularizada.",
-    src:"Goheen, “As the Father Has Sent Me”, cap. 3."},
-   {id:"grandrapids", year:"1982", tags:["evangelicos"], title:"Consulta de Grand Rapids",
-    sum:"Lausanne e a Aliança Evangélica Mundial definem três relações entre ação social e evangelismo: consequência, ponte e parceira. Stott tem papel central.",
-    shift:"Refinamento: a ação social não é mero apêndice do evangelismo.",
-    src:"Relatório Evangelism and Social Responsibility (1982)."},
-   {id:"other1984", year:"1983", tags:["newbigin"], title:"The Other Side of 1984",
-    sum:"Um pequeno livro pergunta às igrejas britânicas como seria um encontro missionário com a cultura moderna. Dá origem ao movimento Gospel and Our Culture no Reino Unido.",
-    shift:"A agenda missionária para o Ocidente ganha forma pública.",
-    src:"Goheen, The Church and Its Vocation."},
-   {id:"foolishness", year:"1986", tags:["newbigin","sociologia"], key:true, title:"Foolishness to the Greeks",
-    sum:"Newbigin analisa a cultura ocidental como um missionário analisaria uma cultura estrangeira: suas crenças fundamentais, sua visão de ciência, política e economia, e a divisão entre fatos e valores.",
-    shift:"Nasce o programa do “encontro missionário” entre evangelho e cultura moderna.",
-    src:"Hunsberger, Bearing the Witness of the Spirit (1998)."},
-   {id:"redeemer", year:"1989", tags:["evangelicos"], title:"Keller funda a Redeemer, em Manhattan",
-    sum:"Timothy e Kathy Keller plantam uma igreja em Nova York voltada a profissionais seculares. Keller lê Newbigin e aplica suas ideias à cidade global.",
-    shift:"O pensamento missional sai da academia e chega à plantação de igrejas urbanas.",
-    src:"Keller, Center Church, introdução."},
-   {id:"gps", year:"1989", tags:["newbigin"], key:true, title:"The Gospel in a Pluralist Society",
-    sum:"A obra mais lida de Newbigin: a Bíblia como história universal, a lógica da eleição, a crítica ao pluralismo e a congregação local como a forma pela qual o mundo entende o evangelho.",
-    shift:"A congregação local, e não o programa ou o especialista, passa a ser o centro da missão.",
-    quote:"A única hermenêutica do evangelho é uma congregação de homens e mulheres que creem nele e vivem por ele.", cite:"Newbigin, The Gospel in a Pluralist Society, cap. 18",
-    src:"Ed. bras.: O evangelho em uma sociedade pluralista."},
-   {id:"manila", year:"1989", tags:["evangelicos"], title:"Lausanne II em Manila",
-    sum:"O segundo congresso cunha o lema que resume o ideal evangélico de missão integral e global.",
-    shift:"Todo o povo de Deus envolvido, não apenas missionários profissionais.",
-    quote:"Toda a igreja levando todo o evangelho a todo o mundo.", cite:"Manifesto de Manila, 1989",
-    src:"Lausanne Movement."},
-   {id:"bosch", year:"1991", tags:["missiologia"], key:true, title:"Bosch, Transforming Mission",
-    sum:"O missiólogo sul-africano mapeia seis paradigmas históricos de missão e descreve um paradigma emergente com treze elementos. Torna-se a obra de referência da missiologia.",
-    shift:"Mostra que o conceito de missão sempre mudou com a história e precisa ser repensado.",
-    quote:"A missão não é primariamente uma atividade da igreja, mas um atributo de Deus.", cite:"Bosch, Transforming Mission, p. 390",
-    src:"Ed. bras.: Missão transformadora."},
-   {id:"stark", year:"1996", tags:["sociologia","pais"], title:"Rodney Stark, The Rise of Christianity",
-    sum:"Um sociólogo explica o crescimento da igreja primitiva por fatores sociais: redes de relacionamento, cuidado nas pragas e o lugar das mulheres. Reforça a ideia de que o testemunho comunitário foi decisivo.",
-    shift:"Confirma pela sociologia o que Newbigin afirmava pela teologia: a comunidade é a mensagem.",
-    src:"Stark (1996)."},
-   {id:"missionalchurch", year:"1998", tags:["missiologia","newbigin"], key:true, title:"Missional Church (Guder, org.)",
-    sum:"A rede Gospel and Our Culture, na América do Norte, publica o livro que populariza o termo “missional”. É a recepção americana direta das perguntas de Newbigin. No mesmo ano, em 30 de janeiro, Newbigin morre em Londres.",
-    shift:"De “igreja com missões” para “igreja missional”: a missão como identidade.",
-    src:"Van Gelder e Zscheile, The Missional Church in Perspective (2011)."}
-  ]},
- {id:"era-hoje", span:"1998 – hoje", title:"O movimento missional e suas ramificações",
-  paradigm:"Pós-Cristandade e cristianismo global",
-  lens:"Pós-Cristandade (Murray), era secular (Taylor), cristianismo global (Jenkins) e presença fiel (Hunter). No Ocidente, a igreja volta a ser minoria criativa; no Sul Global, é um movimento de massa. O Brasil vive as duas realidades ao mesmo tempo: crescimento evangélico e secularização urbana.",
-  events:[
-   {id:"goheen2000", year:"2000", tags:["evangelicos","newbigin"], title:"A tese de Goheen sobre Newbigin",
-    sum:"Em Utrecht, Goheen defende “As the Father Has Sent Me, I Am Sending You”, estudo sobre a eclesiologia missionária de Newbigin. Sua obra posterior desdobra essa pesquisa.",
-    shift:"Newbigin passa a ser lido de forma sistemática.",
-    src:"Goheen (2000)."},
-   {id:"jenkins", year:"2002", tags:["sociologia"], title:"Philip Jenkins, The Next Christendom",
-    sum:"O centro de gravidade do cristianismo migrou para a África, a Ásia e a América Latina.",
-    shift:"A missão vai “de todo lugar para todo lugar”, não mais do Ocidente para o resto.",
-    src:"Jenkins (2002)."},
-   {id:"frosthirsch", year:"2003", tags:["missiologia"], title:"Frost e Hirsch, The Shaping of Things to Come",
-    sum:"Propõem igrejas missionais-encarnacionais, pequenas comunidades inseridas nos bairros e liderança apostólica. Abre a vertente de “movimentos”.",
-    shift:"A pergunta missional chega às estruturas da igreja.",
-    src:"Van Gelder e Zscheile (2011)."},
-   {id:"drama", year:"2004", tags:["evangelicos","biblia"], key:true, title:"The Drama of Scripture",
-    sum:"Bartholomew e Goheen apresentam a Bíblia como drama em seis atos, com a igreja vivendo no quinto. Obra muito usada em seminários para ensinar a narrativa bíblica como um todo.",
-    shift:"A Bíblia lida como história que a igreja habita, e não como coleção de versículos.",
-    src:"Ed. bras.: O drama das Escrituras."},
-   {id:"wright", year:"2006", tags:["evangelicos","biblia"], key:true, title:"Christopher Wright, The Mission of God",
-    sum:"Wright propõe uma hermenêutica missional: toda a Bíblia é a história da missão de Deus, e não apenas alguns textos missionários.",
-    shift:"Dos textos-prova da Grande Comissão para a leitura missional de toda a Escritura.",
-    quote:"Não é tanto que Deus tem uma missão para sua igreja no mundo, mas que Deus tem uma igreja para sua missão no mundo.", cite:"Wright, The Mission of God, p. 62",
-    src:"Ed. bras.: A missão de Deus."},
-   {id:"taylor", year:"2007", tags:["sociologia"], title:"Charles Taylor, A Secular Age",
-    sum:"Taylor descreve a secularidade não como ausência de fé, mas como condição em que crer se torna uma opção entre outras, dentro de uma “moldura imanente”.",
-    shift:"Keller usa Taylor para pensar a apologética e a pregação em contexto secular.",
-    src:"Keller, Making Sense of God (2016)."},
-   {id:"capetown", year:"2010", tags:["evangelicos","al"], title:"Compromisso da Cidade do Cabo",
-    sum:"O terceiro congresso de Lausanne, com Chris Wright à frente do texto, organiza a missão em torno do amor a Deus e ao próximo e afirma a missão integral.",
-    shift:"A linguagem da missão de Deus entra no centro do evangelicalismo global.",
-    src:"The Cape Town Commitment (2010)."},
-   {id:"hunter", year:"2010", tags:["sociologia"], title:"James D. Hunter, To Change the World",
-    sum:"O sociólogo critica as estratégias cristãs de conquista cultural pelo poder e propõe uma “presença fiel” nas instituições.",
-    shift:"Missão como presença fiel, não como guerra cultural.",
-    src:"Hunter (2010)."},
-   {id:"light", year:"2011", tags:["evangelicos","newbigin","biblia"], key:true, title:"Goheen, A Light to the Nations",
-    sum:"Goheen une a narrativa bíblica e a eclesiologia de Newbigin: a igreja missional é o povo que assume seu lugar na história de Deus, de Israel à igreja. Nesse ano morre John Stott, e DeYoung e Gilbert publicam uma crítica ao uso amplo de “missão”.",
-    shift:"A identidade missional é derivada diretamente da história bíblica.",
-    src:"Ed. bras.: A igreja missional na Bíblia: luz para as nações."},
-   {id:"center", year:"2012", tags:["evangelicos"], key:true, title:"Keller, Center Church",
-    sum:"Keller organiza o ministério em três eixos: teologia do evangelho, visão para a cidade e ministério de movimento. Descreve marcas da igreja missional: falar a língua da cultura, equipar leigos para o trabalho, servir a cidade e cultivar unidade entre igrejas.",
-    shift:"O missional vira prática equilibrada de igreja local, evitando os extremos.",
-    quote:"Uma contracultura para o bem comum.", cite:"Keller, Center Church, expressão recorrente",
-    src:"Ed. bras.: Igreja centrada."},
-   {id:"introducing", year:"2014", tags:["evangelicos"], title:"Goheen, Introducing Christian Mission Today",
-    sum:"Manual que integra Escritura, história e questões atuais da missão, incluindo o Ocidente, o Sul Global, a justiça e as religiões do mundo.",
-    shift:"A missiologia da linha Newbigin-Goheen ganha forma didática.",
-    src:"Goheen (2014)."},
-   {id:"kreider", year:"2016", tags:["sociologia","pais"], title:"Alan Kreider, The Patient Ferment",
-    sum:"Kreider mostra que a igreja antiga crescia por paciência, catequese longa e hábitos contraculturais, sem estratégia de marketing.",
-    shift:"A pós-Cristandade redescobre a igreja pré-Cristandade como modelo.",
-    src:"Kreider (2016)."},
-   {id:"vocation", year:"2018", tags:["evangelicos","newbigin"], title:"Goheen, The Church and Its Vocation",
-    sum:"Síntese madura da eclesiologia missionária de Newbigin: a igreja reunida e dispersa, a liderança, a vocação dos leigos na vida pública e o encontro com a cultura.",
-    shift:"Newbigin apresentado como recurso para a igreja do século XXI.",
-    src:"Goheen (2018)."},
-   {id:"west", year:"2020", tags:["evangelicos","newbigin"], title:"Keller, How to Reach the West Again",
-    sum:"Keller retoma a pergunta de Newbigin: pode o Ocidente ser convertido? Propõe uma nova apologética cultural, igrejas contraculturais e cristãos atuando no trabalho. Keller morre em 2023.",
-    shift:"A agenda de Newbigin segue viva na plantação de igrejas urbanas.",
-    src:"Keller (2020)."},
-   {id:"l4", year:"2024", tags:["evangelicos","al"], title:"Lausanne 4, Seul-Incheon",
-    sum:"O quarto congresso reúne a igreja global em torno do tema “Que a igreja declare e demonstre Cristo juntos” e da ideia de missão policêntrica.",
-    shift:"Missão de todo lugar para todo lugar, com o Sul Global como protagonista.",
-    src:"Declaração de Seul (2024)."}
-  ]}
+var PHASES=[
+ {a:"b:0",b:"b:1",t:"Um povo para as nações"},
+ {a:30,b:313,t:"Minoria enviada"},
+ {a:313,b:1500,t:"Expansão da Cristandade"},
+ {a:1500,b:1900,t:"Missões: tarefa especial"},
+ {a:1900,b:1952,t:"Crise do Ocidente cristão"},
+ {a:1952,b:1974,t:"Missio Dei"},
+ {a:1974,b:1998,t:"O Ocidente vira campo"},
+ {a:1998,b:2026,t:"Igreja missional"},
+ {a:"f:0",b:"f:1",t:"Tudo novo"}
 ];
+/* espessura do fio (interpretativa) */
+var RIVER=[["b:0",5],["b:.36",11],["b:.5",13],["b:.89",16],[30,22],[313,21],[420,10],[1500,7],[1732,10],[1792,13],[1910,15],[1952,24],[1974,30],[1998,36],[2026,40],["f:1",46]];
 
-/* ---------------- Viradas ---------------- */
-var SHIFTS = [
-  {from:"Missão como atividade da igreja", to:"Missão como atributo de Deus (missio Dei)", when:"Barth 1932 · Willingen 1952", ev:"willingen"},
-  {from:"Igreja com um departamento de missões", to:"Igreja missionária por natureza", when:"Newbigin 1953 · Guder 1998", ev:"missionalchurch"},
-  {from:"Cristandade: uma cultura supostamente cristã", to:"Encontro missionário com a cultura ocidental", when:"Newbigin 1974–1989", ev:"foolishness"},
-  {from:"Do Ocidente para o resto do mundo", to:"De todo lugar para todo lugar", when:"Edimburgo 1910 → Lausanne 2024", ev:"l4"},
-  {from:"Palavra ou ação", to:"Missão integral: palavra e ação juntas", when:"Lausanne 1974 · Stott 1975 · Padilla", ev:"lausanne"},
-  {from:"Textos-prova da Grande Comissão", to:"Hermenêutica missional de toda a Bíblia", when:"Wright 2006 · Goheen 2004–2011", ev:"wright"},
-  {from:"Programas e especialistas", to:"A congregação como hermenêutica do evangelho", when:"Newbigin 1989 · Keller 2012", ev:"gps"}
+var N=[
+ /* Bíblia */
+ {id:"criacao",l:"biblia",at:"b:.07",w:"Gn 1–2",s:"Criação",t:"Criação e mandato cultural",d:"Deus cria um mundo bom e chama a humanidade a cultivá-lo. O palco da missão é a criação inteira.",k:1},
+ {id:"queda",l:"biblia",at:"b:.22",w:"Gn 3–11",s:"Queda e Babel",t:"Queda e Babel",d:"O pecado corrompe tudo e dispersa as nações. Nada fica fora do alcance da redenção."},
+ {id:"abraao",l:"biblia",at:"b:.36",w:"Gn 12.1-3",s:"Abraão",t:"O chamado de Abraão",d:"Um é escolhido para que todas as famílias da terra sejam abençoadas. Eleição para a missão.",k:1},
+ {id:"sinai",l:"biblia",at:"b:.52",w:"Êx 19.3-6",s:"Sinai",t:"Reino de sacerdotes",d:"Israel recebe sua identidade: povo santo no meio das nações. Para Goheen, o texto-chave da igreja missional.",q:"Vós me sereis reino de sacerdotes e nação santa.",qs:"Êx 19.6",k:1},
+ {id:"servo",l:"biblia",at:"b:.68",w:"Is 49.6",s:"Luz às nações",t:"Luz para as nações",d:"O servo do Senhor é luz para os povos. Missão centrípeta: as nações vêm a Sião."},
+ {id:"jesus",l:"biblia",at:"b:.89",w:"Jo 20.21",s:"Jesus",t:"Jesus e o reino",d:"Jesus anuncia o reino, morre, ressuscita e envia os discípulos como o Pai o enviou.",q:"Assim como o Pai me enviou, eu também vos envio.",qs:"Jo 20.21",k:1},
+ {id:"pentecostes",l:"biblia",at:30,w:"c. 30",s:"Pentecostes",t:"Pentecostes",d:"O Espírito forma uma comunidade enviada. A missão muda de direção: agora a igreja vai às nações.",q:"Sereis minhas testemunhas até os confins da terra.",qs:"At 1.8",k:1},
+ {id:"pedro",l:"biblia",at:64,w:"c. 60",s:"1 Pedro 2.9",t:"A igreja herda Êxodo 19",d:"Pedro aplica à igreja a vocação de Israel: um povo que proclama as virtudes de Deus."},
+ {id:"novacriacao",l:"biblia",at:"f:.5",w:"Ap 21–22",s:"Nova criação",t:"Todas as coisas novas",d:"Uma multidão de todas as nações diante do Cordeiro. O destino dá forma à missão.",k:1},
+ /* Pais */
+ {id:"diogneto",l:"pais",at:130,w:"séc. II",s:"Diogneto",t:"Carta a Diogneto",d:"Cristãos como estrangeiros residentes: vivem nas cidades, mas com outra cidadania.",q:"O que a alma é no corpo, isso são os cristãos no mundo.",qs:"Diogneto 6",k:1},
+ {id:"justino",l:"pais",at:155,w:"c. 155",s:"Justino",t:"Justino e o Logos semeado",d:"Sementes da verdade na filosofia grega: primeiros passos de contextualização."},
+ {id:"irineu",l:"pais",at:180,w:"c. 180",s:"Irineu",t:"Irineu: uma só história",d:"Contra o gnosticismo, lê a Bíblia como um drama da criação à consumação. Antecipa Goheen."},
+ {id:"tertuliano",l:"pais",at:200,w:"197",s:"Tertuliano",t:"Tertuliano",d:"A perseguição não cala a igreja.",q:"O sangue dos cristãos é semente.",qs:"Apologético 50"},
+ {id:"constantino",l:"pais",at:313,w:"313 / 380",s:"Constantino",t:"Começa a Cristandade",d:"A fé vira religião oficial. A igreja deixa de ser enviada e passa a ser o centro da sociedade.",k:1},
+ {id:"agostinho",l:"pais",at:420,w:"413–426",s:"Agostinho",t:"Agostinho: A Cidade de Deus",d:"Duas cidades entrelaçadas: a igreja peregrina serve a cidade sem idolatrá-la.",k:1},
+ {id:"celtas",l:"pais",at:650,w:"séc. V–IX",s:"Monges celtas",t:"Missões monásticas",d:"Comunidades monásticas como bases de oração, hospitalidade e envio."},
+ {id:"francisco",l:"pais",at:1219,w:"1219",s:"Francisco",t:"Francisco diante do sultão",d:"Em plena Cruzada, testemunho pela palavra e pela humildade."},
+ /* Missiologia */
+ {id:"reforma",l:"missiologia",at:1517,w:"1517",s:"Reforma",t:"Reforma Protestante",d:"Palavra, sacerdócio de todos e vocação no trabalho. Mas pouca estrutura missionária.",k:1},
+ {id:"jesuitas",l:"missiologia",at:1540,w:"1540",s:"Jesuítas",t:"“Missão” muda de sentido",d:"A palavra deixa de nomear o envio do Filho pelo Pai e passa a nomear uma atividade da igreja."},
+ {id:"moravios",l:"missiologia",at:1732,w:"1732",s:"Morávios",t:"Os morávios",d:"Uma comunidade inteira organizada para enviar, sustentada por oração contínua."},
+ {id:"carey",l:"missiologia",at:1792,w:"1792",s:"Carey",t:"William Carey",d:"Nasce o modelo das sociedades missionárias: igreja aqui, missão lá fora.",q:"Esperai grandes coisas de Deus; empreendei grandes coisas para Deus.",qs:"Carey, 1792",k:1},
+ {id:"venn",l:"missiologia",at:1855,w:"1850s",s:"Três-autos",t:"Venn e Anderson",d:"Igrejas autogovernadas, autossustentadas e autopropagadoras, em meio ao colonialismo."},
+ {id:"edimburgo",l:"missiologia",at:1910,w:"1910",s:"Edimburgo",t:"Edimburgo 1910",d:"Auge do otimismo ocidental: evangelizar o mundo nesta geração.",k:1},
+ {id:"barth",l:"missiologia",at:1932,w:"1932",s:"Barth",t:"Karl Barth em Brandemburgo",d:"Missão como atividade do próprio Deus. A semente da missio Dei."},
+ {id:"willingen",l:"missiologia",at:1952,w:"1952",s:"Willingen",t:"Willingen: missio Dei",d:"A missão nasce no Deus trino. A igreja participa de uma missão que é de Deus.",q:"O movimento missionário do qual fazemos parte tem sua fonte no próprio Deus trino.",qs:"Willingen 1952",k:1},
+ {id:"adgentes",l:"missiologia",at:1965,w:"1965",s:"Ad Gentes",t:"Vaticano II: Ad Gentes",d:"Também para os católicos, a igreja é missionária por natureza."},
+ {id:"uppsala",l:"missiologia",at:1968,w:"1968",s:"Uppsala",t:"Missio Dei secularizada",d:"Deus agindo no mundo sem a igreja: “o mundo estabelece a agenda”. Provoca reação evangélica."},
+ {id:"bosch",l:"missiologia",at:1991,w:"1991",s:"Bosch",t:"Bosch: Transforming Mission",d:"Seis paradigmas históricos de missão. A missio Dei vira consenso.",q:"A missão não é primariamente uma atividade da igreja, mas um atributo de Deus.",qs:"Bosch, p. 390",k:1},
+ {id:"guder",l:"missiologia",at:1998,w:"1998",s:"Missional Church",t:"Missional Church",d:"O termo “missional” se populariza nos EUA, levando adiante as perguntas de Newbigin.",k:1},
+ {id:"frosthirsch",l:"missiologia",at:2003,w:"2003",s:"Frost e Hirsch",t:"Frost e Hirsch",d:"Igrejas encarnacionais nos bairros e liderança apostólica: a vertente dos movimentos."},
+ /* Newbigin */
+ {id:"india",l:"newbigin",at:1936,w:"1936",s:"Índia",t:"Newbigin parte para a Índia",d:"Aprende tâmil, dialoga com hindus e aprende a ver a própria cultura de fora.",k:1},
+ {id:"csi",l:"newbigin",at:1947,w:"1947",s:"Sul da Índia",t:"Igreja do Sul da Índia",d:"Bispo da igreja recém-unida: unidade e missão andam juntas."},
+ {id:"household",l:"newbigin",at:1953,w:"1953",s:"Household of God",t:"The Household of God",d:"A missão define a própria natureza da igreja.",q:"O que o Senhor deixou não foi um livro, mas uma comunidade visível.",qs:"abreviado"},
+ {id:"newdelhi",l:"newbigin",at:1961,w:"1961",s:"Nova Délhi",t:"Missão dentro da igreja",d:"Conduz a integração do Conselho Missionário ao Conselho Mundial de Igrejas."},
+ {id:"volta",l:"newbigin",at:1974,w:"1974",s:"Volta à Inglaterra",t:"O Ocidente é campo missionário",d:"De volta da Índia, encontra uma cultura mais difícil de alcançar do que a hindu.",k:1},
+ {id:"opensecret",l:"newbigin",at:1978,w:"1978",s:"Open Secret",t:"The Open Secret",d:"Missão trinitária: o reino do Pai, a vida do Filho, o testemunho do Espírito."},
+ {id:"other1984",l:"newbigin",at:1983,w:"1983",s:"Other Side of 1984",t:"The Other Side of 1984",d:"Como seria um encontro missionário com a cultura moderna?"},
+ {id:"foolishness",l:"newbigin",at:1986,w:"1986",s:"Foolishness",t:"Foolishness to the Greeks",d:"Analisa o Ocidente como um missionário analisa uma cultura estrangeira: fatos públicos, valores privados.",k:1},
+ {id:"gps",l:"newbigin",at:1989,w:"1989",s:"Pluralist Society",t:"The Gospel in a Pluralist Society",d:"A congregação local é a forma como o mundo entende o evangelho.",q:"A única hermenêutica do evangelho é uma congregação que crê nele e vive por ele.",qs:"cap. 18",k:1},
+ {id:"proper",l:"newbigin",at:1995,w:"1995",s:"Proper Confidence",t:"Proper Confidence",d:"Anunciar com confiança e sem arrogância: testemunha, não dona da verdade."},
+ /* Evangélicos */
+ {id:"lausanne",l:"evangelicos",at:1974,w:"1974",s:"Lausanne",t:"Lausanne 1974",d:"Stott redige o Pacto; Padilla e Escobar incluem a responsabilidade social na missão.",k:1},
+ {id:"stott75",l:"evangelicos",at:1975.6,w:"1975",s:"Stott",t:"Stott: missão no mundo moderno",d:"João 20.21 como forma da missão: palavra e serviço como parceiros.",q:"Missão descreve tudo aquilo que a igreja é enviada ao mundo para fazer.",qs:"Stott, 1975",k:1},
+ {id:"grandrapids",l:"evangelicos",at:1982,w:"1982",s:"Grand Rapids",t:"Consulta de Grand Rapids",d:"Ação social como consequência, ponte e parceira do evangelismo."},
+ {id:"manila",l:"evangelicos",at:1988.6,w:"1989",s:"Manila",t:"Lausanne II, Manila",d:"Toda a igreja levando todo o evangelho a todo o mundo."},
+ {id:"redeemer",l:"evangelicos",at:1989.8,w:"1989",s:"Redeemer",t:"Keller em Manhattan",d:"Keller planta a Redeemer e aplica Newbigin à cidade global."},
+ {id:"goheen2000",l:"evangelicos",at:2000,w:"2000",s:"Tese de Goheen",t:"Goheen estuda Newbigin",d:"Tese sobre a eclesiologia missionária de Newbigin. Base de toda a obra de Goheen."},
+ {id:"drama",l:"evangelicos",at:2004,w:"2004",s:"Drama of Scripture",t:"O drama das Escrituras",d:"Bartholomew e Goheen: a Bíblia em seis atos. A igreja vive no quinto.",k:1},
+ {id:"wright",l:"evangelicos",at:2006,w:"2006",s:"Mission of God",t:"Wright: A missão de Deus",d:"Hermenêutica missional: a Bíblia inteira conta a missão de Deus.",q:"Deus tem uma igreja para sua missão no mundo.",qs:"Wright, 2006",k:1},
+ {id:"capetown",l:"evangelicos",at:2010,w:"2010",s:"Cidade do Cabo",t:"Lausanne III, Cidade do Cabo",d:"A missão de Deus e a missão integral no centro do evangelicalismo global."},
+ {id:"light",l:"evangelicos",at:2011.4,w:"2011",s:"Light to the Nations",t:"Goheen: Luz para as nações",d:"A identidade missional nasce da história bíblica, de Israel à igreja.",k:1},
+ {id:"center",l:"evangelicos",at:2013,w:"2012",s:"Center Church",t:"Keller: Igreja centrada",d:"Evangelho, cidade e movimento. A igreja como contracultura para o bem comum.",k:1},
+ {id:"vocation",l:"evangelicos",at:2018,w:"2018",s:"Church and Its Vocation",t:"Goheen: a vocação da igreja",d:"Igreja reunida e dispersa; a vocação dos leigos na vida pública."},
+ {id:"west",l:"evangelicos",at:2020.5,w:"2020",s:"Reach the West",t:"Keller: alcançar o Ocidente",d:"Retoma a pergunta de Newbigin: o Ocidente pode ser convertido?"},
+ {id:"l4",l:"evangelicos",at:2024,w:"2024",s:"Lausanne 4",t:"Lausanne 4, Seul-Incheon",d:"Missão policêntrica: de todo lugar para todo lugar.",k:1},
+ /* Sociologia */
+ {id:"polanyi",l:"sociologia",at:1958,w:"1958",s:"Polanyi",t:"Polanyi: conhecimento pessoal",d:"Todo conhecimento envolve compromisso pessoal. Newbigin usa isso contra a falsa neutralidade."},
+ {id:"berger",l:"sociologia",at:1967,w:"1967",s:"Berger",t:"Berger: plausibilidade",d:"Crenças parecem óbvias quando uma comunidade as sustenta.",k:1},
+ {id:"stark",l:"sociologia",at:1996,w:"1996",s:"Stark",t:"Stark: a ascensão do cristianismo",d:"A igreja antiga cresceu cerca de 40% por década, por redes e cuidado mútuo."},
+ {id:"jenkins",l:"sociologia",at:2002,w:"2002",s:"Jenkins",t:"Jenkins: a próxima Cristandade",d:"O centro do cristianismo migrou para o Sul Global."},
+ {id:"murray",l:"sociologia",at:2004.5,w:"2004",s:"Murray",t:"Murray: pós-Cristandade",d:"A igreja volta às margens da cultura."},
+ {id:"taylor",l:"sociologia",at:2007,w:"2007",s:"Taylor",t:"Taylor: era secular",d:"Crer vira uma opção entre outras.",k:1},
+ {id:"hunter",l:"sociologia",at:2010,w:"2010",s:"Hunter",t:"Hunter: presença fiel",d:"Mudar o mundo não pelo poder, mas pela presença fiel nas instituições."},
+ {id:"kreider",l:"sociologia",at:2016,w:"2016",s:"Kreider",t:"Kreider: fermentação paciente",d:"A igreja antiga cresceu por hábitos e paciência, não por marketing."},
+ /* Brasil e AL */
+ {id:"nobrega",l:"al",at:1549,w:"1549",s:"Nóbrega",t:"Jesuítas no Brasil",d:"Manuel da Nóbrega chega à Bahia. Missão ligada à colonização."},
+ {id:"guanabara",l:"al",at:1557,w:"1557",s:"Guanabara",t:"Calvinistas no Rio",d:"Da colônia francesa sai a Confissão da Guanabara (1558), primeira confissão protestante das Américas.",k:1},
+ {id:"ftl",l:"al",at:1970,w:"1970",s:"FTL",t:"Fraternidade Teológica Latino-Americana",d:"Padilla, Escobar e Costas pensam a missão a partir da América Latina.",k:1},
+ {id:"padilla",l:"al",at:1985,w:"1985",s:"Missão integral",t:"Padilla: missão integral",d:"O evangelho para a pessoa inteira e para toda a sociedade.",k:1}
 ];
+var BY={}; N.forEach(function(n){BY[n.id]=n; n.u=pos(n.at); n.lane=LANE[n.l];});
+N.sort(function(a,b){return a.u-b.u;});
+N.forEach(function(n,i){n.order=i;});
 
-/* ---------------- Triângulo ---------------- */
-var TRI = {
-  ec:{t:"Evangelho e cultura: encarnação", d:"O evangelho nunca chega “puro”: ele sempre vem encarnado numa língua e numa cultura. Contextualizar é inevitável. A questão é se o evangelho vai confrontar a cultura ou ser domesticado por ela."},
-  eg:{t:"Evangelho e igreja: a igreja também precisa ser convertida", d:"A Escritura julga também a igreja que a lê. A igreja ocidental absorveu pressupostos iluministas (fé privada, razão neutra) e precisa deixar o evangelho questioná-los. Por isso Newbigin valoriza as igrejas de outras culturas, que ajudam a enxergar nossos pontos cegos."},
-  gc:{t:"Igreja e cultura: o encontro missionário", d:"A igreja fala a língua da cultura, afirma o que nela há de bom e desafia seus ídolos. Newbigin chama isso de “afirmação subversiva”: entrar no mundo do outro para, de dentro, mostrar que Cristo é o verdadeiro cumprimento."}
-};
-
-/* ---------------- Conceitos de Newbigin ---------------- */
-var CONCEPTS = [
-  {tab:"Hermenêutica", title:"A congregação como hermenêutica do evangelho", where:"The Gospel in a Pluralist Society (1989), cap. 18",
-   text:"O mundo não entende o evangelho por argumentos isolados, mas observando uma comunidade que vive por ele. Newbigin descreve seis marcas dessa congregação: louvor, verdade, cuidado com o bairro, sacerdócio dos membros no mundo, responsabilidade mútua e esperança.",
-   echo:"Goheen faz desse capítulo o centro da eclesiologia missional; Keller o traduz na ideia de “contracultura para o bem comum”."},
-  {tab:"Sinal do reino", title:"Sinal, instrumento e antegozo do reino", where:"The Open Secret; Sign of the Kingdom (1980)",
-   text:"A igreja não é o reino, mas é sinal que aponta para ele, instrumento que Deus usa para realizá-lo e antegozo em que ele já é provado. Isso impede tanto o triunfalismo quanto o desprezo pela igreja.",
-   echo:"Goheen organiza a vida da igreja reunida e dispersa a partir dessa tríade."},
-  {tab:"Eleição", title:"A lógica da eleição", where:"The Gospel in a Pluralist Society, cap. 7",
-   text:"Deus escolhe alguns para alcançar todos: Abraão, Israel, a igreja. Eleição não é favoritismo, mas vocação. Ser povo escolhido é carregar a bênção para os outros.",
-   echo:"Base da leitura de Goheen sobre Gn 12 e Êx 19; ecoa em Wright."},
-  {tab:"Fatos e valores", title:"A divisão entre fatos e valores", where:"Foolishness to the Greeks (1986)",
-   text:"O Iluminismo separou fatos públicos (ciência, economia) de valores privados (religião, moral). O evangelho foi colocado na segunda categoria. Newbigin insiste que a ressurreição é uma afirmação sobre fatos, e que a fé cristã é verdade pública.",
-   echo:"Keller usa essa crítica em The Reason for God (2008) e Making Sense of God (2016)."},
-  {tab:"Plausibilidade", title:"Estruturas de plausibilidade", where:"The Gospel in a Pluralist Society, cap. 1 e 20",
-   text:"Tomando o conceito de Peter Berger, Newbigin mostra que toda sociedade tem crenças que parecem óbvias. A igreja precisa ser uma comunidade onde a história bíblica é a estrutura de plausibilidade que molda a vida.",
-   echo:"Leva Goheen a enfatizar formação, liturgia e discipulado como parte da missão."},
-  {tab:"Verdade pública", title:"Confiança adequada", where:"Proper Confidence (1995); Truth to Tell (1991)",
-   text:"Com Michael Polanyi, Newbigin afirma que todo conhecimento envolve compromisso pessoal. O cristão pode anunciar o evangelho com confiança, sem arrogância, como testemunha e não como dono da verdade.",
-   echo:"Fundamenta uma apologética humilde e pública, adotada por Keller."}
+/* influências [de, para, reação?] */
+var L=[
+ ["criacao","drama"],["abraao","wright"],["sinai","pedro"],["sinai","light"],["servo","light"],["jesus","pentecostes"],["jesus","stott75"],["pedro","light"],
+ ["irineu","drama"],["diogneto","center"],["agostinho","center"],["justino","center"],["tertuliano","kreider"],
+ ["constantino","volta",1],["constantino","murray",1],
+ ["reforma","guanabara"],["reforma","carey"],["moravios","carey"],["carey","edimburgo"],["venn","edimburgo"],
+ ["edimburgo","willingen"],["barth","willingen"],["willingen","household"],["willingen","adgentes"],["willingen","uppsala"],["willingen","bosch"],
+ ["uppsala","lausanne",1],["uppsala","opensecret",1],["ftl","lausanne"],["ftl","padilla"],["lausanne","stott75"],["lausanne","grandrapids"],["stott75","grandrapids"],
+ ["india","csi"],["india","volta"],["csi","newdelhi"],["household","newdelhi"],["volta","other1984"],["other1984","foolishness"],["polanyi","foolishness"],["polanyi","proper"],
+ ["foolishness","gps"],["berger","gps"],["foolishness","redeemer"],["gps","guder"],["bosch","guder"],["guder","frosthirsch"],["murray","frosthirsch"],
+ ["gps","goheen2000"],["goheen2000","drama"],["goheen2000","light"],["drama","light"],["wright","light"],["wright","capetown"],["manila","capetown"],["padilla","capetown"],
+ ["capetown","l4"],["jenkins","l4"],["stark","kreider"],["taylor","west"],["hunter","center"],["redeemer","center"],["center","west"],["gps","west"],
+ ["light","vocation"],["goheen2000","vocation"],["l4","novacriacao"],["light","novacriacao"]
 ];
+N.forEach(function(n){n.inn=[];n.out=[];});
+L.forEach(function(e){BY[e[0]].out.push(BY[e[1]]);BY[e[1]].inn.push(BY[e[0]]);});
 
-/* ---------------- Sociologia ---------------- */
-var SOCIO = [
-  {yr:"1958", who:"Michael Polanyi", c:"Conhecimento pessoal", d:"Todo conhecimento, até o científico, depende de compromissos tácitos de uma comunidade.", u:"Newbigin: a fé não é inferior à ciência; ambas partem de confiança."},
-  {yr:"1967", who:"Peter Berger", c:"Estrutura de plausibilidade", d:"Crenças parecem óbvias quando uma rede social as sustenta. O pluralismo desfaz essas redes.", u:"Newbigin: a congregação como estrutura de plausibilidade alternativa."},
-  {yr:"1996", who:"Rodney Stark", c:"Crescimento por redes", d:"A igreja antiga cresceu cerca de 40% por década, por relacionamentos, cuidado nas pragas e dignidade às mulheres.", u:"Confirma o peso do testemunho comunitário."},
-  {yr:"2002", who:"Philip Jenkins", c:"A próxima Cristandade", d:"O centro de gravidade cristão migrou para o Sul Global.", u:"Missão policêntrica; o Brasil como igreja que envia."},
-  {yr:"2004", who:"Stuart Murray", c:"Pós-Cristandade", d:"A cultura que tinha a igreja como centro chegou ao fim; a igreja volta às margens.", u:"Missional como modo de ser igreja minoritária."},
-  {yr:"2007", who:"Charles Taylor", c:"Era secular", d:"Crer passa a ser uma opção entre outras, dentro de uma moldura imanente e de uma “era da autenticidade”.", u:"Keller: apologética que dialoga com o desejo de sentido e identidade."},
-  {yr:"2010", who:"James D. Hunter", c:"Presença fiel", d:"Culturas mudam por redes e instituições de elite, não por maiorias; o poder político é ambíguo.", u:"Missão como presença fiel no trabalho e nas instituições."},
-  {yr:"2016", who:"Alan Kreider", c:"Fermentação paciente", d:"A igreja pré-constantiniana cresceu por habitus e paciência, sem estratégia de marketing.", u:"Formação de discípulos como coração da missão."}
-];
+/* ---------- layout ---------- */
+var PADL=124,PADR=48,TOP_ACT=22,TOP_ERA=48,TOP_TICK=76,LANE_TOP=92,LH=58;
+var RY=LANE_TOP+LANES.length*LH+42, H=RY+60;
+var scroller=document.getElementById("scroller"), svgNS="http://www.w3.org/2000/svg";
+var zoom=0.5, sel=null, laneFocus=null, showLinks=true;
+function X(u){return PADL+u*zoom;}
+function laneY(l){return LANE_TOP+l.i*LH+LH/2;}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");}
+function tw(s,px){return s.length*(px||11)*0.61;}
+function thick(u){
+  for(var i=0;i<RIVER.length-1;i++){
+    var a=pos(RIVER[i][0]),b=pos(RIVER[i+1][0]);
+    if(u<=b){var t=b===a?0:(u-a)/(b-a);return RIVER[i][1]+(RIVER[i+1][1]-RIVER[i][1])*Math.max(0,Math.min(1,t));}
+  }
+  return RIVER[RIVER.length-1][1];
+}
 
-/* ---------------- Vozes ---------------- */
-var VOICES = [
-  {n:"Lesslie Newbigin", d:"1909–1998 · Escócia, Índia, Inglaterra", p:"Bispo, missionário e ecumênico. Voltou da Índia para perguntar se o Ocidente pode ser convertido. É a fonte principal do movimento missional.", w:"<i>The Gospel in a Pluralist Society</i> (1989)", c:"--c-newbigin"},
-  {n:"Michael Goheen", d:"Contemporâneo · Canadá e EUA", p:"Principal intérprete de Newbigin. Une teologia bíblica narrativa, cosmovisão reformada e eclesiologia missional.", w:"<i>A Light to the Nations</i> (2011)", c:"--c-evangelicos"},
-  {n:"John Stott", d:"1921–2011 · Inglaterra", p:"Arquiteto do Pacto de Lausanne. Uniu evangelismo e responsabilidade social a partir de João 20.21, sem abrir mão da prioridade do anúncio.", w:"<i>Christian Mission in the Modern World</i> (1975)", c:"--c-evangelicos"},
-  {n:"Timothy Keller", d:"1950–2023 · EUA", p:"Pastor em Manhattan, fundador da Redeemer City to City. Traduziu Newbigin para a plantação de igrejas nas cidades globais: contextualização, trabalho e bem comum.", w:"<i>Center Church</i> (2012)", c:"--c-evangelicos"},
-  {n:"Christopher J. H. Wright", d:"n. 1947 · Irlanda do Norte, Índia, Inglaterra", p:"Teólogo do Antigo Testamento, sucessor de Stott no Langham. Formulou a hermenêutica missional da Bíblia inteira.", w:"<i>The Mission of God</i> (2006)", c:"--c-evangelicos"},
-  {n:"David Bosch", d:"1929–1992 · África do Sul", p:"Missiólogo que mapeou os paradigmas históricos de missão e firmou a missio Dei como consenso acadêmico.", w:"<i>Transforming Mission</i> (1991)", c:"--c-missiologia"},
-  {n:"Darrell Guder", d:"Contemporâneo · EUA", p:"Organizou o livro que popularizou o termo missional e desenvolveu a ideia da “conversão contínua” da igreja.", w:"<i>Missional Church</i> (1998)", c:"--c-missiologia"},
-  {n:"C. René Padilla", d:"1932–2021 · Equador e Argentina", p:"Com Samuel Escobar, levou a Lausanne a voz latino-americana e formulou a missão integral: o evangelho para a pessoa inteira e para toda a sociedade.", w:"<i>Missão integral</i> (1985)", c:"--c-al"}
-];
-
-/* ---------------- Hoje ---------------- */
-var TODAY = [
-  {t:"Missional reformado e evangélico", who:"Keller · Goheen · Wright · City to City", c:"--c-evangelicos",
-   d:"Fiel à linha Newbigin: centralidade do evangelho, igreja local como comunidade contracultural, contextualização cuidadosa, vocação no trabalho e amor pela cidade. Forte em redes de plantação de igrejas, inclusive no Brasil."},
-  {t:"Missional-encarnacional e movimentos", who:"Frost · Hirsch · Verge · microigrejas", c:"--c-missiologia",
-   d:"Ênfase nas estruturas: pequenas comunidades nos bairros, liderança apostólica, discipulado que se multiplica. Ganha força após a pandemia, com igrejas em casas e comunidades menores."},
-  {t:"Missão integral latino-americana", who:"Padilla · Escobar · FTL · Rede Miqueias", c:"--c-al",
-   d:"Nasce antes do termo “missional” e dialoga com ele. Coloca a justiça, os pobres e a transformação social dentro da missão. No Brasil, influencia igrejas, ONGs cristãs e a reflexão sobre fé e política."},
-  {t:"Críticas e correções", who:"DeYoung e Gilbert · Neill · Hesselgrave", c:"--c-pais",
-   d:"Alertam para o risco de diluição: se tudo é missão, nada é missão (Stephen Neill, 1959). DeYoung e Gilbert (2011) restringem a missão da igreja à Grande Comissão. Keller e Goheen respondem distinguindo o que a igreja institucional faz do que os cristãos fazem no mundo."}
-];
-var CHALLENGES = [
-  {t:"Pós-Cristandade", d:"A igreja não é mais o centro cultural; precisa reaprender a ser minoria fiel."},
-  {t:"Secularização e busca espiritual", d:"Ao mesmo tempo em que cresce o grupo “sem religião”, cresce a espiritualidade difusa."},
-  {t:"Polarização", d:"A tentação de trocar o testemunho pela guerra cultural, algo que Hunter e Keller criticam."},
-  {t:"Missão policêntrica", d:"O Brasil é campo e base de envio; missionários brasileiros atuam no mundo inteiro."},
-  {t:"Vida digital", d:"Comunidade, presença e hospitalidade em um mundo mediado por telas."},
-  {t:"“Missional” como marketing", d:"O rótulo virou moda; a questão é se muda a vida da congregação ou só o vocabulário."}
-];
-
-/* ---------------- Helpers ---------------- */
-function $(s,r){return (r||document).querySelector(s);}
-function el(tag,cls,html){var e=document.createElement(tag); if(cls) e.className=cls; if(html!=null) e.innerHTML=html; return e;}
-function store(k,v){try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v);}catch(e){ return null; }}
-
-/* ---------------- Render: Atos ---------------- */
-var rail=$("#acts-rail"), panel=$("#act-panel");
-ACTS.forEach(function(a,i){
-  var b=el("button","act-btn");
-  b.type="button"; b.setAttribute("role","tab"); b.id="act-tab-"+i;
-  b.setAttribute("aria-controls","act-panel");
-  b.innerHTML=(a.here?'<span class="here">estamos aqui</span>':'')+'<span class="num">'+a.n+'</span><span class="nm">'+a.name+'</span>';
-  b.addEventListener("click",function(){selectAct(i,true);});
-  b.addEventListener("keydown",function(e){
-    if(e.key==="ArrowRight"){selectAct((i+1)%ACTS.length,true,true);e.preventDefault();}
-    if(e.key==="ArrowLeft"){selectAct((i+ACTS.length-1)%ACTS.length,true,true);e.preventDefault();}
+function render(){
+  var W=Math.round(PADL+TOTAL*zoom+PADR), o=[];
+  o.push('<svg xmlns="'+svgNS+'" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" id="tl">');
+  o.push('<defs><linearGradient id="gold" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#F0C46C" stop-opacity=".35"/><stop offset=".55" stop-color="#F0C46C" stop-opacity=".6"/><stop offset="1" stop-color="#FFE3A3" stop-opacity=".95"/></linearGradient></defs>');
+  /* bandas das eras */
+  ZONES.forEach(function(z,i){
+    var x=X(z.s),w=z.w*zoom;
+    o.push('<rect class="band'+(i%2?" alt":"")+'" x="'+x+'" y="'+(TOP_ERA-16)+'" width="'+w+'" height="'+(H-TOP_ERA+16)+'"/>');
+    var lab=tw(z.name)+16<w?z.name:(tw(z.short)+12<w?z.short:"");
+    if(lab) o.push('<text class="era-t" x="'+(x+8)+'" y="'+TOP_ERA+'">'+esc(lab)+'</text>');
   });
-  rail.appendChild(b);
+  /* atos de Goheen */
+  ACTS.forEach(function(a){
+    var x1=X(pos(a.a))+3,x2=X(pos(a.b))-3,w=x2-x1;
+    o.push('<path class="act-l" d="M'+x1+' '+(TOP_ACT+4)+'V'+(TOP_ACT+9)+'H'+x2+'V'+(TOP_ACT+4)+'" fill="none"/>');
+    var full="Ato "+a.n+" · "+a.t, lab=tw(full,14)*0.8+10<w?full:(w>40?"Ato "+a.n:(w>12?a.n:""));
+    if(lab) o.push('<text class="act-t" x="'+(x1+w/2)+'" y="'+TOP_ACT+'" text-anchor="middle">'+esc(lab)+'</text>');
+  });
+  /* marcas de anos */
+  var ticks=[30,313,600,1000,1500,1700,1792,1900,1925,1952,1974,1986,1998,2010,2026],last=-99;
+  ticks.forEach(function(y){
+    var x=X(pos(y)),lab=y===2026?"hoje":String(y);
+    if(x-last<tw(lab,10.5)+14&&y!==2026) return; last=x;
+    o.push('<line class="tick-l" x1="'+x+'" x2="'+x+'" y1="'+(TOP_TICK+4)+'" y2="'+(LANE_TOP-2)+'"/>');
+    o.push('<text class="tick-t'+(y===2026?" now":"")+'" x="'+x+'" y="'+TOP_TICK+'" text-anchor="middle">'+lab+'</text>');
+  });
+  var nx=X(pos(2026));
+  o.push('<line class="now-l" x1="'+nx+'" x2="'+nx+'" y1="'+(LANE_TOP-4)+'" y2="'+(RY+24)+'"/>');
+  /* trilhas */
+  LANES.forEach(function(l){var y=LANE_TOP+l.i*LH+LH;o.push('<line class="lane-l" x1="0" x2="'+W+'" y1="'+y+'" y2="'+y+'"/>');});
+  /* fio da missão */
+  var top=[],bot=[],steps=320;
+  for(var s=0;s<=steps;s++){var u=TOTAL*s/steps,t=thick(u)/2,x=X(u).toFixed(1);top.push(x+","+(RY-t).toFixed(1));bot.unshift(x+","+(RY+t).toFixed(1));}
+  o.push('<path d="M'+top.join("L")+"L"+bot.join("L")+'Z" fill="url(#gold)"/>');
+  PHASES.forEach(function(p,i){
+    var x1=X(pos(p.a)),x2=X(pos(p.b)),w=x2-x1;
+    if(i) o.push('<line class="phase-l" x1="'+x1+'" x2="'+x1+'" y1="'+(RY+24)+'" y2="'+(RY+44)+'"/>');
+    if(tw(p.t,10.5)+10<w) o.push('<text class="phase-t" x="'+(x1+w/2)+'" y="'+(RY+40)+'" text-anchor="middle">'+esc(p.t)+'</text>');
+  });
+  /* posições dos nós, com deslocamento quando estão próximos */
+  var lastIn={};
+  N.forEach(function(n){
+    n.x=X(n.u);
+    var p=lastIn[n.l],dy=0;
+    if(p&&n.x-p.x<15) dy=p.dy>=0?-10:10;
+    n.dy=dy;n.y=laneY(n.lane)+dy;lastIn[n.l]=n;
+  });
+  /* rótulos sem colisão, marcos-chave primeiro */
+  var placed={};N.forEach(function(n){n.lab=null;});
+  N.slice().sort(function(a,b){return (b.k||0)-(a.k||0)||a.u-b.u;}).forEach(function(n){
+    var w=tw(n.s),x1=n.x-w/2,x2=n.x+w/2;
+    if(x1<PADL-6) return;
+    var rows=n.dy>0?[1,0]:[0,1];
+    for(var r=0;r<2;r++){
+      var key=n.l+rows[r],arr=placed[key]||(placed[key]=[]),ok=true;
+      for(var j=0;j<arr.length;j++){if(x1<arr[j][1]+8&&x2>arr[j][0]-8){ok=false;break;}}
+      if(ok){arr.push([x1,x2]);n.lab=rows[r];return;}
+    }
+  });
+  /* ligações */
+  L.forEach(function(e){
+    var a=BY[e[0]],b=BY[e[1]],dx=Math.max(24,(b.x-a.x)*.5);
+    o.push('<path class="link'+(e[2]?" rea":"")+'" data-a="'+a.id+'" data-b="'+b.id+'" stroke="'+a.lane.c+'" d="M'+a.x.toFixed(1)+' '+a.y+'C'+(a.x+dx).toFixed(1)+' '+a.y+' '+(b.x-dx).toFixed(1)+' '+b.y+' '+b.x.toFixed(1)+' '+b.y+'"/>');
+  });
+  /* nós */
+  N.forEach(function(n){
+    var r=n.k?7:5,c=n.lane.c;
+    o.push('<g class="node" data-id="'+n.id+'" tabindex="-1" role="button" aria-label="'+esc(n.w+", "+n.t)+'">');
+    o.push('<circle class="hit" cx="'+n.x+'" cy="'+n.y+'" r="13"/>');
+    o.push('<circle class="halo" cx="'+n.x+'" cy="'+n.y+'" r="10"/>');
+    if(n.k) o.push('<circle class="ring" cx="'+n.x+'" cy="'+n.y+'" r="11" stroke="'+c+'"/>');
+    o.push('<circle class="dot" cx="'+n.x+'" cy="'+n.y+'" r="'+r+'" fill="'+c+'"/>');
+    if(n.lab!==null) o.push('<text x="'+n.x+'" y="'+(n.lab===0?n.y-(n.k?16:12):n.y+(n.k?25:21))+'" text-anchor="middle">'+esc(n.s)+'</text>');
+    o.push('</g>');
+  });
+  o.push('</svg>');
+  scroller.innerHTML=o.join("");
+  svg=scroller.firstChild;
+  bindNodes();
+  applyState();
+  renderMini();
+}
+
+/* ---------- estado visual ---------- */
+var svg;
+function applyState(){
+  if(!svg) return;
+  svg.classList.toggle("has-sel",!!sel);
+  svg.classList.toggle("nolinks",!showLinks);
+  svg.classList.toggle("lf",!!laneFocus&&!sel);
+  var rel={};
+  if(sel){rel[sel.id]=1;sel.inn.forEach(function(n){rel[n.id]=1;});sel.out.forEach(function(n){rel[n.id]=1;});}
+  Array.prototype.forEach.call(svg.querySelectorAll(".node"),function(g){
+    var id=g.getAttribute("data-id");
+    g.classList.toggle("sel",!!sel&&id===sel.id);
+    g.classList.toggle("rel",!!rel[id]);
+    g.classList.toggle("on",laneFocus===BY[id].l);
+    g.setAttribute("tabindex",sel?(id===sel.id?"0":"-1"):(BY[id].order===0?"0":"-1"));
+  });
+  Array.prototype.forEach.call(svg.querySelectorAll(".link"),function(p){
+    var a=p.getAttribute("data-a"),b=p.getAttribute("data-b");
+    p.classList.toggle("rel",!!sel&&(a===sel.id||b===sel.id));
+    p.classList.toggle("on",!!laneFocus&&(BY[a].l===laneFocus||BY[b].l===laneFocus));
+  });
+  if(sel){var g=svg.querySelector('.node[data-id="'+sel.id+'"]');if(g) g.parentNode.appendChild(g);}
+}
+
+/* ---------- interação ---------- */
+var tip=document.getElementById("tip"),stage=document.getElementById("stage"),dragged=false;
+function bindNodes(){
+  Array.prototype.forEach.call(svg.querySelectorAll(".node"),function(g){
+    var n=BY[g.getAttribute("data-id")];
+    g.addEventListener("click",function(){if(dragged) return;stopPlay();select(n,false);});
+    g.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();stopPlay();select(n,false);}});
+    g.addEventListener("pointerenter",function(e){if(e.pointerType==="mouse") showTip(n);});
+    g.addEventListener("pointerleave",hideTip);
+  });
+}
+function showTip(n){
+  var sr=stage.getBoundingClientRect(),x=n.x-scroller.scrollLeft;
+  tip.innerHTML='<small>'+esc(n.w)+' · '+esc(n.lane.name)+'</small>'+esc(n.t);
+  tip.style.left=Math.max(120,Math.min(sr.width-120,x))+"px";
+  tip.style.top=(n.y-4)+"px";
+  tip.classList.add("on");
+}
+function hideTip(){tip.classList.remove("on");}
+
+function center(n,smooth){
+  var target=n.x-scroller.clientWidth/2-(PADL/2)+PADL/2;
+  var reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(n.x<scroller.scrollLeft+PADL+30||n.x>scroller.scrollLeft+scroller.clientWidth-40||smooth==="force")
+    scroller.scrollTo({left:Math.max(0,target),behavior:reduce?"auto":"smooth"});
+}
+function select(n,doCenter){
+  sel=n;applyState();renderCard();hideTip();
+  if(n&&doCenter!==false) center(n);
+  if(n){var g=svg.querySelector('.node[data-id="'+n.id+'"]');if(g&&document.activeElement&&document.activeElement.closest&&document.activeElement.closest("#scroller")) g.focus({preventScroll:true});}
+}
+function step(d){
+  var i=sel?sel.order+d:(d>0?0:N.length-1);
+  if(i<0||i>=N.length) return false;
+  select(N[i]);return true;
+}
+
+/* arrastar para navegar */
+(function(){
+  var down=false,sx=0,sl=0;
+  scroller.addEventListener("pointerdown",function(e){if(e.pointerType!=="mouse"||e.button!==0) return;down=true;dragged=false;sx=e.clientX;sl=scroller.scrollLeft;});
+  window.addEventListener("pointermove",function(e){if(!down) return;var dx=e.clientX-sx;if(Math.abs(dx)>4){dragged=true;scroller.classList.add("dragging");hideTip();}if(dragged) scroller.scrollLeft=sl-dx;});
+  window.addEventListener("pointerup",function(){if(!down) return;down=false;scroller.classList.remove("dragging");setTimeout(function(){dragged=false;},0);});
+})();
+scroller.addEventListener("keydown",function(e){
+  if(e.key==="ArrowRight"){e.preventDefault();stopPlay();step(1);}
+  else if(e.key==="ArrowLeft"){e.preventDefault();stopPlay();step(-1);}
+  else if(e.key==="Escape"){select(null);}
 });
-function selectAct(i,save,focus){
-  var a=ACTS[i];
-  Array.prototype.forEach.call(rail.children,function(b,j){
-    b.setAttribute("aria-selected",j===i?"true":"false");
-    b.tabIndex=j===i?0:-1;
+scroller.addEventListener("scroll",function(){updateMiniWin();hideTip();},{passive:true});
+
+/* zoom */
+function fitZoom(){return Math.max(0.3,(scroller.clientWidth-PADL-PADR)/TOTAL);}
+function setZoom(z){
+  var cu=(scroller.scrollLeft+scroller.clientWidth/2-PADL)/zoom;
+  zoom=Math.max(fitZoom(),Math.min(3,z));
+  render();
+  scroller.scrollLeft=PADL+cu*zoom-scroller.clientWidth/2;
+}
+document.getElementById("zin").addEventListener("click",function(){setZoom(zoom*1.5);});
+document.getElementById("zout").addEventListener("click",function(){setZoom(zoom/1.5);});
+document.getElementById("zfit").addEventListener("click",function(){zoom=fitZoom();render();scroller.scrollLeft=0;});
+scroller.addEventListener("wheel",function(e){
+  if(e.ctrlKey||e.metaKey){e.preventDefault();setZoom(zoom*(e.deltaY<0?1.15:1/1.15));}
+  else if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&scroller.scrollWidth>scroller.clientWidth+2){
+    var atStart=scroller.scrollLeft<=0&&e.deltaY<0,atEnd=scroller.scrollLeft+scroller.clientWidth>=scroller.scrollWidth-1&&e.deltaY>0;
+    if(!atStart&&!atEnd){e.preventDefault();scroller.scrollLeft+=e.deltaY;}
+  }
+},{passive:false});
+
+/* influências */
+var linksBtn=document.getElementById("links");
+linksBtn.addEventListener("click",function(){showLinks=!showLinks;linksBtn.setAttribute("aria-pressed",String(showLinks));applyState();});
+
+/* legenda das trilhas */
+var legend=document.getElementById("legend"),ll=document.getElementById("lane-labels");
+LANES.forEach(function(l){
+  var b=document.createElement("button");b.type="button";b.className="lchip";b.style.setProperty("--c",l.c);
+  b.setAttribute("aria-pressed","false");b.innerHTML='<i></i>'+esc(l.name);
+  b.addEventListener("click",function(){
+    laneFocus=laneFocus===l.id?null:l.id;
+    Array.prototype.forEach.call(legend.children,function(c,j){c.setAttribute("aria-pressed",String(LANES[j].id===laneFocus));});
+    if(laneFocus) select(null);
+    applyState();
   });
-  if(focus) rail.children[i].focus();
-  panel.setAttribute("aria-labelledby","act-tab-"+i);
-  panel.innerHTML=
-    '<div class="act-main">'+
-      '<div class="eyebrow">Ato '+a.n+' de 6</div>'+
-      '<h3>'+a.name+'</h3>'+
-      '<div class="ref">'+a.refs+'</div>'+
-      '<p>'+a.text+'</p>'+
-      '<div class="mode">'+a.mode+'</div>'+
-    '</div>'+
-    '<div class="act-side">'+
-      '<div class="note"><span class="who">Leitura de Newbigin</span><p>'+a.nb+'</p></div>'+
-      '<div class="note keller"><span class="who">Goheen · Keller · Stott · Wright</span><p>'+a.keller+'</p></div>'+
-    '</div>';
-  if(save) store("pe-act",String(i));
+  legend.appendChild(b);
+  var d=document.createElement("div");d.style.setProperty("--c",l.c);d.style.top=laneY(l)+"px";
+  d.innerHTML='<i></i><span>'+esc(l.sh||l.name)+'</span>';ll.appendChild(d);
+});
+var rl=document.createElement("div");rl.className="river-lab";rl.style.top=RY+"px";rl.style.setProperty("--c","#F0C46C");
+rl.innerHTML='<i></i><span>Fio da missão</span>';ll.appendChild(rl);
+
+/* minimapa */
+var mini=document.getElementById("mini"),win;
+function renderMini(){
+  if(mini.dataset.built!=="1"){
+    var h=[];
+    ZONES.forEach(function(z){h.push('<div class="blk" style="left:'+(z.s/TOTAL*100)+'%;width:'+(z.w/TOTAL*100)+'%"></div>');});
+    N.forEach(function(n){h.push('<span class="md" style="--c:'+n.lane.c+';left:calc('+(n.u/TOTAL*100)+'% - 1.5px);top:'+(5+n.lane.i*3.6)+'px"></span>');});
+    h.push('<div class="win" id="win"></div>');
+    mini.innerHTML=h.join("");mini.dataset.built="1";win=document.getElementById("win");
+  }
+  updateMiniWin();
 }
-var savedAct=parseInt(store("pe-act"),10);
-selectAct(isNaN(savedAct)?4:Math.max(0,Math.min(5,savedAct)));
-
-/* ---------------- Render: Linha do tempo ---------------- */
-var tl=$("#timeline"), nav=$("#era-nav"), filters=$("#filters"), count=$("#count");
-var active="todas";
-
-function makeChip(id,label,color){
-  var c=el("button","chip");
-  c.type="button"; c.dataset.lens=id;
-  c.style.setProperty("--c",color);
-  c.innerHTML='<span class="dot" aria-hidden="true"></span>'+label;
-  c.addEventListener("click",function(){setFilter(id);});
-  filters.appendChild(c);
+function updateMiniWin(){
+  if(!win||!svg) return;
+  var W=TOTAL*zoom,l=(scroller.scrollLeft)/zoom,vis=(scroller.clientWidth-PADL)/zoom;
+  win.style.left=Math.max(0,l/TOTAL*100)+"%";
+  win.style.width=Math.min(100,vis/TOTAL*100)+"%";
 }
-makeChip("todas","Todas","var(--muted)");
-LENSES.forEach(function(l){ makeChip(l.id,l.label,"var(--c-"+l.id+")"); });
+(function(){
+  var down=false;
+  function go(e){var r=mini.getBoundingClientRect(),f=(e.clientX-r.left)/r.width;scroller.scrollLeft=PADL+f*TOTAL*zoom-scroller.clientWidth/2;}
+  mini.addEventListener("pointerdown",function(e){down=true;mini.setPointerCapture(e.pointerId);go(e);});
+  mini.addEventListener("pointermove",function(e){if(down) go(e);});
+  mini.addEventListener("pointerup",function(){down=false;});
+})();
 
-ERAS.forEach(function(era){
-  var sec=el("div","era"); sec.id=era.id;
-  var head=el("div","era-head");
-  head.innerHTML='<div class="span">'+era.span+'</div><h3>'+era.title+'</h3><div class="paradigm">'+era.paradigm+'</div>'+
-    '<div class="lens"><span class="lab">Lente sociológica</span><span>'+era.lens+'</span></div>';
-  sec.appendChild(head);
-  var list=el("div","events");
-  era.events.forEach(function(ev){
-    var main=ev.tags[0];
-    var a=el("article","ev"+(ev.key?" key":""));
-    a.id="ev-"+ev.id; a.dataset.tags=ev.tags.join(" ");
-    a.style.setProperty("--c","var(--c-"+main+")");
-    var tags=ev.tags.map(function(t){return '<span class="tag" style="--c:var(--c-'+t+')">'+LENS_LABEL[t]+'</span>';}).join("");
-    var det='<div><span class="lab">O que muda</span>'+ev.shift+'</div>';
-    if(ev.quote) det+='<blockquote>“'+ev.quote.replace(/^“|”$/g,"")+'”<cite>'+ev.cite+'</cite></blockquote>';
-    det+='<div><span class="lab">Fonte e leitura</span>'+ev.src+'</div>';
-    a.innerHTML=
-      '<div class="ev-year">'+ev.year+'</div>'+
-      '<div class="ev-rail"><span class="ev-dot"></span></div>'+
-      '<div class="ev-body">'+
-        '<div class="ev-tags">'+tags+'</div>'+
-        '<h4>'+ev.title+'</h4>'+
-        '<p class="ev-sum">'+ev.sum+'</p>'+
-        '<button class="ev-more" type="button" aria-expanded="false" aria-controls="det-'+ev.id+'"><span class="car" aria-hidden="true">›</span>O que mudou, citação e fonte</button>'+
-        '<div class="ev-detail" id="det-'+ev.id+'" hidden>'+det+'</div>'+
+/* cartão */
+var body=document.getElementById("card-body");
+function chip(n){return '<button class="rc" type="button" data-go="'+n.id+'" style="--c:'+n.lane.c+'"><i></i>'+esc(n.s)+'</button>';}
+function renderCard(){
+  if(!sel){
+    body.innerHTML='<div class="meta">Como ler</div><h2>A missão de Deus atravessa a história</h2>'+
+      '<p>Aperte <b>▶ Percorrer</b> ou clique em qualquer ponto. Cada trilha é uma fonte do pensamento; as linhas mostram quem influenciou quem.</p>'+
+      '<div class="legend">'+
+        '<span><svg width="28" height="12"><circle cx="6" cy="6" r="5" fill="#ECE8DC"/><circle cx="21" cy="6" r="4" fill="none" stroke="#ECE8DC"/></svg>marco-chave</span>'+
+        '<span><svg width="30" height="8"><line x1="0" y1="4" x2="30" y2="4" stroke="#8D95B3" stroke-width="1.5"/></svg>influência</span>'+
+        '<span><svg width="30" height="8"><line x1="0" y1="4" x2="30" y2="4" stroke="#8D95B3" stroke-width="1.5" stroke-dasharray="4 4"/></svg>reação</span>'+
+        '<span><svg width="34" height="12"><path d="M0 5 L34 2 L34 10 L0 7Z" fill="#F0C46C" opacity=".8"/></svg>fio da missão</span>'+
       '</div>';
-    var btn=$(".ev-more",a), d=$(".ev-detail",a);
-    btn.addEventListener("click",function(){ toggle(btn,d); });
-    list.appendChild(a);
+    return;
+  }
+  var n=sel,h='<div class="meta" style="--c:'+n.lane.c+'"><i></i><b>'+esc(n.lane.name)+'</b><span>· '+esc(n.w)+'</span><span>· '+(n.order+1)+' de '+N.length+'</span></div>'+
+    '<h2>'+esc(n.t)+'</h2><p>'+esc(n.d)+'</p>';
+  if(n.q) h+='<q>'+esc(n.q)+'<small>'+esc(n.qs)+'</small></q>';
+  if(n.inn.length||n.out.length){
+    h+='<div class="rels">';
+    if(n.inn.length) h+='<span class="lab">Veio de</span>'+n.inn.map(chip).join("");
+    if(n.inn.length&&n.out.length) h+='<span class="gap"></span>';
+    if(n.out.length) h+='<span class="lab">Levou a</span>'+n.out.map(chip).join("");
+    h+='</div>';
+  }
+  body.innerHTML=h;
+  Array.prototype.forEach.call(body.querySelectorAll("[data-go]"),function(b){
+    b.addEventListener("click",function(){stopPlay();select(BY[b.getAttribute("data-go")]);});
   });
-  var empty=el("p","empty","Nenhum marco desta lente nesta era."); empty.hidden=true;
-  list.appendChild(empty);
-  sec.appendChild(list);
-  tl.appendChild(sec);
-  var link=el("a",null,'<span>'+era.span+'</span>'+era.title.split(":")[0]);
-  link.href="#"+era.id;
-  nav.appendChild(link);
-});
-
-function toggle(btn,d,force){
-  var open=force===undefined?btn.getAttribute("aria-expanded")!=="true":force;
-  btn.setAttribute("aria-expanded",open?"true":"false");
-  d.hidden=!open;
 }
-function setFilter(id,noSave){
-  active=id;
-  Array.prototype.forEach.call(filters.children,function(c){ c.setAttribute("aria-pressed",c.dataset.lens===id?"true":"false"); });
-  var shown=0;
-  Array.prototype.forEach.call(tl.querySelectorAll(".era"),function(sec){
-    var n=0;
-    Array.prototype.forEach.call(sec.querySelectorAll(".ev"),function(a){
-      var ok=id==="todas"||a.dataset.tags.split(" ").indexOf(id)>-1;
-      a.hidden=!ok; if(ok){n++;}
-    });
-    sec.querySelector(".empty").hidden=n>0;
-    shown+=n;
-  });
-  count.textContent=shown+" marcos exibidos";
-  if(!noSave) store("pe-lens",id);
-}
-var savedLens=store("pe-lens");
-setFilter(savedLens && (savedLens==="todas"||LENS_LABEL[savedLens])?savedLens:"todas",true);
+document.getElementById("prev").addEventListener("click",function(){stopPlay();step(-1);});
+document.getElementById("next").addEventListener("click",function(){stopPlay();step(1);});
 
-$("#expand-all").addEventListener("click",function(){
-  Array.prototype.forEach.call(tl.querySelectorAll(".ev"),function(a){ toggle($(".ev-more",a),$(".ev-detail",a),true); });
-});
-$("#collapse-all").addEventListener("click",function(){
-  Array.prototype.forEach.call(tl.querySelectorAll(".ev"),function(a){ toggle($(".ev-more",a),$(".ev-detail",a),false); });
+/* percorrer */
+var playBtn=document.getElementById("play"),timer=null;
+function stopPlay(){if(timer){clearInterval(timer);timer=null;}playBtn.textContent="▶ Percorrer";playBtn.setAttribute("aria-pressed","false");}
+playBtn.addEventListener("click",function(){
+  if(timer){stopPlay();return;}
+  laneFocus=null;Array.prototype.forEach.call(legend.children,function(c){c.setAttribute("aria-pressed","false");});
+  if(!sel||sel.order===N.length-1) select(N[0]); else step(1);
+  playBtn.textContent="❚❚ Pausar";playBtn.setAttribute("aria-pressed","true");
+  timer=setInterval(function(){if(!step(1)) stopPlay();},3400);
 });
 
-function openEvent(id){
-  var a=document.getElementById("ev-"+id); if(!a) return;
-  if(a.hidden) setFilter("todas");
-  toggle($(".ev-more",a),$(".ev-detail",a),true);
-  var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  a.scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"});
-  a.classList.remove("flash"); void a.offsetWidth; a.classList.add("flash");
-  $(".ev-more",a).focus({preventScroll:true});
-}
-
-/* ---------------- Render: Viradas ---------------- */
-var shifts=$("#shifts");
-SHIFTS.forEach(function(s){
-  var r=el("div","shift");
-  r.innerHTML='<div class="from">'+s.from+'</div><div class="arrow" aria-hidden="true">→</div>'+
-    '<div class="to">'+s.to+'<span class="when">'+s.when+'</span></div>';
-  var b=el("button","btn-ghost go","Ver marco"); b.type="button";
-  b.addEventListener("click",function(){openEvent(s.ev);});
-  r.appendChild(b);
-  shifts.appendChild(r);
-});
-
-/* ---------------- Triângulo ---------------- */
-var triOut=$("#tri-out");
-function showEdge(k){
-  Array.prototype.forEach.call(document.querySelectorAll(".tri-edge"),function(g){
-    g.classList.toggle("on",g.dataset.edge===k);
-    g.setAttribute("aria-pressed",g.dataset.edge===k?"true":"false");
-  });
-  triOut.innerHTML='<h4>'+TRI[k].t+'</h4><p>'+TRI[k].d+'</p>';
-}
-Array.prototype.forEach.call(document.querySelectorAll(".tri-edge"),function(g){
-  g.addEventListener("click",function(){showEdge(g.dataset.edge);});
-  g.addEventListener("keydown",function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); showEdge(g.dataset.edge);} });
-});
-showEdge("gc");
-
-/* ---------------- Conceitos ---------------- */
-var ctabs=$("#ctabs"), cpanel=$("#cpanel");
-CONCEPTS.forEach(function(c,i){
-  var b=el("button","ctab",c.tab); b.type="button"; b.setAttribute("role","tab"); b.id="ctab-"+i;
-  b.addEventListener("click",function(){selectConcept(i);});
-  ctabs.appendChild(b);
-});
-function selectConcept(i){
-  var c=CONCEPTS[i];
-  Array.prototype.forEach.call(ctabs.children,function(b,j){ b.setAttribute("aria-selected",j===i?"true":"false"); });
-  cpanel.setAttribute("aria-labelledby","ctab-"+i);
-  cpanel.innerHTML='<h3>'+c.title+'</h3><div class="ref" style="color:var(--accent)">'+c.where+'</div><p>'+c.text+'</p>'+
-    '<div class="note keller"><span class="who">Como a linha Goheen–Keller retoma</span><p>'+c.echo+'</p></div>';
-}
-selectConcept(0);
-
-/* ---------------- Sociologia, Vozes, Hoje ---------------- */
-var socio=$("#socio");
-SOCIO.forEach(function(s){
-  socio.appendChild(el("div","sc",'<div class="yr">'+s.yr+' · '+s.who+'</div><h4>'+s.c+'</h4><p>'+s.d+'</p><p class="use">'+s.u+'</p>'));
-});
-var voices=$("#voices");
-VOICES.forEach(function(v){
-  var d=el("div","voice",'<div class="dates">'+v.d+'</div><h4>'+v.n+'</h4><p>'+v.p+'</p><div class="work">Obra-chave: '+v.w+'</div>');
-  d.style.borderTop="3px solid var("+v.c+")";
-  voices.appendChild(d);
-});
-var today=$("#today");
-TODAY.forEach(function(t){
-  var d=el("div","cur",'<div class="who">'+t.who+'</div><h4>'+t.t+'</h4><p>'+t.d+'</p>');
-  d.style.setProperty("--c","var("+t.c+")");
-  today.appendChild(d);
-});
-var ch=$("#challenges");
-CHALLENGES.forEach(function(c){ ch.appendChild(el("div","ch",'<b>'+c.t+'</b><span>'+c.d+'</span>')); });
-
+/* início */
+var rz;
+window.addEventListener("resize",function(){clearTimeout(rz);rz=setTimeout(function(){if(zoom<fitZoom()) zoom=fitZoom();render();},150);});
+zoom=fitZoom();
+render();
+renderCard();
 })();
 </script>
