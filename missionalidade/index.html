@@ -52,6 +52,15 @@ h1 em{color:var(--gold)}
 
 .tip{position:absolute;pointer-events:none;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 9px;font-size:13px;max-width:240px;transform:translate(-50%,calc(-100% - 12px));opacity:0;transition:opacity .12s;z-index:3}
 .tip.on{opacity:1}
+.pop{position:absolute;z-index:4;width:min(360px,calc(100% - 24px));background:var(--bg);border:1px solid var(--c);border-radius:12px;padding:18px 20px 16px;box-shadow:0 18px 50px rgba(0,0,0,.55);display:grid;gap:10px;animation:popin .22s ease-out}
+@keyframes popin{from{opacity:0;transform:translateY(6px) scale(.98)}to{opacity:1;transform:none}}
+.pop .who{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--c);padding-right:26px}
+.pop .who i{width:8px;height:8px;border-radius:50%;background:var(--c);flex:none}
+.pop blockquote{margin:0;font-family:var(--display);font-style:italic;font-size:clamp(19px,2.2vw,23px);line-height:1.3;color:var(--ink)}
+.pop blockquote::before{content:"\201C";display:block;font-size:54px;line-height:.6;height:22px;color:var(--c);font-style:normal}
+.pop cite{font-family:var(--mono);font-style:normal;font-size:11.5px;line-height:1.45;color:var(--muted)}
+.pop .x{position:absolute;top:10px;right:10px;width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:var(--panel);cursor:pointer;font-size:15px;line-height:1;padding:0;color:var(--muted)}
+.pop .x:hover{color:var(--ink);border-color:var(--muted)}
 .tip small{display:block;font-family:var(--mono);font-size:11px;color:var(--muted)}
 
 /* svg */
@@ -156,6 +165,7 @@ svg.lf .link:not(.on){opacity:.03}
     <div class="scroller" id="scroller" tabindex="0" aria-label="Linha do tempo. Use as setas para percorrer."></div>
     <div class="lane-labels" id="lane-labels" aria-hidden="true"></div>
     <div class="tip" id="tip" role="status"></div>
+    <div class="pop" id="pop" role="dialog" aria-live="polite" aria-label="Citação" hidden></div>
   </div>
 
   <div class="mini" id="mini" aria-hidden="true"></div>
@@ -166,7 +176,7 @@ svg.lf .link:not(.on){opacity:.03}
     <button class="btn nav" id="next" type="button" aria-label="Próximo marco">›</button>
   </section>
 
-  <p class="foot">A espessura do fio dourado mostra o quanto a missão define a identidade da igreja em cada período. É uma leitura interpretativa, na linha de Bosch, Newbigin e Goheen. As linhas entre os pontos indicam influência (contínuas) ou reação (tracejadas).</p>
+  <p class="foot">A espessura do fio dourado mostra o quanto a missão define a identidade da igreja em cada período. É uma leitura interpretativa, na linha de Bosch, Newbigin e Goheen. As linhas entre os pontos indicam influência (contínuas) ou reação (tracejadas). Citações traduzidas livremente do original; quando a fonte diz “síntese”, o texto resume a ideia e não é literal.</p>
 </div>
 
 <script>
@@ -257,7 +267,7 @@ var N=[
  {id:"carey",l:"missiologia",at:1792,w:"1792",s:"Carey",t:"William Carey",d:"Nasce o modelo das sociedades missionárias: igreja aqui, missão lá fora.",q:"Esperai grandes coisas de Deus; empreendei grandes coisas para Deus.",qs:"Carey, 1792",k:1},
  {id:"venn",l:"missiologia",at:1855,w:"1850s",s:"Três-autos",t:"Venn e Anderson",d:"Igrejas autogovernadas, autossustentadas e autopropagadoras, em meio ao colonialismo."},
  {id:"edimburgo",l:"missiologia",at:1910,w:"1910",s:"Edimburgo",t:"Edimburgo 1910",d:"Auge do otimismo ocidental: evangelizar o mundo nesta geração.",k:1},
- {id:"barth",l:"missiologia",at:1932,w:"1932",s:"Barth",t:"Karl Barth em Brandemburgo",d:"Missão como atividade do próprio Deus. A semente da missio Dei."},
+ {id:"barth",l:"missiologia",at:1932,w:"1931–32",s:"Barth e Brunner",t:"Barth e Brunner: a missão nasce em Deus",d:"Barth fala da missão como atividade do próprio Deus; Brunner diz que a igreja existe pela missão. A semente da missio Dei."},
  {id:"willingen",l:"missiologia",at:1952,w:"1952",s:"Willingen",t:"Willingen: missio Dei",d:"A missão nasce no Deus trino. A igreja participa de uma missão que é de Deus.",q:"O movimento missionário do qual fazemos parte tem sua fonte no próprio Deus trino.",qs:"Willingen 1952",k:1},
  {id:"adgentes",l:"missiologia",at:1965,w:"1965",s:"Ad Gentes",t:"Vaticano II: Ad Gentes",d:"Também para os católicos, a igreja é missionária por natureza."},
  {id:"uppsala",l:"missiologia",at:1968,w:"1968",s:"Uppsala",t:"Missio Dei secularizada",d:"Deus agindo no mundo sem a igreja: “o mundo estabelece a agenda”. Provoca reação evangélica."},
@@ -305,6 +315,77 @@ var N=[
  {id:"ftl",l:"al",at:1970,w:"1970",s:"FTL",t:"Fraternidade Teológica Latino-Americana",d:"Padilla, Escobar e Costas pensam a missão a partir da América Latina.",k:1},
  {id:"padilla",l:"al",at:1985,w:"1985",s:"Missão integral",t:"Padilla: missão integral",d:"O evangelho para a pessoa inteira e para toda a sociedade.",k:1}
 ];
+
+/* a citação que coloca cada autor ou marco no gráfico */
+var QUOTES={
+ criacao:["Sede fecundos, multiplicai-vos, enchei a terra e sujeitai-a; dominai…","Gênesis 1.28"],
+ queda:["E chamou o Senhor Deus ao homem e lhe perguntou: Onde estás?","Gênesis 3.9 · Deus é o primeiro a sair em busca"],
+ abraao:["Em ti serão benditas todas as famílias da terra.","Gênesis 12.3"],
+ sinai:["Vós me sereis reino de sacerdotes e nação santa.","Êxodo 19.6"],
+ servo:["Também te dei como luz para os gentios, para seres a minha salvação até à extremidade da terra.","Isaías 49.6"],
+ jesus:["Assim como o Pai me enviou, eu também vos envio.","João 20.21"],
+ pentecostes:["Recebereis poder, ao descer sobre vós o Espírito Santo, e sereis minhas testemunhas… até aos confins da terra.","Atos 1.8"],
+ pedro:["Vós, porém, sois raça eleita, sacerdócio real, nação santa, povo de propriedade exclusiva de Deus, a fim de proclamardes as virtudes daquele que vos chamou das trevas para a sua maravilhosa luz.","1 Pedro 2.9"],
+ novacriacao:["Eis que faço novas todas as coisas.","Apocalipse 21.5"],
+ diogneto:["O que a alma é no corpo, isso são os cristãos no mundo.","Carta a Diogneto, 6"],
+ justino:["Tudo o que de bom foi dito por todos eles pertence a nós, cristãos.","Justino Mártir, II Apologia 13"],
+ irineu:["A glória de Deus é o homem vivente, e a vida do homem é a visão de Deus.","Irineu de Lyon, Contra as Heresias IV.20.7"],
+ tertuliano:["O sangue dos cristãos é semente.","Tertuliano, Apologético 50"],
+ constantino:["Com este sinal vencerás.","A visão de Constantino, segundo Eusébio, Vida de Constantino I.28"],
+ agostinho:["Dois amores fizeram duas cidades: a terrena, o amor de si até o desprezo de Deus; a celestial, o amor de Deus até o desprezo de si.","Agostinho, A Cidade de Deus XIV.28"],
+ celtas:["Cristo comigo, Cristo diante de mim, Cristo atrás de mim, Cristo em mim.","Couraça de São Patrício (atribuída)"],
+ francisco:["Não façam litígios nem disputas, mas sejam submissos a toda criatura humana por amor de Deus e confessem que são cristãos.","Francisco de Assis, Regra não bulada 16, sobre os frades que vão aos sarracenos"],
+ reforma:["As obras de monges e sacerdotes, por mais santas e árduas, em nada diferem aos olhos de Deus das obras do lavrador no campo ou da mulher nas tarefas da casa.","Martinho Lutero, Do cativeiro babilônico da igreja (1520)"],
+ jesuitas:["Para a maior glória de Deus.","Lema da Companhia de Jesus (Ad maiorem Dei gloriam)"],
+ moravios:["Tenho uma só paixão: é Ele, somente Ele.","Conde Nikolaus von Zinzendorf"],
+ carey:["Esperai grandes coisas de Deus; empreendei grandes coisas para Deus.","William Carey, sermão de 1792"],
+ venn:["…a eutanásia de uma missão.","Henry Venn: o alvo da missão é tornar-se desnecessária diante de uma igreja nativa madura"],
+ edimburgo:["A evangelização do mundo nesta geração.","Lema do Movimento Estudantil Voluntário, liderado por John R. Mott"],
+ barth:["A igreja existe pela missão, assim como o fogo existe queimando.","Emil Brunner, The Word and the World (1931)"],
+ willingen:["O movimento missionário do qual fazemos parte tem sua fonte no próprio Deus trino.","Conferência de Willingen (1952)"],
+ adgentes:["A Igreja peregrina é, por sua natureza, missionária.","Concílio Vaticano II, Ad Gentes 2"],
+ uppsala:["É preciso permitir que o mundo forneça a agenda das igrejas.","The Church for Others (CMI, 1967)"],
+ bosch:["A missão não é primariamente uma atividade da igreja, mas um atributo de Deus.","David Bosch, Transforming Mission (1991), p. 390"],
+ guder:["Missão não é meramente uma atividade da igreja. Missão é resultado da iniciativa de Deus, enraizada em seus propósitos de restaurar e curar a criação.","Darrell Guder (org.), Missional Church (1998)"],
+ frosthirsch:["A igreja missional é encarnacional, não atracional, em sua eclesiologia.","Michael Frost e Alan Hirsch, The Shaping of Things to Come (2003)"],
+ india:["Nunca pode haver um evangelho livre de cultura.","Lesslie Newbigin, Foolishness to the Greeks (1986): a lição aprendida na Índia"],
+ csi:["Para que todos sejam um… para que o mundo creia.","João 17.21, o texto da unidade que guiou Newbigin"],
+ household:["É um fato de significado inesgotável que o que nosso Senhor deixou não foi um livro, nem um credo, nem um sistema de pensamento, nem uma regra de vida, mas uma comunidade visível.","Lesslie Newbigin, The Household of God (1953)"],
+ newdelhi:["Uma missão sem igreja é tão monstruosa quanto uma igreja sem missão.","Lesslie Newbigin, One Body, One Gospel, One World (1958)"],
+ volta:["Pode o Ocidente ser convertido?","Lesslie Newbigin, título de sua palestra de 1987"],
+ opensecret:["A igreja não é tanto o agente da missão quanto o lugar onde a missão acontece.","Lesslie Newbigin, The Open Secret (1978)"],
+ other1984:["O que estaria envolvido num verdadeiro encontro missionário entre o evangelho e a cultura ocidental moderna?","Lesslie Newbigin, a pergunta central de The Other Side of 1984 (síntese)"],
+ foolishness:["…a dicotomia entre o mundo privado dos valores e o mundo público dos fatos.","Lesslie Newbigin, Foolishness to the Greeks (1986)"],
+ gps:["A única hermenêutica do evangelho é uma congregação de homens e mulheres que creem nele e vivem por ele.","Lesslie Newbigin, The Gospel in a Pluralist Society (1989), cap. 18"],
+ proper:["A confiança própria do cristão não é a de quem possui um conhecimento demonstrável e indubitável. É a confiança de quem ouviu e respondeu ao chamado.","Lesslie Newbigin, Proper Confidence (1995)"],
+ lausanne:["O evangelismo e o envolvimento sociopolítico são ambos parte do nosso dever cristão.","Pacto de Lausanne (1974), §5, redigido sob a liderança de John Stott"],
+ stott75:["‘Missão’ descreve tudo aquilo que a igreja é enviada ao mundo para fazer.","John Stott, Christian Mission in the Modern World (1975)"],
+ grandrapids:["A ação social é consequência do evangelismo, ponte para o evangelismo e parceira do evangelismo.","Relatório de Grand Rapids (1982), síntese"],
+ manila:["Toda a igreja levando todo o evangelho a todo o mundo.","Manifesto de Manila (1989)"],
+ redeemer:["Somos mais pecadores e falhos do que jamais ousamos crer e, ao mesmo tempo, mais aceitos e amados em Jesus Cristo do que jamais ousamos esperar.","Timothy Keller, a síntese do evangelho que marcou sua pregação"],
+ goheen2000:["Assim como o Pai me enviou, eu também vos envio.","João 20.21, título da tese de Michael Goheen sobre Newbigin (2000)"],
+ drama:["Encontrando nosso lugar na história bíblica.","Bartholomew e Goheen, subtítulo de The Drama of Scripture (2004)"],
+ wright:["Não é tanto que Deus tem uma missão para sua igreja no mundo, mas que Deus tem uma igreja para sua missão no mundo.","Christopher Wright, The Mission of God (2006), p. 62"],
+ capetown:["Nossa missão deriva inteiramente da missão de Deus, abrange toda a criação de Deus e está fundada, em seu centro, na vitória redentora da cruz.","Compromisso da Cidade do Cabo (2010), I.10"],
+ light:["A igreja só entende sua missão quando entende seu lugar na história que a Bíblia conta.","Michael Goheen, A Light to the Nations (2011), síntese da tese do livro"],
+ center:["Uma contracultura para o bem comum.","Timothy Keller, Center Church (2012)"],
+ vocation:["Sinal, instrumento e antegozo do reino de Deus.","A fórmula de Newbigin que Goheen desdobra em The Church and Its Vocation (2018)"],
+ west:["O evangelho não é apenas o ABC, mas o A a Z da vida cristã.","Timothy Keller"],
+ l4:["Que a igreja declare e demonstre Cristo juntos.","Tema de Lausanne 4, Seul-Incheon (2024)"],
+ polanyi:["Sabemos mais do que conseguimos dizer.","Michael Polanyi, The Tacit Dimension (1966)"],
+ berger:["Mundos são construídos socialmente e mantidos socialmente.","Peter Berger, The Sacred Canopy (1967)"],
+ stark:["As doutrinas centrais do cristianismo geraram e sustentaram relações sociais atraentes, libertadoras e eficazes.","Rodney Stark, The Rise of Christianity (1996)"],
+ jenkins:["O cristianismo deve viver um crescimento mundial no novo século, mas a vasta maioria dos crentes não será nem branca nem europeia.","Philip Jenkins, The Next Christendom (2002)"],
+ murray:["Pós-Cristandade é a cultura que emerge quando a fé cristã perde coerência numa sociedade que foi decisivamente moldada pela história cristã.","Stuart Murray, Post-Christendom (2004)"],
+ taylor:["…de uma sociedade em que a fé em Deus era inquestionável para outra em que ela é entendida como uma opção entre outras.","Charles Taylor, A Secular Age (2007)"],
+ hunter:["Uma teologia da presença fiel.","James Davison Hunter, To Change the World (2010)"],
+ kreider:["Não falamos grandes coisas; nós as vivemos.","Cipriano de Cartago, citado por Alan Kreider, The Patient Ferment of the Early Church (2016)"],
+ nobrega:["Esta terra é nossa empresa.","Manuel da Nóbrega, carta de 1549"],
+ guanabara:["Cremos em um só Deus, imortal, invisível, criador do céu e da terra.","Confissão de Fé da Guanabara (1558), art. 1"],
+ ftl:["Todo o evangelho para o ser humano todo.","Lema da missão integral, formulado na Fraternidade Teológica Latino-Americana"],
+ padilla:["Missão integral é a proclamação e a demonstração do evangelho. Não é simplesmente fazer evangelismo e ação social lado a lado.","Declaração de Miqueias (2001), com a participação de René Padilla"]
+};
+N.forEach(function(n){var q=QUOTES[n.id];if(q){n.q=q[0];n.qs=q[1];}});
 var BY={}; N.forEach(function(n){BY[n.id]=n; n.u=pos(n.at); n.lane=LANE[n.l];});
 N.sort(function(a,b){return a.u-b.u;});
 N.forEach(function(n,i){n.order=i;});
@@ -424,6 +505,7 @@ function render(){
   bindNodes();
   applyState();
   renderMini();
+  if(typeof placePop==="function") placePop();
 }
 
 /* ---------- estado visual ---------- */
@@ -476,8 +558,29 @@ function center(n,smooth){
   if(n.x<scroller.scrollLeft+PADL+30||n.x>scroller.scrollLeft+scroller.clientWidth-40||smooth==="force")
     scroller.scrollTo({left:Math.max(0,target),behavior:reduce?"auto":"smooth"});
 }
+var pop=document.getElementById("pop");
+function openPop(){
+  if(!sel||!sel.q){pop.hidden=true;return;}
+  var n=sel;
+  pop.style.setProperty("--c",n.lane.c);
+  pop.innerHTML='<button class="x" type="button" aria-label="Fechar citação">×</button>'+
+    '<div class="who"><i></i>'+esc(n.t)+' · '+esc(n.w)+'</div>'+
+    '<blockquote>'+esc(n.q)+'</blockquote><cite>'+esc(n.qs)+'</cite>';
+  pop.querySelector(".x").addEventListener("click",function(){pop.hidden=true;});
+  pop.hidden=false;
+  placePop();
+}
+function placePop(){
+  if(pop.hidden||!sel) return;
+  var n=sel,sw=stage.clientWidth,pw=pop.offsetWidth,ph=pop.offsetHeight,x=n.x-scroller.scrollLeft;
+  var left=Math.max(12,Math.min(sw-pw-12,x-pw/2));
+  var top=n.y>H*0.5?n.y-ph-20:n.y+20;
+  if(top<8) top=8;
+  if(top+ph>H-8) top=Math.max(8,H-ph-8);
+  pop.style.left=left+"px";pop.style.top=top+"px";
+}
 function select(n,doCenter){
-  sel=n;applyState();renderCard();hideTip();
+  sel=n;applyState();renderCard();hideTip();openPop();
   if(n&&doCenter!==false) center(n);
   if(n){var g=svg.querySelector('.node[data-id="'+n.id+'"]');if(g&&document.activeElement&&document.activeElement.closest&&document.activeElement.closest("#scroller")) g.focus({preventScroll:true});}
 }
@@ -497,9 +600,9 @@ function step(d){
 scroller.addEventListener("keydown",function(e){
   if(e.key==="ArrowRight"){e.preventDefault();stopPlay();step(1);}
   else if(e.key==="ArrowLeft"){e.preventDefault();stopPlay();step(-1);}
-  else if(e.key==="Escape"){select(null);}
+  else if(e.key==="Escape"){if(!pop.hidden) pop.hidden=true; else select(null);}
 });
-scroller.addEventListener("scroll",function(){updateMiniWin();hideTip();},{passive:true});
+scroller.addEventListener("scroll",function(){updateMiniWin();hideTip();placePop();},{passive:true});
 
 /* zoom */
 function fitZoom(){return Math.max(0.3,(scroller.clientWidth-PADL-PADR)/TOTAL);}
@@ -585,7 +688,6 @@ function renderCard(){
   }
   var n=sel,h='<div class="meta" style="--c:'+n.lane.c+'"><i></i><b>'+esc(n.lane.name)+'</b><span>· '+esc(n.w)+'</span><span>· '+(n.order+1)+' de '+N.length+'</span></div>'+
     '<h2>'+esc(n.t)+'</h2><p>'+esc(n.d)+'</p>';
-  if(n.q) h+='<q>'+esc(n.q)+'<small>'+esc(n.qs)+'</small></q>';
   if(n.inn.length||n.out.length){
     h+='<div class="rels">';
     if(n.inn.length) h+='<span class="lab">Veio de</span>'+n.inn.map(chip).join("");
