@@ -193,6 +193,7 @@ footer a{color:var(--gold)}
       <div class="field span2">
         <label for="cfgGlossario">Glossário (uma linha por termo: <code>português = español</code>, ou só o nome)</label>
         <textarea id="cfgGlossario" spellcheck="false"></textarea>
+        <div class="row"><button class="btn" id="btnRestaurar" type="button">Restaurar glossário e contexto do tema (Planejamento da Visão)</button></div>
       </div>
       <div class="field span2">
         <label for="cfgContexto">Contexto da palestra (título, tema, roteiro: ajuda a traduzir termos e corrigir nomes)</label>
@@ -219,37 +220,102 @@ const NOMES_MOTOR = {
   'claude-haiku-4-5': 'Haiku 4.5', 'claude-sonnet-5-5': 'Sonnet 5.5', 'claude-opus-5-5': 'Opus 5.5',
   chrome: 'Chrome offline', pt: 'sem tradução', falso: 'simulado',
 };
-const GLOSSARIO_PADRAO = `missionalidade = misionalidad
-missional = misional
-igreja missional = iglesia misional
-missio Dei = missio Dei
-missão integral = misión integral
-Cristandade = Cristiandad
-pós-Cristandade = poscristiandad
-Fraternidade Teológica Latino-Americana = Fraternidad Teológica Latinoamericana
-Pentecostes = Pentecostés
+const GLOSSARIO_PADRAO = `# Planejamento da Visão (Auxano) — termos oficiais do material em espanhol
+Planejamento da Visão = Planeación de la Visión
+planejamento visionário = planeación visionaria
+Plataforma Estratégica = Plataforma Estratégica
+Visão Clara = Visión Adecuada
+Visão Adequada = Visión Adecuada
+visão de longo prazo = visión de largo plazo
+visão de curto prazo = visión de corto plazo
+Olhe para frente = Mira hacia adelante
+O Dom de Olhar para Frente = El Don de Mirar hacia Adelante
+Moldura da Visão = Encuadre de la Visión
+Trilha do Horizonte = Trama del Horizonte
+Enredo do Horizonte = Trama del Horizonte
+Visão 4D = Visión Adecuada 4D
+Além do Horizonte = Más Allá del Horizonte
+Horizonte Mensurável = Horizonte Medible
+Caminho para o Horizonte = Camino hacia el Horizonte
+Rumo ao Horizonte = Camino hacia el Horizonte
+Próximos Passos no Horizonte = Próximos Pasos en el Horizonte
+estratégias do Horizonte Mensurável = estrategias del Horizonte Medible
+iniciativas dos Próximos Passos = iniciativas de Próximos Pasos
+Pequenas Conquistas = Pequeñas Conquistas
+Síntese de Longo Prazo = Síntesis a Largo Plazo
+Esboço de Guardanapo = Bosquejo de Servilleta
+1:4:1:4 = 1:4:1:4
+Comprimento de Onda do Pensamento = Longitud de Onda del Pensamiento
+Mapa da Vida da Igreja = Mapa de la Vida de la Iglesia
+momentos de articulação = momentos de articulación
+Visão Genérica = Visión Genérica
+Visão Vigorosa = Visión Vigorosa
+Visão Vívida = Visión Vívida
+declaração de visão = declaración de visión
+missão = misión
+missão é a bússola = la misión es la brújula
+visão é o guia de viagem = la visión es la guía de viaje
+valores = valores
+estratégia = estrategia
+medidas de missão = medidas de misión
+navegador = navegador
+quadro branco = pizarra blanca
+folha de apoio = Hoja de Apoyo
+ênfase de 1 ano = énfasis de 1 año
+meta de 1 ano = meta de 1 año
+iniciativa de equipe = iniciativa de equipo
+equipe multifuncional = equipo multifuncional
+subobjetivo = subobjetivo
+líder condutor = líder/conductor
+painel do ministério = panel del ministerio
+cadência de responsabilização = cadencia de responsabilización
+fazer discípulos = hacer discípulos
+discipulado = discipulado
+culto = culto
+planejamento = planeación
+Reinicie a Conversa = Reinicia la Conversación
+Descobrindo o Planejamento Visionário = Descubriendo la Planeación Visionaria
+Encontre seu Futuro = Encuentra tu Futuro
+Concentre sua Visão de Longo Prazo = Concentra tu Visión de Largo Plazo
+Execute sua Visão de Curto Prazo = Ejecuta tu Visión de Corto Plazo
+Lidere com Liberdade = Lidera con Libertad
+Para onde Deus está nos levando? = ¿Hacia dónde Dios nos está llevando?
+# Os 12 modelos de visão
+Torne-se = Conviértete
+Avance = Avanza
+Resgate = Rescata
+Multiplicação de Liderança = Multiplicación del Liderazgo
+Reprodução Cultural = Reproducción Cultural
+Amplificação da Unção = Amplificación de la Unción
+Formação Espiritual = Formación Espiritual
+Manifestação da Presença = Manifestación de la Presencia
+Antecipação Obediente = Anticipación Obediente
+Saturação Geográfica = Saturación Geográfica
+Transformação Direcionada = Transformación Dirigida
+Aprofundamento no Grupo de Pessoas = Profundización en el Grupo de Personas
+Renovação Institucional = Renovación Institucional
+Necessidade de Adoção = Necesidad de Adopción
+Mobilização durante a Crise = Movilización Durante la Crisis
+# Nomes
+Auxano
+Will Mancini
+Tom Paterson
+Patrick Lencioni
+Franklin Covey
+Peter Drucker
+Robert Brault
+# Bíblia
 Êxodo = Éxodo
+Deuteronômio = Deuteronomio
+Lucas = Lucas
+João = Juan
 Atos = Hechos
-Apocalipse = Apocalipsis
-Lesslie Newbigin
-Michael Goheen
-David Bosch
-Darrell Guder
-Alan Hirsch
-Michael Frost
-Christopher Wright
-John Stott
-Timothy Keller
-René Padilla
-Samuel Escobar
-Orlando Costas
-Craig Bartholomew
-Karl Barth
-Lausanne
-Willingen`;
+transfiguração = transfiguración`;
+const CONTEXTO_PADRAO = `Palestra sobre Planejamento da Visão (Plataforma Estratégica, metodologia Auxano) para líderes e pastores de igrejas. Temas: visão adequada de longo e curto prazo; a Trilha do Horizonte com seus quatro horizontes (Além do Horizonte 5–20 anos, Horizonte Mensurável 3 anos, Caminho para o Horizonte 1 ano, Próximos Passos no Horizonte 90 dias); Moldura da Visão (missão, valores, estratégia, medidas de missão); os 12 modelos de visão; visão genérica × visão vigorosa; Comprimento de Onda do Pensamento (Tom Paterson); Mapa da Vida da Igreja; ênfase e meta de 1 ano; 4 iniciativas de 90 dias; Esboço de Guardanapo 1:4:1:4. O material oficial em espanhol usa "Planeación de la Visión", "Trama del Horizonte" e "Encuadre de la Visión": use sempre esses termos.`;
+const VERSAO_GLOSSARIO = 2;
 const PADRAO = {
   modelo: 'claude-haiku-4-5', escala: 1, linhasProj: 3, linhasFaixa: 2, fundo: 'preto', cor: 'branco',
-  mostrarPt: false, prov: true, frases: true, local: false, glossario: GLOSSARIO_PADRAO, contexto: '',
+  mostrarPt: false, prov: true, frases: true, local: false, glossario: GLOSSARIO_PADRAO, contexto: CONTEXTO_PADRAO, versaoGlossario: VERSAO_GLOSSARIO,
 };
 const params = new URLSearchParams(location.search);
 const DEMO = params.has('demo');
@@ -260,7 +326,13 @@ const armazenar = {
   gravar(k, v) { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} },
 };
 let cfg = { ...PADRAO };
-try { Object.assign(cfg, JSON.parse(armazenar.ler('legendas.cfg') || '{}')); } catch {}
+let salvo = {};
+try { salvo = JSON.parse(armazenar.ler('legendas.cfg') || '{}') || {}; } catch {}
+Object.assign(cfg, salvo);
+if ((salvo.versaoGlossario || 1) < VERSAO_GLOSSARIO) {
+  // Glossário e contexto do tema da palestra substituem os de versões anteriores.
+  Object.assign(cfg, { glossario: GLOSSARIO_PADRAO, contexto: CONTEXTO_PADRAO, versaoGlossario: VERSAO_GLOSSARIO });
+}
 let chave = armazenar.ler('legendas.chave') || '';
 const salvarCfg = () => armazenar.gravar('legendas.cfg', JSON.stringify(cfg));
 
@@ -493,11 +565,12 @@ Regras:
 - Use espanhol latino-americano neutro: "ustedes" (nunca "vosotros") e vocabulário comum a toda a América Latina.
 - Omita hesitações e muletas ("é…", "né", "tipo", "então" sem função, repetições). Seja conciso como uma legenda, mas não resuma nem corte conteúdo.
 - Mantenha o tom e a pessoa do discurso do palestrante.
+- O glossário traz a terminologia oficial do material em espanhol que a plateia conhece: quando o termo em português aparecer (mesmo com variações de gênero, número ou pequenas diferenças de reconhecimento), use EXATAMENTE o termo em espanhol do glossário, com as mesmas maiúsculas.
 - Livros e referências bíblicas no padrão em espanhol (João 3:16 → Juan 3:16; Atos → Hechos).
 - Se houver uma tradução provisória já exibida para o trecho, mantenha-a palavra por palavra no que estiver correto e apenas a complete ou corrija o final, para a legenda não "pular" na tela.
 - Se o trecho for só hesitação ou ruído, responda com uma string vazia.
 
-Glossário (português = espanhol; nomes sem "=" ficam como estão):
+Glossário (português = espanhol; nomes sem "=" ficam como estão; linhas com # são títulos):
 ${cfg.glossario.trim() || '(vazio)'}
 
 Contexto da palestra:
@@ -825,18 +898,19 @@ const reconhecedor = {
   },
 };
 function termosDoGlossario() {
-  return cfg.glossario.split('\n').map((l) => l.split('=')[0].trim()).filter((l) => l && l.length <= 60).slice(0, 60);
+  return cfg.glossario.split('\n').filter((l) => !l.trim().startsWith('#'))
+    .map((l) => l.split('=')[0].trim()).filter((l) => l && l.length <= 60).slice(0, 80);
 }
 
 // Simulador (modo demonstração)
 const TEXTO_DEMO = [
   'boa noite a todos é uma alegria enorme estar aqui com vocês',
-  'hoje eu quero falar sobre a missionalidade da igreja',
-  'Lesslie Newbigin voltou da Índia e percebeu que o ocidente tinha se tornado um campo missionário',
-  'a missão não é uma atividade da igreja é a própria natureza de Deus que envia',
-  'por isso falamos em missio Dei a missão de Deus',
-  'e René Padilla nos lembrou que a missão é integral ela alcança a pessoa inteira',
-  'como diz João 20 21 assim como o pai me enviou eu também vos envio',
+  'hoje vamos falar sobre o planejamento da visão para onde Deus está nos levando',
+  'a missão é a bússola e a visão é o guia de viagem',
+  'a trilha do horizonte tem quatro horizontes começando pelo além do horizonte de cinco a vinte anos',
+  'depois vem o horizonte mensurável de três anos e o caminho para o horizonte de um ano',
+  'e por fim os próximos passos no horizonte com quatro iniciativas de noventa dias',
+  'tudo isso cabe num esboço de guardanapo um quatro um quatro',
 ];
 const simulador = {
   timer: null, sessao: 1000,
@@ -992,6 +1066,12 @@ function salvarChave() {
   atualizarPainel();
 }
 $('cfgChave').addEventListener('change', salvarChave);
+$('btnRestaurar').addEventListener('click', () => {
+  if (!confirm('Substituir o glossário e o contexto atuais pelos padrões do tema?')) return;
+  Object.assign(cfg, { glossario: GLOSSARIO_PADRAO, contexto: CONTEXTO_PADRAO, versaoGlossario: VERSAO_GLOSSARIO });
+  salvarCfg();
+  carregarFormulario();
+});
 $('cfgLembrar').addEventListener('change', salvarChave);
 
 $('btnTestar').addEventListener('click', async () => {
