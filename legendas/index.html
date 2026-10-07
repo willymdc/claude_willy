@@ -1187,30 +1187,92 @@ async function traduzir(trecho, tipo) {
 // ─────────────────────────────── Trechos ───────────────────────────────
 function novoTrecho() {
   const t = { id: proxId++, pt: '', final: false, es: '', esFinal: false, motor: '', tPt: agora(),
-    tCriado: Date.now(), voo: null, palavrasEnviadas: 0 };
+    tCriado: Date.now(), tFinal: 0, voo: null, palavrasEnviadas: 0 };
   estado.trechos.push(t);
   return t;
 }
-const sessaoTrechos = new Map(); // `${sessão}:${índice}` → trecho
-function resultado(sessao, indice, texto, final) {
-  const k = `${sessao}:${indice}`;
-  let t = sessaoTrechos.get(k);
-  if (!t) {
-    if (!texto.trim()) return;
-    t = novoTrecho();
-    sessaoTrechos.set(k, t);
+function removerTrecho(t) {
+  if (t.voo) { t.voo.cancelado = true; t.voo.cancelar(); t.voo = null; }
+  const i = estado.trechos.indexOf(t);
+  if (i >= 0) {
+    estado.trechos.splice(i, 1);
+    if (estado.limparDesde > i) estado.limparDesde--;
   }
-  if (t.final) return;
-  texto = texto.trim();
-  if (texto !== t.pt) { t.pt = texto; t.tPt = agora(); }
-  if (final) { t.final = true; sessaoTrechos.delete(k); }
+  atualizar();
+}
+
+// Rede de segurança contra repetição: uma frase que chega logo depois de outra e já está
+// contida nela é descartada; uma que só estende a anterior substitui a anterior.
+const normalizar = (s) => s.toLocaleLowerCase('pt-BR').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  .replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+function finalizarTrecho(t) {
+  t.final = true;
+  t.tFinal = Date.now();
+  const i = estado.trechos.indexOf(t);
+  const ant = estado.trechos.slice(0, i).reverse().find((x) => x.final && x.pt);
+  const a = ant && t.tFinal - ant.tFinal < 4000 ? normalizar(ant.pt) : '';
+  const n = normalizar(t.pt);
+  if (a && n) {
+    if ((' ' + a + ' ').includes(' ' + n + ' ')) { removerTrecho(t); return; }
+    if (n.startsWith(a + ' ')) {
+      ant.pt = t.pt;
+      ant.tPt = agora();
+      ant.tFinal = t.tFinal;
+      ant.esFinal = false;
+      removerTrecho(t);
+      pedirFinal(ant);
+      return;
+    }
+  }
   trechoAtualizado(t);
+}
+
+// O Chrome manda, a cada evento, a lista inteira da sessão: primeiro os resultados finais
+// (um por pausa) e, no fim, a frase em andamento, que pode vir quebrada em vários pedaços
+// provisórios. Os pedaços provisórios são juntados numa frase só.
+const sessoes = new Map(); // sessão → { finais: Set de índices já usados, aberto: trecho em andamento }
+function processarResultados(sessao, lista, inicio = 0) {
+  let s = sessoes.get(sessao);
+  if (!s) sessoes.set(sessao, s = { finais: new Set(), aberto: null });
+  let fechou = false;
+  for (let i = inicio; i < lista.length; i++) {
+    const r = lista[i];
+    if (!r || !r.final || s.finais.has(i)) continue;
+    s.finais.add(i);
+    const texto = r.texto.replace(/\s+/g, ' ').trim();
+    if (!texto) continue;
+    const t = s.aberto || novoTrecho();
+    s.aberto = null;
+    fechou = true;
+    if (texto !== t.pt) { t.pt = texto; t.tPt = agora(); }
+    finalizarTrecho(t);
+  }
+  const provisorio = lista.filter((r) => r && !r.final).map((r) => r.texto).join(' ').replace(/\s+/g, ' ').trim();
+  if (provisorio) {
+    const t = s.aberto || (s.aberto = novoTrecho());
+    if (provisorio !== t.pt) { t.pt = provisorio; t.tPt = agora(); trechoAtualizado(t); }
+  } else if (s.aberto && !fechou) {
+    // O reconhecedor desistiu da frase em andamento (era ruído): ela sai da tela.
+    const t = s.aberto;
+    s.aberto = null;
+    removerTrecho(t);
+  }
   atualizarPainel();
 }
 function fimDeSessao(sessao) {
-  for (const [k, t] of sessaoTrechos) {
-    if (k.startsWith(sessao + ':')) { sessaoTrechos.delete(k); t.final = true; trechoAtualizado(t); }
-  }
+  const s = sessoes.get(sessao);
+  sessoes.delete(sessao);
+  listasSimuladas.delete(sessao);
+  if (s?.aberto?.pt) finalizarTrecho(s.aberto);
+}
+// Entrada simplificada (modo demonstração e testes): um resultado por vez, no índice dado.
+const listasSimuladas = new Map();
+function resultado(sessao, indice, texto, final) {
+  let lista = listasSimuladas.get(sessao);
+  if (!lista) listasSimuladas.set(sessao, lista = []);
+  lista[indice] = { texto, final };
+  lista.length = indice + 1;
+  processarResultados(sessao, lista, indice);
 }
 
 // ─────────────────────────────── Reconhecimento de voz ───────────────────────────────
@@ -1245,9 +1307,8 @@ const reconhecedor = {
     r.onresult = (e) => {
       this.ultimoEvento = agora();
       this.espera = 250;
-      for (let i = e.resultIndex; i < e.results.length; i++) {
-        resultado(sessao, i, e.results[i][0].transcript, e.results[i].isFinal);
-      }
+      const lista = Array.from(e.results, (res) => ({ texto: res[0].transcript, final: res.isFinal }));
+      processarResultados(sessao, lista, e.resultIndex);
     };
     r.onerror = (e) => {
       console.warn('reconhecimento:', e.error, e.message);
@@ -1582,7 +1643,7 @@ if (DEMO) alerta('Modo demonstração: o português é simulado (sem microfone).
 atualizar();
 
 // Ganchos para testes automatizados
-window.__legendas = { estado, falso, superficies, cfg, abrirProjetor, iniciarTudo, pararTudo, resultado, fimDeSessao, alternarExemplo };
+window.__legendas = { estado, falso, superficies, cfg, abrirProjetor, iniciarTudo, pararTudo, resultado, processarResultados, fimDeSessao, alternarExemplo };
 </script>
 </body>
 </html>
