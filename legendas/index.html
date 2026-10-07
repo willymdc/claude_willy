@@ -1,0 +1,1061 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Legendas ao Vivo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link id="fontes" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  color-scheme: dark;
+  --bg:#0B1020;
+  --panel:#121A33;
+  --panel-2:#18213F;
+  --line:#26305A;
+  --ink:#ECE8DC;
+  --muted:#8D95B3;
+  --gold:#F0C46C;
+  --ok:#6FCF97;
+  --warn:#F2994A;
+  --bad:#EB5757;
+  --sans:"Atkinson Hyperlegible",system-ui,"Segoe UI",Roboto,Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg);margin:0}
+body{color:var(--ink);font-family:var(--sans);padding-inline:16px}
+.app{max-width:1400px;margin:0 auto;padding-block:20px 40px;display:grid;gap:14px}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 24px}
+h1{font-weight:700;font-size:clamp(26px,4vw,40px);line-height:1.05;margin:0}
+h1 em{color:var(--gold);font-style:normal}
+.sub{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+
+.pill{font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;border:1px solid var(--line);border-radius:999px;padding:5px 12px 5px 10px;display:inline-flex;align-items:center;gap:8px;background:var(--panel)}
+.pill i{width:9px;height:9px;border-radius:50%;background:var(--muted)}
+.pill[data-s="ouvindo"] i{background:var(--ok);box-shadow:0 0 0 4px rgba(111,207,151,.18)}
+.pill[data-s="reconectando"] i,.pill[data-s="demo"] i{background:var(--warn)}
+.pill[data-s="erro"] i{background:var(--bad)}
+
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{background:var(--panel);border:1px solid var(--line);border-radius:6px;min-height:40px;padding:0 14px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--mono);font-size:13px}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--gold);border-color:var(--gold);color:#1A1406;font-weight:500;min-width:190px}
+.btn.primary[aria-pressed="true"]{background:var(--bad);border-color:var(--bad);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+kbd{font-family:var(--mono);font-size:11px;border:1px solid currentColor;border-radius:4px;padding:0 4px;opacity:.7}
+
+.alert{display:none;border:1px solid var(--bad);background:rgba(235,87,87,.1);border-radius:8px;padding:10px 14px;font-size:15px}
+.alert.show{display:block}
+.alert.info{border-color:var(--warn);background:rgba(242,153,74,.1)}
+
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:14px}
+@media (max-width:900px){.grid{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;min-width:0}
+.card h2{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500;margin:0 0 10px;display:flex;justify-content:space-between;gap:8px}
+.transcript{height:300px;overflow-y:auto;font-size:18px;line-height:1.45;display:flex;flex-direction:column;gap:6px;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.transcript p{margin:0}
+.transcript .prov{color:var(--muted)}
+.transcript .eng{font-family:var(--mono);font-size:10px;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:0 4px;margin-left:6px;vertical-align:middle}
+
+.preview{position:relative;aspect-ratio:16/9;border-radius:8px;overflow:hidden;border:1px solid var(--line)}
+
+.meter{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12px;color:var(--muted);flex-wrap:wrap}
+.meter .track{width:140px;height:8px;border-radius:4px;background:var(--panel-2);overflow:hidden}
+.meter .fill{height:100%;width:0;background:var(--ok);transition:width .08s linear}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.stat b{display:block;font-size:22px;font-weight:700}
+.stat span{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+
+details.card summary{cursor:pointer;font-family:var(--mono);font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold)}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:14px}
+.field{display:grid;gap:6px;align-content:start}
+.field label,.field .lbl{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.04em}
+.field small{color:var(--muted);font-size:13px}
+input[type=text],input[type=password],select,textarea{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px;width:100%}
+textarea{min-height:170px;resize:vertical;font-family:var(--mono);font-size:13px;line-height:1.5}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.check{display:flex;gap:8px;align-items:center;font-size:15px}
+.span2{grid-column:1/-1}
+footer{color:var(--muted);font-size:13px}
+footer a{color:var(--gold)}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div>
+      <h1>Legendas ao vivo <em>PT → ES</em></h1>
+      <div class="sub">Português do Brasil → espanhol latino-americano · tempo real</div>
+    </div>
+    <span class="pill" id="status" data-s="parado"><i></i><span>Parado</span></span>
+  </header>
+
+  <div class="bar">
+    <button class="btn primary" id="btnIniciar" aria-pressed="false">Iniciar legendas <kbd>Espaço</kbd></button>
+    <button class="btn" id="btnProjetor">Abrir janela do projetor <kbd>P</kbd></button>
+    <button class="btn" id="btnFaixa">Faixa flutuante sobre os slides <kbd>B</kbd></button>
+    <button class="btn" id="btnLimpar">Limpar tela <kbd>Esc</kbd></button>
+    <button class="btn" id="btnBaixar">Baixar transcrição</button>
+  </div>
+
+  <div class="alert" id="alerta" role="alert"></div>
+
+  <div class="meter">
+    <span>Microfone:</span><span id="micNome">padrão do sistema</span>
+    <div class="track"><div class="fill" id="micNivel"></div></div>
+    <span id="motorInfo"></span>
+  </div>
+
+  <div class="grid">
+    <section class="card">
+      <h2><span>Português reconhecido</span><span id="ptConta"></span></h2>
+      <div class="transcript" id="ptLog" aria-live="off"></div>
+    </section>
+    <section class="card">
+      <h2><span>O que a plateia vê</span><span>prévia</span></h2>
+      <div class="preview" id="previa"></div>
+    </section>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><b id="stLat">–</b><span>Atraso mediano</span></div>
+    <div class="stat"><b id="stMotor">–</b><span>Motor de tradução</span></div>
+    <div class="stat"><b id="stCusto">US$ 0,00</b><span>Custo da sessão (estim.)</span></div>
+    <div class="stat"><b id="stReq">0</b><span>Traduções · reservas</span></div>
+  </div>
+
+  <details class="card" id="config">
+    <summary>Configurações</summary>
+    <div class="form">
+      <div class="field">
+        <label for="cfgChave">Chave da API Anthropic</label>
+        <input type="password" id="cfgChave" autocomplete="off" placeholder="sk-ant-…">
+        <div class="row">
+          <label class="check"><input type="checkbox" id="cfgLembrar" checked> Lembrar neste navegador</label>
+          <button class="btn" id="btnTestar" type="button">Testar</button>
+        </div>
+        <small id="testeRes">A chave fica só neste navegador e vai direto para a API da Anthropic.</small>
+      </div>
+      <div class="field">
+        <label for="cfgModelo">Motor de tradução</label>
+        <select id="cfgModelo">
+          <option value="claude-haiku-4-5">Claude Haiku 4.5 — mais rápido (padrão)</option>
+          <option value="claude-sonnet-5-5">Claude Sonnet 5.5 — mais nuance, um pouco mais lento</option>
+          <option value="claude-opus-5-5">Claude Opus 5.5 — melhor qualidade, mais atraso</option>
+          <option value="chrome">Só o tradutor do Chrome (grátis, offline)</option>
+        </select>
+        <small>Se o Claude falhar, o tradutor do Chrome assume na hora.</small>
+        <div class="row">
+          <button class="btn" id="btnOffline" type="button">Preparar modo offline</button>
+          <small id="offlineRes"></small>
+        </div>
+      </div>
+      <div class="field">
+        <span class="lbl">Aparência da legenda</span>
+        <div class="row">
+          <label class="check">Tamanho <input type="range" id="cfgEscala" min="0.6" max="1.5" step="0.05"></label>
+        </div>
+        <div class="row">
+          <label class="check">Linhas no projetor
+            <select id="cfgLinhasProj"><option>2</option><option>3</option><option>4</option></select></label>
+          <label class="check">Linhas na faixa
+            <select id="cfgLinhasFaixa"><option>1</option><option>2</option><option>3</option></select></label>
+        </div>
+        <div class="row">
+          <label class="check">Fundo
+            <select id="cfgFundo">
+              <option value="preto">Preto</option>
+              <option value="azul">Azul-escuro</option>
+              <option value="verde">Verde (chroma key / OBS)</option>
+            </select></label>
+          <label class="check">Texto
+            <select id="cfgCor">
+              <option value="branco">Branco</option>
+              <option value="amarelo">Amarelo</option>
+            </select></label>
+        </div>
+        <label class="check"><input type="checkbox" id="cfgMostrarPt"> Mostrar também o português (menor)</label>
+        <label class="check"><input type="checkbox" id="cfgProv"> Esmaecer o texto provisório</label>
+      </div>
+      <div class="field">
+        <span class="lbl">Reconhecimento de voz</span>
+        <label class="check"><input type="checkbox" id="cfgFrases"> Reforçar nomes do glossário (se o Chrome suportar)</label>
+        <label class="check"><input type="checkbox" id="cfgLocal"> Reconhecer no dispositivo, sem internet (se houver para pt-BR)</label>
+        <small id="localRes">O microfone usado é o padrão do sistema operacional.</small>
+      </div>
+      <div class="field span2">
+        <label for="cfgGlossario">Glossário (uma linha por termo: <code>português = español</code>, ou só o nome)</label>
+        <textarea id="cfgGlossario" spellcheck="false"></textarea>
+      </div>
+      <div class="field span2">
+        <label for="cfgContexto">Contexto da palestra (título, tema, roteiro: ajuda a traduzir termos e corrigir nomes)</label>
+        <textarea id="cfgContexto" spellcheck="false" style="min-height:90px"></textarea>
+      </div>
+    </div>
+  </details>
+
+  <footer>Atalhos: <kbd>Espaço</kbd> iniciar/pausar · <kbd>Esc</kbd> limpar tela · <kbd>P</kbd> projetor · <kbd>B</kbd> faixa flutuante · na janela do projetor, duplo clique ou <kbd>F</kbd> = tela cheia. Teste sem microfone: <a href="?demo=1">modo demonstração</a>.</footer>
+</div>
+
+<script type="module">
+// ─────────────────────────────── Configuração ───────────────────────────────
+const SDK_URLS = [
+  'https://cdn.jsdelivr.net/npm/@anthropic-ai/sdk@0.131.0/+esm',
+  'https://esm.sh/@anthropic-ai/sdk@0.131.0',
+];
+const PRECOS = { // US$ por milhão de tokens
+  'claude-haiku-4-5':  { in: 1, out: 5,  cr: 0.10, cw: 1.25 },
+  'claude-sonnet-5-5': { in: 2, out: 10, cr: 0.20, cw: 2.50 },
+  'claude-opus-5-5':   { in: 4, out: 20, cr: 0.20, cw: 5.00 },
+};
+const NOMES_MOTOR = {
+  'claude-haiku-4-5': 'Haiku 4.5', 'claude-sonnet-5-5': 'Sonnet 5.5', 'claude-opus-5-5': 'Opus 5.5',
+  chrome: 'Chrome offline', pt: 'sem tradução', falso: 'simulado',
+};
+const GLOSSARIO_PADRAO = `missionalidade = misionalidad
+missional = misional
+igreja missional = iglesia misional
+missio Dei = missio Dei
+missão integral = misión integral
+Cristandade = Cristiandad
+pós-Cristandade = poscristiandad
+Fraternidade Teológica Latino-Americana = Fraternidad Teológica Latinoamericana
+Pentecostes = Pentecostés
+Êxodo = Éxodo
+Atos = Hechos
+Apocalipse = Apocalipsis
+Lesslie Newbigin
+Michael Goheen
+David Bosch
+Darrell Guder
+Alan Hirsch
+Michael Frost
+Christopher Wright
+John Stott
+Timothy Keller
+René Padilla
+Samuel Escobar
+Orlando Costas
+Craig Bartholomew
+Karl Barth
+Lausanne
+Willingen`;
+const PADRAO = {
+  modelo: 'claude-haiku-4-5', escala: 1, linhasProj: 3, linhasFaixa: 2, fundo: 'preto', cor: 'branco',
+  mostrarPt: false, prov: true, frases: true, local: false, glossario: GLOSSARIO_PADRAO, contexto: '',
+};
+const params = new URLSearchParams(location.search);
+const DEMO = params.has('demo');
+const MOTOR_FALSO = params.get('motor') === 'falso';
+
+const armazenar = {
+  ler(k) { try { return localStorage.getItem(k); } catch { return null; } },
+  gravar(k, v) { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} },
+};
+let cfg = { ...PADRAO };
+try { Object.assign(cfg, JSON.parse(armazenar.ler('legendas.cfg') || '{}')); } catch {}
+let chave = armazenar.ler('legendas.chave') || '';
+const salvarCfg = () => armazenar.gravar('legendas.cfg', JSON.stringify(cfg));
+
+const $ = (id) => document.getElementById(id);
+const agora = () => performance.now();
+const contarPalavras = (t) => (t.trim().match(/\S+/g) || []).length;
+
+// ─────────────────────────────── Estado ───────────────────────────────
+const estado = {
+  rodando: false,
+  trechos: [],        // {id, pt, final, es, esFinal, motor, tPt, tCriado, voo, palavrasEnviadas}
+  limparDesde: 0,     // índice a partir do qual a tela mostra
+  latencias: [],
+  custo: 0, tokensIn: 0, tokensOut: 0,
+  traducoes: 0, reservas: 0,
+  falhasSeguidas: 0, claudeForaAte: 0, claudeDesativado: false,
+};
+let proxId = 1;
+
+// ─────────────────────────────── Interface: status e alertas ───────────────────────────────
+function status(s, texto) {
+  const el = $('status');
+  el.dataset.s = s;
+  el.lastElementChild.textContent = texto;
+}
+let alertaTimer;
+function alerta(msg, tipo = 'erro', ms = 0) {
+  const el = $('alerta');
+  el.textContent = msg;
+  el.className = 'alert show' + (tipo === 'info' ? ' info' : '');
+  clearTimeout(alertaTimer);
+  if (ms) alertaTimer = setTimeout(() => el.classList.remove('show'), ms);
+}
+const fecharAlerta = () => $('alerta').classList.remove('show');
+
+// ─────────────────────────────── Legendas: CSS compartilhado pelas superfícies ───────────────────────────────
+const CSS_LEGENDA = `
+.cap{container-type:size;position:absolute;inset:0;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;
+  padding:3cqh 4cqw;background:var(--cap-bg);color:var(--cap-fg);
+  font-family:"Atkinson Hyperlegible",system-ui,"Segoe UI",Roboto,Arial,sans-serif;font-weight:700;
+  --pt-h:0cqh;--fs:min(calc((94cqh - var(--pt-h)) / (var(--lines) * 1.2) * var(--scale)), calc(6.2cqw * var(--scale)))}
+.cap.com-pt{--pt-h:16cqh}
+.cap-pt{display:none;font-weight:400;opacity:.7;font-size:calc(var(--fs) * .42);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:.3em}
+.cap.com-pt .cap-pt{display:block}
+.cap-box{font-size:var(--fs);line-height:1.2;height:calc(var(--lines) * 1.2em);overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end}
+.cap-es{margin:0;text-wrap:pretty}
+.cap.esmaecer .l{opacity:.72}
+.cap .l{transition:opacity .2s}
+`;
+const CSS_JANELA = `
+html,body{margin:0;height:100%;background:#000;overflow:hidden}
+body{position:relative}
+body.sem-cursor{cursor:none}
+.dica{position:fixed;top:10px;left:50%;transform:translateX(-50%);font:13px system-ui,sans-serif;color:#bbb;background:rgba(0,0,0,.6);
+  padding:6px 12px;border-radius:6px;transition:opacity .4s;pointer-events:none;z-index:2}
+body.sem-cursor .dica{opacity:0}
+`;
+const FUNDOS = { preto: '#000000', azul: '#0B1020', verde: '#00B140' };
+const CORES = { branco: '#FFFFFF', amarelo: '#FFE15A' };
+
+document.head.insertAdjacentHTML('beforeend', `<style>${CSS_LEGENDA}</style>`);
+
+// Superfícies: {tipo, doc, cap, pt, es, janela}
+const superficies = [];
+function criarLegenda(doc, tipo) {
+  const cap = doc.createElement('div');
+  cap.className = 'cap';
+  cap.innerHTML = '<div class="cap-pt"></div><div class="cap-box"><p class="cap-es"></p></div>';
+  const sup = { tipo, doc, cap, pt: cap.querySelector('.cap-pt'), es: cap.querySelector('.cap-es') };
+  aplicarAparencia(sup);
+  return sup;
+}
+function aplicarAparencia(sup) {
+  const s = sup.cap.style;
+  s.setProperty('--cap-bg', FUNDOS[cfg.fundo] || '#000');
+  s.setProperty('--cap-fg', CORES[cfg.cor] || '#fff');
+  s.setProperty('--scale', cfg.escala);
+  s.setProperty('--lines', sup.tipo === 'faixa' ? cfg.linhasFaixa : cfg.linhasProj);
+  sup.cap.classList.toggle('com-pt', !!cfg.mostrarPt);
+  sup.cap.classList.toggle('esmaecer', !!cfg.prov);
+  if (sup.doc !== document) sup.doc.body.style.background = FUNDOS[cfg.fundo] || '#000';
+}
+
+function desenharLegendas() {
+  const visiveis = estado.trechos.slice(estado.limparDesde).filter((t) => t.es).slice(-14);
+  const ultimoPt = estado.trechos.slice(estado.limparDesde).filter((t) => t.pt).slice(-2).map((t) => t.pt).join(' ');
+  for (const sup of superficies) {
+    const d = sup.doc;
+    const frag = d.createDocumentFragment();
+    visiveis.forEach((t, i) => {
+      const span = d.createElement('span');
+      if (!t.esFinal) span.className = 'l';
+      span.textContent = (i ? ' ' : '') + t.es;
+      frag.append(span);
+    });
+    sup.es.replaceChildren(frag);
+    sup.pt.textContent = ultimoPt.length > 140 ? '…' + ultimoPt.slice(-140) : ultimoPt;
+  }
+}
+
+// Prévia no painel
+superficies.push(criarLegenda(document, 'previa'));
+$('previa').append(superficies[0].cap);
+
+function prepararJanela(w, tipo) {
+  const d = w.document;
+  d.title = tipo === 'faixa' ? 'Legenda' : 'Legendas — projetor';
+  d.head.innerHTML = `<meta charset="utf-8"><link rel="stylesheet" href="${$('fontes').href}"><style>${CSS_JANELA}${CSS_LEGENDA}</style>`;
+  d.body.innerHTML = tipo === 'projetor'
+    ? '<div class="dica">Arraste esta janela para o projetor e dê duplo clique (ou F) para tela cheia</div>' : '';
+  const sup = criarLegenda(d, tipo);
+  sup.janela = w;
+  d.body.append(sup.cap);
+  let t;
+  const mexeu = () => { d.body.classList.remove('sem-cursor'); clearTimeout(t); t = setTimeout(() => d.body.classList.add('sem-cursor'), 2500); };
+  d.addEventListener('mousemove', mexeu); mexeu();
+  const telaCheia = () => (d.fullscreenElement ? d.exitFullscreen() : d.documentElement.requestFullscreen()).catch(() => {});
+  if (tipo === 'projetor') {
+    d.addEventListener('dblclick', telaCheia);
+    d.addEventListener('keydown', (e) => { if (e.key === 'f' || e.key === 'F') telaCheia(); });
+  }
+  w.addEventListener('pagehide', () => {
+    const i = superficies.indexOf(sup);
+    if (i >= 0) superficies.splice(i, 1);
+  });
+  superficies.push(sup);
+  desenharLegendas();
+  return sup;
+}
+
+function abrirProjetor() {
+  const existente = superficies.find((s) => s.tipo === 'projetor' && !s.janela.closed);
+  if (existente) { existente.janela.focus(); return; }
+  const w = window.open('', 'legendas-projetor', 'popup,width=1280,height=720');
+  if (!w) { alerta('O navegador bloqueou a janela do projetor. Permita pop-ups para este site e tente de novo.'); return; }
+  prepararJanela(w, 'projetor');
+}
+
+async function abrirFaixa() {
+  const existente = superficies.find((s) => s.tipo === 'faixa' && !s.janela.closed);
+  if (existente) { existente.janela.focus(); return; }
+  if ('documentPictureInPicture' in window) {
+    try {
+      const largura = Math.min(Math.round(screen.availWidth * 0.9), 1600);
+      const altura = Math.round(largura * (cfg.linhasFaixa + 0.6) * 0.075);
+      const w = await documentPictureInPicture.requestWindow({ width: largura, height: altura });
+      prepararJanela(w, 'faixa');
+      alerta('Faixa aberta: arraste-a para a parte de baixo do projetor e ajuste o tamanho. O Chrome lembra a posição.', 'info', 8000);
+      return;
+    } catch (e) { console.warn('PiP indisponível', e); }
+  }
+  const w = window.open('', 'legendas-faixa', 'popup,width=1400,height=220');
+  if (!w) { alerta('O navegador bloqueou a janela. Permita pop-ups para este site.'); return; }
+  prepararJanela(w, 'faixa');
+  alerta('Este navegador não tem janela "sempre no topo"; abri uma janela comum. Use o Chrome atualizado para a faixa flutuante.', 'info', 8000);
+}
+
+// ─────────────────────────────── Painel: transcrição e métricas ───────────────────────────────
+let painelPendente = false;
+function atualizarPainel() {
+  if (painelPendente) return;
+  painelPendente = true;
+  queueMicrotask(() => {
+    painelPendente = false;
+    const log = $('ptLog');
+    const pertoDoFim = log.scrollHeight - log.scrollTop - log.clientHeight < 40;
+    const frag = document.createDocumentFragment();
+    for (const t of estado.trechos.slice(-60)) {
+      const p = document.createElement('p');
+      if (!t.final) p.className = 'prov';
+      p.textContent = t.pt;
+      if (t.motor) {
+        const e = document.createElement('span');
+        e.className = 'eng';
+        e.textContent = NOMES_MOTOR[t.motor] || t.motor;
+        p.append(e);
+      }
+      frag.append(p);
+    }
+    log.replaceChildren(frag);
+    if (pertoDoFim) log.scrollTop = log.scrollHeight;
+    $('ptConta').textContent = estado.trechos.length ? `${estado.trechos.length} trechos` : '';
+    const lat = [...estado.latencias].sort((a, b) => a - b);
+    $('stLat').textContent = lat.length ? (lat[Math.floor(lat.length / 2)] / 1000).toFixed(1).replace('.', ',') + ' s' : '–';
+    $('stCusto').textContent = 'US$ ' + estado.custo.toFixed(2).replace('.', ',');
+    $('stReq').textContent = `${estado.traducoes} · ${estado.reservas}`;
+    $('stMotor').textContent = rotuloMotor();
+  });
+}
+function rotuloMotor() {
+  if (MOTOR_FALSO) return 'Simulado';
+  if (cfg.modelo === 'chrome') return 'Chrome offline';
+  if (!claudeUtilizavel()) return chromeTradutor ? 'Chrome (reserva)' : 'Sem tradução';
+  return NOMES_MOTOR[cfg.modelo];
+}
+function atualizar() { desenharLegendas(); atualizarPainel(); }
+
+// ─────────────────────────────── Motor: Claude ───────────────────────────────
+let Anthropic = null, sdkErro = null, sdkCarregando = null;
+function carregarSDK() {
+  if (!sdkCarregando) sdkCarregando = (async () => {
+    for (const url of SDK_URLS) {
+      try { Anthropic = (await import(url)).default; return Anthropic; } catch (e) { sdkErro = e; }
+    }
+    console.warn('SDK da Anthropic não carregou', sdkErro);
+    return null;
+  })();
+  return sdkCarregando;
+}
+let cliente = null, clienteChave = '';
+function obterCliente() {
+  if (!Anthropic || !chave) return null;
+  if (!cliente || clienteChave !== chave) {
+    cliente = new Anthropic({ apiKey: chave, dangerouslyAllowBrowser: true, maxRetries: 0, timeout: 15000 });
+    clienteChave = chave;
+  }
+  return cliente;
+}
+function claudeUtilizavel() {
+  return cfg.modelo !== 'chrome' && !!chave && !!Anthropic && !estado.claudeDesativado && agora() >= estado.claudeForaAte;
+}
+
+function promptSistema() {
+  return `Você é o tradutor simultâneo de uma palestra presencial ao vivo. O palestrante fala em português do Brasil; a plateia lê legendas em espanhol latino-americano projetadas num telão.
+
+Regras:
+- Responda SOMENTE com a tradução em espanhol do TRECHO NOVO. Sem aspas, sem rótulos, sem comentários, sem repetir o contexto.
+- O português vem de reconhecimento automático de fala: chega sem pontuação e pode ter palavras trocadas por outras de som parecido. Use o contexto e o glossário para inferir o termo pretendido (sobretudo nomes próprios e termos teológicos), mas nunca acrescente ideias que não foram ditas.
+- Pontue o texto em espanhol. Se o trecho novo continua uma frase do contexto, comece em minúscula e não feche a frase antes da hora.
+- Use espanhol latino-americano neutro: "ustedes" (nunca "vosotros") e vocabulário comum a toda a América Latina.
+- Omita hesitações e muletas ("é…", "né", "tipo", "então" sem função, repetições). Seja conciso como uma legenda, mas não resuma nem corte conteúdo.
+- Mantenha o tom e a pessoa do discurso do palestrante.
+- Livros e referências bíblicas no padrão em espanhol (João 3:16 → Juan 3:16; Atos → Hechos).
+- Se houver uma tradução provisória já exibida para o trecho, mantenha-a palavra por palavra no que estiver correto e apenas a complete ou corrija o final, para a legenda não "pular" na tela.
+- Se o trecho for só hesitação ou ruído, responda com uma string vazia.
+
+Glossário (português = espanhol; nomes sem "=" ficam como estão):
+${cfg.glossario.trim() || '(vazio)'}
+
+Contexto da palestra:
+${cfg.contexto.trim() || '(não informado)'}`;
+}
+
+function mensagemTrecho(trecho, tipo) {
+  const i = estado.trechos.indexOf(trecho);
+  const anteriores = estado.trechos.slice(Math.max(0, i - 6), i).filter((t) => t.final && t.es).slice(-3);
+  let m = '';
+  if (anteriores.length) {
+    m += 'Contexto recente (já exibido ao público):\n';
+    for (const t of anteriores) m += `PT: ${t.pt}\nES: ${t.es}\n`;
+    m += '\n';
+  }
+  m += tipo === 'final'
+    ? 'Trecho novo (final — o palestrante fez uma pausa):\n'
+    : 'Trecho novo (provisório — a fala ainda continua; traduza só o que já foi dito):\n';
+  m += `<pt>${trecho.pt}</pt>\n`;
+  if (trecho.es) m += `\nTradução provisória já exibida deste trecho:\n<anterior>${trecho.es}</anterior>\n`;
+  m += '\nResponda apenas com a tradução em espanhol do trecho novo.';
+  return m;
+}
+
+function paramsClaude(modelo, sistema, msg, maxTokens) {
+  const p = {
+    model: modelo,
+    max_tokens: maxTokens,
+    system: [{ type: 'text', text: sistema, cache_control: { type: 'ephemeral' } }],
+    messages: [{ role: 'user', content: msg }],
+  };
+  if (modelo === 'claude-sonnet-5-5') {
+    p.thinking = { type: 'between_tools' };
+    p.output_config = { effort: 'low' };
+  } else if (modelo === 'claude-opus-5-5') {
+    p.output_config = { effort: 'low' };
+  }
+  return p;
+}
+const usaBeta = (modelo) => modelo === 'claude-sonnet-5-5' || modelo === 'claude-opus-5-5';
+function abrirStream(c, modelo, p) {
+  if (usaBeta(modelo)) {
+    return c.beta.messages.stream({ ...p, betas: ['server-side-fallback-2026-07-01'], fallbacks: 'default' });
+  }
+  return c.messages.stream(p);
+}
+
+function limparSaida(t) {
+  return t.replace(/<\/?(pt|anterior|es)>/g, '').replace(/^\s*(ES|Español|Espanhol)\s*:\s*/i, '')
+    .replace(/^["“«]+|["”»]+$/g, '').replace(/\s+/g, ' ').trim();
+}
+
+function contabilizar(modelo, u) {
+  const pr = PRECOS[modelo];
+  if (!pr || !u) return;
+  const cr = u.cache_read_input_tokens || 0, cw = u.cache_creation_input_tokens || 0;
+  estado.tokensIn += (u.input_tokens || 0) + cr + cw;
+  estado.tokensOut += u.output_tokens || 0;
+  estado.custo += ((u.input_tokens || 0) * pr.in + cr * pr.cr + cw * pr.cw + (u.output_tokens || 0) * pr.out) / 1e6;
+}
+
+async function traduzirClaude(trecho, tipo, voo, aoParcial) {
+  const c = obterCliente();
+  const modelo = cfg.modelo;
+  const maxT = modelo === 'claude-opus-5-5' ? 4000 : 512;
+  const s = abrirStream(c, modelo, paramsClaude(modelo, promptSistema(), mensagemTrecho(trecho, tipo), maxT));
+  voo.cancelar = () => s.abort();
+  s.on('text', (_d, snap) => aoParcial(limparSaida(snap)));
+  const msg = await s.finalMessage();
+  contabilizar(modelo, msg.usage);
+  if (msg.stop_reason === 'refusal') throw Object.assign(new Error('recusa'), { recusa: true });
+  return limparSaida(msg.content.filter((b) => b.type === 'text').map((b) => b.text).join(''));
+}
+
+async function preAquecer() {
+  const c = obterCliente();
+  if (!c || cfg.modelo === 'chrome') return;
+  try {
+    const msg = await c.messages.create({
+      ...paramsClaude(cfg.modelo, promptSistema(), 'Trecho novo (final):\n<pt>bom dia a todos</pt>', 0),
+    });
+    contabilizar(cfg.modelo, msg.usage);
+    atualizarPainel();
+  } catch (e) { tratarErroClaude(e); }
+}
+
+function tratarErroClaude(e) {
+  if (Anthropic && e instanceof Anthropic.AuthenticationError) {
+    estado.claudeDesativado = true;
+    alerta('A chave da API foi recusada (401). Usando o tradutor do Chrome. Confira a chave em Configurações.');
+    return;
+  }
+  if (Anthropic && e instanceof Anthropic.PermissionDeniedError) {
+    estado.claudeDesativado = true;
+    alerta('A chave da API não tem permissão para este modelo (403). Usando o tradutor do Chrome.');
+    return;
+  }
+  estado.falhasSeguidas++;
+  if (estado.falhasSeguidas >= 3) {
+    estado.claudeForaAte = agora() + 30000;
+    estado.falhasSeguidas = 0;
+    alerta('O Claude não está respondendo. Usando o tradutor do Chrome por 30 s e depois tento de novo.', 'info', 10000);
+  }
+}
+
+// ─────────────────────────────── Motor: tradutor do Chrome (offline) ───────────────────────────────
+let chromeTradutor = null, chromeCriando = null;
+async function prepararChrome(baixar) {
+  if (chromeTradutor) return chromeTradutor;
+  if (!('Translator' in self)) return null;
+  if (chromeCriando) return chromeCriando;
+  chromeCriando = (async () => {
+    try {
+      const opts = { sourceLanguage: 'pt', targetLanguage: 'es' };
+      const disp = await Translator.availability(opts);
+      if (disp === 'unavailable') return null;
+      if (disp !== 'available' && !baixar) return null;
+      chromeTradutor = await Translator.create({
+        ...opts,
+        monitor(m) {
+          m.addEventListener('downloadprogress', (e) => { $('offlineRes').textContent = `Baixando… ${Math.round(e.loaded * 100)}%`; });
+        },
+      });
+      return chromeTradutor;
+    } catch (e) { console.warn('Tradutor do Chrome indisponível', e); return null; }
+    finally { chromeCriando = null; }
+  })();
+  return chromeCriando;
+}
+
+// ─────────────────────────────── Motor falso (testes e demonstração) ───────────────────────────────
+const falso = { atraso: 450, falhar: false };
+function traduzirFalso(trecho, tipo, voo) {
+  const texto = voo.texto;
+  return new Promise((ok, erro) => {
+    const t = setTimeout(() => {
+      if (falso.falhar) return erro(new Error('falha simulada'));
+      ok(`[ES${tipo === 'final' ? '' : '…'}] ${texto}`);
+    }, falso.atraso);
+    voo.cancelar = () => { clearTimeout(t); erro(Object.assign(new Error('cancelado'), { cancelado: true })); };
+  });
+}
+
+// ─────────────────────────────── Agendador ───────────────────────────────
+const NOVAS_PALAVRAS = 2;
+
+function trechoAtualizado(trecho) {
+  if (trecho.final) pedirFinal(trecho);
+  else talvezParcial(trecho);
+}
+function talvezParcial(trecho) {
+  if (trecho.voo || trecho.final) return;
+  const n = contarPalavras(trecho.pt);
+  if (n >= 1 && n - trecho.palavrasEnviadas >= NOVAS_PALAVRAS) traduzir(trecho, 'parcial');
+}
+function pedirFinal(trecho) {
+  if (trecho.esFinal) return;
+  if (trecho.voo) {
+    if (trecho.voo.tipo === 'final' && trecho.voo.texto === trecho.pt) return;
+    trecho.voo.cancelado = true;
+    trecho.voo.cancelar();
+    trecho.voo = null;
+  }
+  if (!trecho.pt.trim()) { trecho.esFinal = true; return; }
+  traduzir(trecho, 'final');
+}
+
+async function traduzir(trecho, tipo) {
+  const voo = { tipo, texto: trecho.pt, cancelado: false, cancelar() {} };
+  trecho.voo = voo;
+  trecho.palavrasEnviadas = contarPalavras(voo.texto);
+  const tPt = trecho.tPt;
+  const vigente = () => trecho.voo === voo && !voo.cancelado;
+  const aplicar = (es, motor, final) => {
+    trecho.es = es;
+    trecho.esFinal = final;
+    trecho.motor = motor;
+    if (trecho.tPrimeiraVez == null && es) trecho.tPrimeiraVez = agora();
+    estado.latencias.push(agora() - tPt);
+    if (estado.latencias.length > 25) estado.latencias.shift();
+    atualizar();
+  };
+  const aoParcial = (snap) => {
+    if (vigente() && snap.length >= trecho.es.length) { trecho.es = snap; desenharLegendas(); }
+  };
+  const limite = setTimeout(() => {
+    if (vigente()) { voo.estourou = true; voo.cancelar(); }
+  }, tipo === 'final' ? 5000 : 4000);
+
+  let es = null, motor = null;
+  try {
+    if (MOTOR_FALSO) {
+      es = await traduzirFalso(trecho, tipo, voo); motor = 'falso';
+    } else if (claudeUtilizavel()) {
+      es = await traduzirClaude(trecho, tipo, voo, aoParcial); motor = cfg.modelo;
+      estado.falhasSeguidas = 0;
+    }
+  } catch (e) {
+    if (voo.cancelado && !voo.estourou) { clearTimeout(limite); return; }
+    if (!MOTOR_FALSO) tratarErroClaude(e);
+    console.warn('Tradução falhou; usando reserva', e);
+  }
+  clearTimeout(limite);
+  if (voo.cancelado && !voo.estourou) return;
+
+  if (es == null) {
+    // Reserva: tradutor do Chrome; sem ele, o próprio português.
+    try {
+      const tr = await prepararChrome(false);
+      if (tr) { es = limparSaida(await tr.translate(voo.texto)); motor = 'chrome'; }
+    } catch (e) { console.warn('Tradutor do Chrome falhou', e); }
+    if (es == null && tipo === 'final') { es = voo.texto; motor = 'pt'; }
+    if (es != null && !MOTOR_FALSO && cfg.modelo !== 'chrome') estado.reservas++;
+  }
+  if (trecho.voo !== voo) return;
+  trecho.voo = null;
+  if (es != null) {
+    estado.traducoes++;
+    aplicar(es, motor, tipo === 'final' && voo.texto === trecho.pt);
+  }
+  if (trecho.final) pedirFinal(trecho);
+  else talvezParcial(trecho);
+}
+
+// ─────────────────────────────── Trechos ───────────────────────────────
+function novoTrecho() {
+  const t = { id: proxId++, pt: '', final: false, es: '', esFinal: false, motor: '', tPt: agora(),
+    tCriado: Date.now(), voo: null, palavrasEnviadas: 0 };
+  estado.trechos.push(t);
+  return t;
+}
+const sessaoTrechos = new Map(); // `${sessão}:${índice}` → trecho
+function resultado(sessao, indice, texto, final) {
+  const k = `${sessao}:${indice}`;
+  let t = sessaoTrechos.get(k);
+  if (!t) {
+    if (!texto.trim()) return;
+    t = novoTrecho();
+    sessaoTrechos.set(k, t);
+  }
+  if (t.final) return;
+  texto = texto.trim();
+  if (texto !== t.pt) { t.pt = texto; t.tPt = agora(); }
+  if (final) { t.final = true; sessaoTrechos.delete(k); }
+  trechoAtualizado(t);
+  atualizarPainel();
+}
+function fimDeSessao(sessao) {
+  for (const [k, t] of sessaoTrechos) {
+    if (k.startsWith(sessao + ':')) { sessaoTrechos.delete(k); t.final = true; trechoAtualizado(t); }
+  }
+}
+
+// ─────────────────────────────── Reconhecimento de voz ───────────────────────────────
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+const reconhecedor = {
+  rec: null, sessao: 0, ultimoEvento: 0, espera: 250, frasesOk: true, localOk: true, vigia: null,
+  iniciar() {
+    this.espera = 250;
+    this._criar();
+    this.vigia = setInterval(() => this._vigiar(), 2000);
+  },
+  parar() {
+    clearInterval(this.vigia);
+    const r = this.rec;
+    this.rec = null;
+    if (r) { r.onend = null; try { r.stop(); } catch {} }
+    fimDeSessao(this.sessao);
+  },
+  _criar() {
+    if (!estado.rodando) return;
+    const r = new SR();
+    const sessao = ++this.sessao;
+    r.lang = 'pt-BR';
+    r.continuous = true;
+    r.interimResults = true;
+    r.maxAlternatives = 1;
+    if (cfg.frases && this.frasesOk && 'SpeechRecognitionPhrase' in window) {
+      try { r.phrases = termosDoGlossario().map((p) => new SpeechRecognitionPhrase(p, 3)); } catch { this.frasesOk = false; }
+    }
+    if (cfg.local && this.localOk && 'processLocally' in r) r.processLocally = true;
+    r.onstart = () => { this.ultimoEvento = agora(); status('ouvindo', 'Ouvindo'); };
+    r.onresult = (e) => {
+      this.ultimoEvento = agora();
+      this.espera = 250;
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        resultado(sessao, i, e.results[i][0].transcript, e.results[i].isFinal);
+      }
+    };
+    r.onerror = (e) => {
+      console.warn('reconhecimento:', e.error, e.message);
+      if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+        alerta('O Chrome não tem permissão para usar o microfone. Clique no ícone de cadeado da barra de endereço, permita o microfone e inicie de novo.');
+        pararTudo();
+      } else if (e.error === 'phrases-not-supported') {
+        this.frasesOk = false;
+      } else if (e.error === 'language-not-supported' && r.processLocally) {
+        this.localOk = false;
+        alerta('Reconhecimento no dispositivo indisponível para pt-BR; usando o reconhecimento on-line.', 'info', 8000);
+      } else if (e.error === 'network') {
+        status('reconectando', 'Sem rede, reconectando');
+        this.espera = Math.min(this.espera * 2, 5000);
+      } else if (e.error === 'audio-capture') {
+        alerta('Nenhum microfone encontrado. Confira o microfone padrão do sistema.');
+        this.espera = 2000;
+      }
+    };
+    r.onend = () => {
+      fimDeSessao(sessao);
+      if (this.rec !== r || !estado.rodando) return;
+      status('reconectando', 'Reconectando');
+      setTimeout(() => { if (this.rec === r && estado.rodando) this._criar(); }, this.espera);
+    };
+    this.rec = r;
+    try { r.start(); } catch (e) { console.warn(e); }
+  },
+  _vigiar() {
+    // Se há som no microfone, mas o reconhecimento está mudo há 8 s, reinicia.
+    if (!this.rec || !estado.rodando) return;
+    if (agora() - this.ultimoEvento > 8000 && agora() - medidor.ultimaFala < 1500) {
+      console.warn('vigia: reiniciando reconhecimento');
+      this.ultimoEvento = agora();
+      try { this.rec.abort(); } catch {}
+    }
+  },
+};
+function termosDoGlossario() {
+  return cfg.glossario.split('\n').map((l) => l.split('=')[0].trim()).filter((l) => l && l.length <= 60).slice(0, 60);
+}
+
+// Simulador (modo demonstração)
+const TEXTO_DEMO = [
+  'boa noite a todos é uma alegria enorme estar aqui com vocês',
+  'hoje eu quero falar sobre a missionalidade da igreja',
+  'Lesslie Newbigin voltou da Índia e percebeu que o ocidente tinha se tornado um campo missionário',
+  'a missão não é uma atividade da igreja é a própria natureza de Deus que envia',
+  'por isso falamos em missio Dei a missão de Deus',
+  'e René Padilla nos lembrou que a missão é integral ela alcança a pessoa inteira',
+  'como diz João 20 21 assim como o pai me enviou eu também vos envio',
+];
+const simulador = {
+  timer: null, sessao: 1000,
+  iniciar() {
+    let frase = 0, palavra = 0, indice = 0;
+    const sessao = ++this.sessao;
+    status('demo', 'Demonstração');
+    const passo = () => {
+      if (!estado.rodando) return;
+      const palavras = TEXTO_DEMO[frase % TEXTO_DEMO.length].split(' ');
+      palavra++;
+      const final = palavra >= palavras.length;
+      resultado(sessao, indice, palavras.slice(0, palavra).join(' '), final);
+      medidor.ultimaFala = agora();
+      if (final) { frase++; palavra = 0; indice++; this.timer = setTimeout(passo, 900); }
+      else this.timer = setTimeout(passo, 330);
+    };
+    this.timer = setTimeout(passo, 300);
+  },
+  parar() { clearTimeout(this.timer); fimDeSessao(this.sessao); },
+};
+
+// ─────────────────────────────── Medidor do microfone ───────────────────────────────
+const medidor = {
+  stream: null, ctx: null, timer: null, ultimaFala: 0,
+  async iniciar() {
+    try {
+      this.stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false } });
+      const trilha = this.stream.getAudioTracks()[0];
+      $('micNome').textContent = trilha.label || 'padrão do sistema';
+      this.ctx = new AudioContext();
+      const an = this.ctx.createAnalyser();
+      an.fftSize = 1024;
+      this.ctx.createMediaStreamSource(this.stream).connect(an);
+      const buf = new Float32Array(an.fftSize);
+      this.timer = setInterval(() => {
+        an.getFloatTimeDomainData(buf);
+        let s = 0;
+        for (const v of buf) s += v * v;
+        const rms = Math.sqrt(s / buf.length);
+        const nivel = Math.min(1, rms * 8);
+        $('micNivel').style.width = (nivel * 100).toFixed(0) + '%';
+        if (rms > 0.02) this.ultimaFala = agora();
+      }, 100);
+      return true;
+    } catch (e) {
+      console.warn('microfone', e);
+      return false;
+    }
+  },
+  parar() {
+    clearInterval(this.timer);
+    this.stream?.getTracks().forEach((t) => t.stop());
+    this.ctx?.close().catch(() => {});
+    this.stream = this.ctx = null;
+    $('micNivel').style.width = '0';
+  },
+};
+
+// ─────────────────────────────── Iniciar / parar ───────────────────────────────
+async function iniciarTudo() {
+  if (estado.rodando) return;
+  fecharAlerta();
+  if (!DEMO && !SR) {
+    alerta('Este navegador não tem reconhecimento de voz. Use o Google Chrome no computador.');
+    return;
+  }
+  estado.rodando = true;
+  $('btnIniciar').setAttribute('aria-pressed', 'true');
+  $('btnIniciar').firstChild.textContent = 'Pausar legendas ';
+  prepararChrome(cfg.modelo === 'chrome'); // dentro do clique: pode baixar o pacote se preciso
+  if (!MOTOR_FALSO && cfg.modelo !== 'chrome') {
+    if (!chave) alerta('Sem chave da API: usando o tradutor do Chrome. Cole a chave em Configurações para usar o Claude.', 'info', 10000);
+    else if (!(await carregarSDK())) alerta('Não consegui carregar o SDK do Claude (internet?). Usando o tradutor do Chrome.', 'info', 10000);
+    else preAquecer();
+  }
+  if (DEMO) { simulador.iniciar(); }
+  else {
+    status('reconectando', 'Iniciando');
+    const ok = await medidor.iniciar();
+    if (!ok) { alerta('Não consegui acessar o microfone. Permita o microfone para este site.'); pararTudo(); return; }
+    if (estado.rodando) reconhecedor.iniciar();
+  }
+  atualizarPainel();
+}
+function pararTudo() {
+  if (!estado.rodando) return;
+  estado.rodando = false;
+  $('btnIniciar').setAttribute('aria-pressed', 'false');
+  $('btnIniciar').firstChild.textContent = 'Iniciar legendas ';
+  if (DEMO) simulador.parar(); else reconhecedor.parar();
+  medidor.parar();
+  status('parado', 'Parado');
+}
+function limparTela() {
+  estado.limparDesde = estado.trechos.length;
+  atualizar();
+}
+function baixarTranscricao() {
+  const linhas = estado.trechos.filter((t) => t.pt).map((t) => {
+    const h = new Date(t.tCriado).toLocaleTimeString('pt-BR');
+    return `[${h}] PT: ${t.pt}\n${' '.repeat(h.length + 3)}ES: ${t.es || ''}`;
+  });
+  const blob = new Blob([linhas.join('\n\n') + '\n'], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `legendas-${new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-')}.txt`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+}
+
+// ─────────────────────────────── Configurações ───────────────────────────────
+function carregarFormulario() {
+  $('cfgChave').value = chave;
+  $('cfgModelo').value = cfg.modelo;
+  $('cfgEscala').value = cfg.escala;
+  $('cfgLinhasProj').value = cfg.linhasProj;
+  $('cfgLinhasFaixa').value = cfg.linhasFaixa;
+  $('cfgFundo').value = cfg.fundo;
+  $('cfgCor').value = cfg.cor;
+  $('cfgMostrarPt').checked = cfg.mostrarPt;
+  $('cfgProv').checked = cfg.prov;
+  $('cfgFrases').checked = cfg.frases;
+  $('cfgLocal').checked = cfg.local;
+  $('cfgGlossario').value = cfg.glossario;
+  $('cfgContexto').value = cfg.contexto;
+}
+const ligar = (id, campo, conv = (v) => v, ev = 'change') => $(id).addEventListener(ev, (e) => {
+  cfg[campo] = conv(e.target.type === 'checkbox' ? e.target.checked : e.target.value);
+  salvarCfg();
+  superficies.forEach(aplicarAparencia);
+  atualizarPainel();
+});
+ligar('cfgModelo', 'modelo');
+ligar('cfgEscala', 'escala', Number, 'input');
+ligar('cfgLinhasProj', 'linhasProj', Number);
+ligar('cfgLinhasFaixa', 'linhasFaixa', Number);
+ligar('cfgFundo', 'fundo');
+ligar('cfgCor', 'cor');
+ligar('cfgMostrarPt', 'mostrarPt');
+ligar('cfgProv', 'prov');
+ligar('cfgFrases', 'frases');
+ligar('cfgLocal', 'local');
+ligar('cfgGlossario', 'glossario', String, 'input');
+ligar('cfgContexto', 'contexto', String, 'input');
+$('cfgModelo').addEventListener('change', () => { estado.claudeDesativado = false; estado.claudeForaAte = 0; });
+
+function salvarChave() {
+  chave = $('cfgChave').value.trim();
+  armazenar.gravar('legendas.chave', $('cfgLembrar').checked && chave ? chave : null);
+  estado.claudeDesativado = false;
+  estado.claudeForaAte = 0;
+  atualizarPainel();
+}
+$('cfgChave').addEventListener('change', salvarChave);
+$('cfgLembrar').addEventListener('change', salvarChave);
+
+$('btnTestar').addEventListener('click', async () => {
+  salvarChave();
+  const res = $('testeRes');
+  if (cfg.modelo === 'chrome') { res.textContent = 'O motor escolhido é o do Chrome; não usa chave.'; return; }
+  if (!chave) { res.textContent = 'Cole a chave primeiro.'; return; }
+  res.textContent = 'Testando…';
+  if (!(await carregarSDK())) { res.textContent = 'Não consegui carregar o SDK do Claude. Confira a internet.'; return; }
+  const t0 = agora();
+  try {
+    const trecho = { pt: 'boa noite a todos é uma alegria estar com vocês', es: '' };
+    const msg = await obterCliente().messages.create(paramsClaude(cfg.modelo, promptSistema(), mensagemTrecho(trecho, 'final'), cfg.modelo === 'claude-opus-5-5' ? 4000 : 512));
+    contabilizar(cfg.modelo, msg.usage);
+    const txt = limparSaida(msg.content.filter((b) => b.type === 'text').map((b) => b.text).join(''));
+    res.textContent = `OK em ${((agora() - t0) / 1000).toFixed(1)} s: “${txt}”`;
+  } catch (e) {
+    res.textContent = 'Falhou: ' + (e?.status ? `HTTP ${e.status} — ` : '') + (e?.message || e);
+  }
+  atualizarPainel();
+});
+
+$('btnOffline').addEventListener('click', async () => {
+  const res = $('offlineRes');
+  if (!('Translator' in self)) { res.textContent = 'Este navegador não tem o tradutor embutido (use o Chrome 138+ no computador).'; return; }
+  res.textContent = 'Preparando…';
+  const tr = await prepararChrome(true);
+  res.textContent = tr ? 'Pronto: o tradutor offline PT→ES está instalado.' : 'Não foi possível instalar o tradutor PT→ES neste Chrome.';
+  atualizarPainel();
+});
+
+async function verificarLocal() {
+  if (!SR || typeof SR.available !== 'function') { $('cfgLocal').disabled = true; return; }
+  try {
+    const d = await SR.available({ langs: ['pt-BR'], processLocally: true });
+    if (d === 'unavailable') { $('cfgLocal').disabled = true; $('localRes').textContent = 'Reconhecimento offline indisponível para pt-BR neste Chrome.'; }
+    else if (d !== 'available') $('localRes').textContent = 'Reconhecimento offline para pt-BR pode ser baixado (marque a opção e inicie).';
+  } catch { $('cfgLocal').disabled = true; }
+}
+
+// ─────────────────────────────── Botões e atalhos ───────────────────────────────
+$('btnIniciar').addEventListener('click', () => (estado.rodando ? pararTudo() : iniciarTudo()));
+$('btnProjetor').addEventListener('click', abrirProjetor);
+$('btnFaixa').addEventListener('click', abrirFaixa);
+$('btnLimpar').addEventListener('click', limparTela);
+$('btnBaixar').addEventListener('click', baixarTranscricao);
+document.addEventListener('keydown', (e) => {
+  if (e.target.closest('input,textarea,select,button,summary') || e.ctrlKey || e.metaKey || e.altKey) return;
+  if (e.code === 'Space') { e.preventDefault(); estado.rodando ? pararTudo() : iniciarTudo(); }
+  else if (e.key === 'Escape') limparTela();
+  else if (e.key === 'p' || e.key === 'P') abrirProjetor();
+  else if (e.key === 'b' || e.key === 'B') abrirFaixa();
+});
+window.addEventListener('beforeunload', (e) => { if (estado.rodando) { e.preventDefault(); e.returnValue = ''; } });
+
+carregarFormulario();
+verificarLocal();
+prepararChrome(false);
+if (chave && cfg.modelo !== 'chrome') carregarSDK();
+if (DEMO) alerta('Modo demonstração: o texto em português é simulado (sem microfone).' + (MOTOR_FALSO ? ' A tradução também é simulada.' : ''), 'info');
+atualizar();
+
+// Ganchos para testes automatizados
+window.__legendas = { estado, falso, superficies, cfg, abrirProjetor, iniciarTudo, pararTudo, resultado, fimDeSessao };
+</script>
+</body>
+</html>
