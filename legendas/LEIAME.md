@@ -21,32 +21,46 @@ A chave e as configurações ficam salvas só neste navegador.
 
 ## No dia
 
-1. **Microfone.** O sistema usa o microfone padrão do computador, e o painel mostra qual é e o nível
-   do sinal. O ideal é o seu microfone de lapela ou headset, ou uma saída da mesa de som ligada ao
-   computador por uma interface USB. Evite o microfone embutido do notebook perto das caixas de som:
-   o eco piora muito o reconhecimento.
-2. **Internet.** O reconhecimento de voz do Chrome e o Claude usam a internet. Tenha o hotspot do
-   celular como reserva. Sem internet, o tradutor offline do Chrome assume, com qualidade menor.
-3. **Onde mostrar as legendas:**
-   - **Tela só de legendas:** clique em **Abrir janela do projetor**, arraste a janela para a tela do
-     projetor ou TV e dê **duplo clique** (ou tecle **F**) para entrar em tela cheia.
-   - **Sobre os slides:** clique em **Faixa flutuante sobre os slides**. Abre uma faixa que fica
-     sempre por cima de outras janelas, inclusive do PowerPoint e do Google Slides em tela cheia.
-     Arraste a faixa para a parte de baixo do projetor e ajuste o tamanho. O Chrome lembra onde ela
-     ficou.
-   - **Com OBS:** escolha o fundo **Verde (chroma key)** em Configurações, capture a janela do projetor
-     no OBS e aplique o filtro Chroma Key.
-4. Clique em **Iniciar legendas** (ou tecle **Espaço**) e fale normalmente.
+O painel mostra **4 passos de preparação** no topo. Cada um fica verde quando está pronto:
+
+1. **Microfone.** O sistema usa o microfone padrão do computador e mostra o nome dele e o nível do
+   sinal. O ideal é um microfone de lapela ou headset, ou uma saída da mesa de som ligada por uma
+   interface USB. Evite o microfone embutido do notebook perto das caixas: o eco piora o reconhecimento.
+   Se não chegar som por 20 s, o painel avisa.
+2. **Tradutor.** O passo fica verde quando o tradutor do Chrome está baixado. Se aparecer
+   **Baixar**, clique uma vez, com internet.
+3. **Telão de legendas.** Clique em **Abrir**, arraste a janela para o telão ou TV e dê
+   **duplo clique** (ou tecle **F**) para entrar em tela cheia. Antes de começar, o telão mostra uma
+   tela de espera com o título da palestra.
+4. **Faixa nos slides.** Clique em **Abrir**. A faixa fica sempre por cima, inclusive do PowerPoint
+   e do Google Slides em tela cheia. Arraste-a para a base do projetor; o Chrome lembra a posição.
+
+Use **Texto de exemplo** para ajustar o tamanho da letra e o número de linhas sem precisar falar.
+Depois, clique em **Iniciar legendas** (ou tecle **Espaço**).
+
+**Como a legenda aparece para a plateia:**
+- Cada pausa na fala começa uma **linha nova**.
+- A frase atual fica em destaque, e as anteriores vão ficando mais apagadas.
+- O texto sobe suavemente, sem pular.
+- Uma frase de cima que não cabe inteira fica bem apagada, para ninguém ler um pedaço solto.
+- Depois de 15 s de silêncio, a legenda esmaece. Ela volta assim que você fala.
 
 | Tecla | Ação |
 |---|---|
 | Espaço | iniciar / pausar |
 | Esc | limpar a tela (por exemplo, numa troca de assunto) |
-| P | abrir a janela do projetor |
-| B | abrir a faixa flutuante |
-| F ou duplo clique (na janela do projetor) | tela cheia |
+| P | abrir o telão |
+| B | abrir a faixa sobre os slides |
+| F ou duplo clique (no telão) | tela cheia |
 
-Ao final, **Baixar transcrição** salva tudo o que foi dito, em português e em espanhol, num arquivo `.txt`.
+Em **Configurações → Legenda na tela** você ajusta:
+- título mostrado no telão;
+- fundo: carvão, grafite, preto ou verde para OBS;
+- cor do texto: branco ou dourado;
+- tamanho da letra e número de linhas;
+- posição: no centro, que é visível por cima das cabeças, ou embaixo.
+
+Ao final, **Transcrição** salva tudo o que foi dito, em português e em espanhol, num arquivo `.txt`.
 
 ## Ensaio obrigatório (15 minutos, no local se possível)
 
@@ -59,7 +73,7 @@ Ao final, **Baixar transcrição** salva tudo o que foi dito, em português e em
 - [ ] No Keynote, o modo apresentação às vezes esconde janelas flutuantes. Nesse caso, use a tela
   dedicada ou o OBS.
 - [ ] Ver no painel o **Atraso mediano** e o **Custo da sessão**.
-- [ ] Ler as legendas do fundo da sala e ajustar **tamanho** e **linhas** em Configurações.
+- [ ] Com **Texto de exemplo** ligado, ler as legendas do fundo da sala e ajustar **tamanho** e **linhas** em Configurações.
 - [ ] Desligar a internet por um momento e ver o tradutor offline assumir (aparece "Chrome" no painel).
 
 Quer testar o visual sem falar? Abra a página com `?demo=1` no fim do endereço. O português passa a

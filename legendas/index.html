@@ -4,206 +4,336 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Legendas ao Vivo</title>
+<meta name="theme-color" content="#DAAD28">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cpolygon points='60,5 107.6,32.5 107.6,87.5 60,115 12.4,87.5 12.4,32.5' fill='%23DAAD28'/%3E%3Cpath d='M26 84 L50 50 L61 65 L72 51 L95 84 Z' fill='%231D1E21'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link id="fontes" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link id="fontes" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Atkinson+Hyperlegible+Next:wght@400..800&family=Caveat:wght@600&display=swap">
 <style>
+/* Paleta extraída do material "Planeación de la Visión" (Auxano):
+   dourado #DAAD28 · grafite #54565B · cinza #CECCCD · prata #9FA1A3 · branco. */
 :root{
   color-scheme: dark;
-  --bg:#0B1020;
-  --panel:#121A33;
-  --panel-2:#18213F;
-  --line:#26305A;
-  --ink:#ECE8DC;
-  --muted:#8D95B3;
-  --gold:#F0C46C;
-  --ok:#6FCF97;
-  --warn:#F2994A;
-  --bad:#EB5757;
-  --sans:"Atkinson Hyperlegible",system-ui,"Segoe UI",Roboto,Arial,sans-serif;
-  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --ouro:#DAAD28;
+  --ouro-claro:#F0CB5C;
+  --grafite:#54565B;
+  --cinza:#CECCCD;
+  --prata:#9FA1A3;
+  --branco:#FFFFFF;
+  --tinta:#1D1E21;
+  --fundo:#25262A;
+  --sup:#303135;
+  --sup-2:#3A3C40;
+  --linha:#4B4D52;
+  --ok:#6FBF73;
+  --erro:#E5675A;
+  --vivo:#E5483B;
+  --ui:"Archivo",system-ui,"Segoe UI",Roboto,Arial,sans-serif;
+  --leitura:"Atkinson Hyperlegible Next","Atkinson Hyperlegible",system-ui,"Segoe UI",Roboto,Arial,sans-serif;
 }
 *{box-sizing:border-box}
-html,body{background:var(--bg);margin:0}
-body{color:var(--ink);font-family:var(--sans);padding-inline:16px}
-.app{max-width:1400px;margin:0 auto;padding-block:20px 40px;display:grid;gap:14px}
+[hidden]{display:none !important}
+html,body{margin:0;background:var(--fundo)}
+body{color:var(--branco);font-family:var(--ui);font-size:15px;line-height:1.4;-webkit-font-smoothing:antialiased}
 button,input,select,textarea{font:inherit;color:inherit}
-:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+:focus-visible{outline:2px solid var(--ouro);outline-offset:2px}
+.icone{width:1.2em;height:1.2em;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+kbd{font-family:var(--ui);font-size:11px;font-weight:700;border:1px solid currentColor;border-radius:4px;padding:0 5px;opacity:.6;line-height:1.5}
 
-header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 24px}
-h1{font-weight:700;font-size:clamp(26px,4vw,40px);line-height:1.05;margin:0}
-h1 em{color:var(--gold);font-style:normal}
-.sub{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+/* Cabeçalho no estilo das barras douradas do material */
+.topo{display:flex;align-items:stretch;background:var(--ouro);color:var(--tinta);min-height:60px}
+.topo-num{position:relative;display:flex;align-items:center;background:var(--grafite);color:var(--branco);padding:0 18px;font-weight:800;font-stretch:80%;font-size:21px;letter-spacing:.02em}
+.topo-num::after{content:"";position:absolute;left:18px;top:100%;border:9px solid transparent;border-top-color:var(--grafite);border-bottom:0}
+.topo-titulo{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;padding:6px 18px}
+.topo h1{margin:0;font-size:22px;font-weight:800;font-stretch:85%;line-height:1.1}
+.topo-sub{font-size:13px;font-weight:600;opacity:.78}
+.topo-dir{display:flex;align-items:center;gap:22px;padding:0 16px}
+.estado{display:inline-flex;align-items:center;gap:8px;background:var(--tinta);color:var(--branco);border-radius:999px;padding:7px 14px 7px 11px;font-weight:800;font-stretch:88%;font-size:13px;letter-spacing:.07em;text-transform:uppercase;white-space:nowrap}
+.estado i{width:10px;height:10px;border-radius:50%;background:var(--prata)}
+.estado[data-s="ouvindo"] i{background:var(--vivo);animation:pulso 1.8s infinite}
+.estado[data-s="reconectando"] i,.estado[data-s="demo"] i{background:var(--ouro)}
+.estado[data-s="erro"] i{background:var(--erro)}
+@keyframes pulso{0%{box-shadow:0 0 0 0 rgba(229,72,59,.6)}70%{box-shadow:0 0 0 9px rgba(229,72,59,0)}100%{box-shadow:0 0 0 0 rgba(229,72,59,0)}}
 
-.pill{font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;border:1px solid var(--line);border-radius:999px;padding:5px 12px 5px 10px;display:inline-flex;align-items:center;gap:8px;background:var(--panel)}
-.pill i{width:9px;height:9px;border-radius:50%;background:var(--muted)}
-.pill[data-s="ouvindo"] i{background:var(--ok);box-shadow:0 0 0 4px rgba(111,207,151,.18)}
-.pill[data-s="reconectando"] i,.pill[data-s="demo"] i{background:var(--warn)}
-.pill[data-s="erro"] i{background:var(--bad)}
+.painel{max-width:1440px;margin:0 auto;padding:24px 20px 28px;display:grid;gap:14px}
 
-.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.btn{background:var(--panel);border:1px solid var(--line);border-radius:6px;min-height:40px;padding:0 14px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--mono);font-size:13px}
-.btn:hover{border-color:var(--muted)}
-.btn.primary{background:var(--gold);border-color:var(--gold);color:#1A1406;font-weight:500;min-width:190px}
-.btn.primary[aria-pressed="true"]{background:var(--bad);border-color:var(--bad);color:#fff}
+/* Passos de preparação */
+.passos{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:1100px){.passos{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.passos{grid-template-columns:1fr}}
+.passo{display:flex;align-items:center;gap:11px;min-width:0;background:var(--sup);border:1px solid var(--linha);border-left:4px solid var(--prata);border-radius:10px;padding:10px 12px}
+.passo[data-e="ok"]{border-left-color:var(--ok)}
+.passo[data-e="aviso"]{border-left-color:var(--ouro)}
+.passo[data-e="erro"]{border-left-color:var(--erro)}
+.passo-n{width:28px;height:28px;flex:none;display:grid;place-items:center;border-radius:50%;background:var(--sup-2);color:var(--cinza);font-weight:800;font-size:14px}
+.passo[data-e="ok"] .passo-n{background:var(--ok);color:var(--tinta)}
+.passo[data-e="aviso"] .passo-n{background:var(--ouro);color:var(--tinta)}
+.passo[data-e="erro"] .passo-n{background:var(--erro);color:var(--tinta)}
+.passo-txt{flex:1;min-width:0;display:grid}
+.passo-txt b{font-size:14px;font-weight:700}
+.passo-txt small{font-size:12.5px;color:var(--cinza);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Botões */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px;padding:0 12px;background:var(--sup-2);border:1px solid var(--linha);border-radius:8px;cursor:pointer;font-weight:650;font-size:14px;white-space:nowrap}
+.btn:hover{border-color:var(--ouro)}
+.btn[aria-pressed="true"]{border-color:var(--ouro);color:var(--ouro-claro)}
 .btn:disabled{opacity:.45;cursor:not-allowed}
-kbd{font-family:var(--mono);font-size:11px;border:1px solid currentColor;border-radius:4px;padding:0 4px;opacity:.7}
+.btn.mini{min-height:32px;padding:0 10px;font-size:13px}
+.btn.ouro{background:var(--ouro);border-color:var(--ouro);color:var(--tinta)}
+.btn.ouro:hover{background:var(--ouro-claro)}
 
-.alert{display:none;border:1px solid var(--bad);background:rgba(235,87,87,.1);border-radius:8px;padding:10px 14px;font-size:15px}
-.alert.show{display:block}
-.alert.info{border-color:var(--warn);background:rgba(242,153,74,.1)}
+/* Controle */
+.controle{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;background:var(--sup);border:1px solid var(--linha);border-radius:12px;padding:10px}
+.iniciar{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:54px;min-width:240px;padding:0 20px;border:0;border-radius:10px;background:var(--ouro);color:var(--tinta);cursor:pointer;font-weight:800;font-stretch:90%;font-size:18px}
+.iniciar:hover{background:var(--ouro-claro)}
+.iniciar[aria-pressed="true"]{background:#C2453A;color:var(--branco)}
+.iniciar .icone{width:1.15em;height:1.15em}
+.medidor{display:flex;align-items:center;gap:8px;min-width:0;max-width:330px;color:var(--cinza);font-size:13px}
+.medidor .trilho{width:110px;height:10px;flex:none;border-radius:5px;background:var(--sup-2);overflow:hidden}
+.medidor .nivel{height:100%;width:0;background:linear-gradient(90deg,var(--ok),var(--ouro));transition:width .08s linear}
+.medidor span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.acoes{display:flex;gap:8px;flex-wrap:wrap}
+.metricas{display:flex;gap:20px}
+.metrica{display:grid;line-height:1.1;text-align:right}
+.metrica b{font-size:16px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.metrica span{font-size:10.5px;font-weight:800;font-stretch:85%;letter-spacing:.07em;text-transform:uppercase;opacity:.72;white-space:nowrap}
+@media (max-width:980px){.metricas{display:none}}
 
-.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:14px}
-@media (max-width:900px){.grid{grid-template-columns:1fr}}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;min-width:0}
-.card h2{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500;margin:0 0 10px;display:flex;justify-content:space-between;gap:8px}
-.transcript{height:300px;overflow-y:auto;font-size:18px;line-height:1.45;display:flex;flex-direction:column;gap:6px;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
-.transcript p{margin:0}
-.transcript .prov{color:var(--muted)}
-.transcript .eng{font-family:var(--mono);font-size:10px;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:0 4px;margin-left:6px;vertical-align:middle}
+/* Avisos */
+.aviso{display:none;align-items:flex-start;gap:10px;border:1px solid var(--erro);background:rgba(229,103,90,.12);border-radius:10px;padding:10px 12px;font-size:15px}
+.aviso.mostrar{display:flex}
+.aviso.info{border-color:var(--ouro);background:rgba(218,173,40,.1)}
+.aviso p{margin:0;flex:1}
+.aviso button{background:none;border:0;color:var(--cinza);cursor:pointer;font-size:20px;line-height:1;padding:0 4px}
 
-.preview{position:relative;aspect-ratio:16/9;border-radius:8px;overflow:hidden;border:1px solid var(--line)}
+/* Ao vivo */
+.ao-vivo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:14px}
+@media (max-width:960px){.ao-vivo{grid-template-columns:1fr}}
+.cartao{display:flex;flex-direction:column;min-width:0;overflow:hidden;background:var(--sup);border:1px solid var(--linha);border-radius:12px}
+.cartao h2{margin:0;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 14px;border-bottom:1px solid var(--linha);font-size:12px;font-weight:800;font-stretch:85%;letter-spacing:.09em;text-transform:uppercase;color:var(--cinza)}
+.cartao h2 .dica{font-weight:600;letter-spacing:.02em;text-transform:none;color:var(--prata)}
+.transcricao{flex:1 1 auto;height:0;min-height:220px;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:7px;font-family:var(--leitura);font-size:17px;line-height:1.45;scrollbar-width:thin;scrollbar-color:var(--linha) transparent}
+.transcricao:empty::before{content:"O que você falar em português aparece aqui, uma linha por pausa.";color:var(--prata)}
+.transcricao p{margin:0}
+.transcricao .prov{color:var(--prata)}
+.transcricao .eng{margin-left:6px;padding:0 5px;border:1px solid var(--linha);border-radius:4px;font-family:var(--ui);font-size:10.5px;font-weight:700;color:var(--prata);vertical-align:middle;white-space:nowrap}
+.previa{position:relative;aspect-ratio:16/9;background:#000}
 
-.meter{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12px;color:var(--muted);flex-wrap:wrap}
-.meter .track{width:140px;height:8px;border-radius:4px;background:var(--panel-2);overflow:hidden}
-.meter .fill{height:100%;width:0;background:var(--ok);transition:width .08s linear}
+/* Configurações */
+.config{background:var(--sup);border:1px solid var(--linha);border-radius:12px}
+.config>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:13px 14px;font-weight:800;font-stretch:85%;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--ouro)}
+.config>summary::-webkit-details-marker{display:none}
+.config>summary::after{content:"";margin-left:auto;border:6px solid transparent;border-top-color:var(--ouro);border-bottom:0;transition:transform .2s}
+.config[open]>summary::after{transform:rotate(180deg)}
+.grupos{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:14px;padding:0 14px 14px}
+.grupo{display:grid;gap:13px;align-content:start;background:var(--sup-2);border-radius:10px;padding:14px}
+.grupo h3{margin:0;font-size:12px;font-weight:800;font-stretch:85%;letter-spacing:.09em;text-transform:uppercase;color:var(--ouro)}
+.campo{display:grid;gap:6px}
+.campo>label,.campo>.rotulo{font-size:13px;font-weight:700;color:var(--cinza)}
+.campo small,.grupo small{font-size:12.5px;color:var(--prata)}
+.linha{display:flex;gap:10px 16px;align-items:center;flex-wrap:wrap}
+.check{display:flex;gap:9px;align-items:flex-start;font-size:14px}
+.check input{accent-color:var(--ouro);width:16px;height:16px;margin:2px 0 0;flex:none}
+input[type=range]{accent-color:var(--ouro);flex:1;min-width:140px}
+input[type=text],input[type=password],select,textarea{width:100%;background:var(--fundo);border:1px solid var(--linha);border-radius:8px;padding:8px 10px}
+select{width:auto;min-width:90px}
+#cfgModelo{width:100%}
+textarea{min-height:150px;resize:vertical;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;line-height:1.5}
+.amostras{display:flex;gap:10px;flex-wrap:wrap}
+.amostra{position:relative;display:grid;justify-items:center;gap:4px;font-size:12px;color:var(--cinza);cursor:pointer}
+.amostra input{position:absolute;opacity:0;pointer-events:none}
+.amostra span{display:grid;place-items:center;width:62px;height:40px;border-radius:7px;border:2px solid var(--linha);background:var(--a-bg);color:var(--a-fg);font-family:var(--leitura);font-weight:700;font-size:17px}
+.amostra input:checked+span{border-color:var(--ouro);box-shadow:0 0 0 2px var(--ouro)}
+.amostra input:focus-visible+span{outline:2px solid var(--branco);outline-offset:3px}
+output{font-variant-numeric:tabular-nums;font-weight:700;min-width:3.5em}
 
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
-.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
-.stat b{display:block;font-size:22px;font-weight:700}
-.stat span{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-
-details.card summary{cursor:pointer;font-family:var(--mono);font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold)}
-.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:14px}
-.field{display:grid;gap:6px;align-content:start}
-.field label,.field .lbl{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.04em}
-.field small{color:var(--muted);font-size:13px}
-input[type=text],input[type=password],select,textarea{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px;width:100%}
-textarea{min-height:170px;resize:vertical;font-family:var(--mono);font-size:13px;line-height:1.5}
-.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.check{display:flex;gap:8px;align-items:center;font-size:15px}
-.span2{grid-column:1/-1}
-footer{color:var(--muted);font-size:13px}
-footer a{color:var(--gold)}
+.rodape{display:flex;flex-wrap:wrap;gap:6px 16px;color:var(--prata);font-size:13px}
+.rodape a{color:var(--ouro)}
 </style>
 </head>
 <body>
-<div class="app">
-  <header>
-    <div>
-      <h1>Legendas ao vivo <em>PT → ES</em></h1>
-      <div class="sub">Português do Brasil → espanhol latino-americano · tempo real</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l12.5-7.5z" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-pausa" viewBox="0 0 24 24"><path d="M6.5 4h4v16h-4zM13.5 4h4v16h-4z" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="2.5" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3.5M8.5 21.5h7"/></symbol>
+  <symbol id="i-tela" viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="13" rx="1.5"/><path d="M8 21h8M12 17v4"/></symbol>
+  <symbol id="i-faixa" viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="16" rx="1.5"/><rect x="5" y="13.5" width="14" height="4" rx=".8" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-limpar" viewBox="0 0 24 24"><path d="M3.5 20.5h17M6 15.5l9-9 4 4-9 9H6z"/></symbol>
+  <symbol id="i-texto" viewBox="0 0 24 24"><path d="M4 6h16M4 11h16M4 16h10"/></symbol>
+  <symbol id="i-baixar" viewBox="0 0 24 24"><path d="M12 3.5v12M7 10.5l5 5 5-5M4.5 20.5h15"/></symbol>
+  <symbol id="i-ajustes" viewBox="0 0 24 24"><path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/></symbol>
+  <symbol id="i-globo" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.8 3 2.8 15 0 18M12 3c-2.8 3-2.8 15 0 18"/></symbol>
+</svg>
+
+<header class="topo">
+  <div class="topo-num">PT → ES</div>
+  <div class="topo-titulo">
+    <h1>Legendas ao vivo</h1>
+    <span class="topo-sub">Português do Brasil → espanhol latino-americano · tempo real</span>
+  </div>
+  <div class="topo-dir">
+    <div class="metricas" aria-label="Métricas da sessão">
+      <div class="metrica"><b id="stLat">–</b><span>Atraso</span></div>
+      <div class="metrica"><b id="stMotor">–</b><span>Motor</span></div>
+      <div class="metrica"><b id="stReq">0</b><span>Traduções · reservas</span></div>
+      <div class="metrica" id="mCusto" hidden><b id="stCusto">US$ 0,00</b><span>Custo</span></div>
     </div>
-    <span class="pill" id="status" data-s="parado"><i></i><span>Parado</span></span>
-  </header>
-
-  <div class="bar">
-    <button class="btn primary" id="btnIniciar" aria-pressed="false">Iniciar legendas <kbd>Espaço</kbd></button>
-    <button class="btn" id="btnProjetor">Abrir janela do projetor <kbd>P</kbd></button>
-    <button class="btn" id="btnFaixa">Faixa flutuante sobre os slides <kbd>B</kbd></button>
-    <button class="btn" id="btnLimpar">Limpar tela <kbd>Esc</kbd></button>
-    <button class="btn" id="btnBaixar">Baixar transcrição</button>
+    <span class="estado" id="status" data-s="parado" role="status"><i></i><span>Parado</span></span>
   </div>
+</header>
 
-  <div class="alert" id="alerta" role="alert"></div>
+<main class="painel">
+  <section class="passos" aria-label="Preparação">
+    <div class="passo" id="pMic" data-n="1" data-e="pendente">
+      <span class="passo-n">1</span>
+      <div class="passo-txt"><b>Microfone</b><small id="chkMic">Verificando…</small></div>
+    </div>
+    <div class="passo" id="pTrad" data-n="2" data-e="pendente">
+      <span class="passo-n">2</span>
+      <div class="passo-txt"><b>Tradutor</b><small id="chkTrad">Verificando…</small></div>
+      <button class="btn mini ouro" id="btnOffline" type="button" hidden><span class="rotulo">Baixar</span></button>
+    </div>
+    <div class="passo" id="pProj" data-n="3" data-e="pendente">
+      <span class="passo-n">3</span>
+      <div class="passo-txt"><b>Telão de legendas</b><small id="chkProj"></small></div>
+      <button class="btn mini" id="btnProjetor" type="button"><svg class="icone"><use href="#i-tela"/></svg><span class="rotulo">Abrir</span></button>
+    </div>
+    <div class="passo" id="pFaixa" data-n="4" data-e="pendente">
+      <span class="passo-n">4</span>
+      <div class="passo-txt"><b>Faixa nos slides</b><small id="chkFaixa"></small></div>
+      <button class="btn mini" id="btnFaixa" type="button"><svg class="icone"><use href="#i-faixa"/></svg><span class="rotulo">Abrir</span></button>
+    </div>
+  </section>
 
-  <div class="meter">
-    <span>Microfone:</span><span id="micNome">padrão do sistema</span>
-    <div class="track"><div class="fill" id="micNivel"></div></div>
-    <span id="motorInfo"></span>
-  </div>
+  <section class="controle" aria-label="Controle das legendas">
+    <button class="iniciar" id="btnIniciar" type="button" aria-pressed="false"><svg class="icone"><use href="#i-play"/></svg><span class="rotulo">Iniciar legendas</span><kbd>Espaço</kbd></button>
+    <div class="medidor" title="Nível do microfone">
+      <svg class="icone"><use href="#i-mic"/></svg>
+      <div class="trilho"><div class="nivel" id="micNivel"></div></div>
+      <span id="micNome">microfone padrão</span>
+    </div>
+    <div class="acoes">
+      <button class="btn" id="btnLimpar" type="button"><svg class="icone"><use href="#i-limpar"/></svg>Limpar tela<kbd>Esc</kbd></button>
+      <button class="btn" id="btnExemplo" type="button" aria-pressed="false"><svg class="icone"><use href="#i-texto"/></svg>Texto de exemplo</button>
+      <button class="btn" id="btnBaixar" type="button"><svg class="icone"><use href="#i-baixar"/></svg>Transcrição</button>
+    </div>
+  </section>
 
-  <div class="grid">
-    <section class="card">
-      <h2><span>Português reconhecido</span><span id="ptConta"></span></h2>
-      <div class="transcript" id="ptLog" aria-live="off"></div>
-    </section>
-    <section class="card">
-      <h2><span>O que a plateia vê</span><span>prévia</span></h2>
-      <div class="preview" id="previa"></div>
-    </section>
-  </div>
+  <div class="aviso" id="alerta" role="status" aria-live="polite"><p id="alertaTxt"></p><button type="button" id="alertaFechar" aria-label="Fechar aviso">×</button></div>
 
-  <div class="stats">
-    <div class="stat"><b id="stLat">–</b><span>Atraso mediano</span></div>
-    <div class="stat"><b id="stMotor">–</b><span>Motor de tradução</span></div>
-    <div class="stat"><b id="stCusto">US$ 0,00</b><span>Custo da sessão (estim.)</span></div>
-    <div class="stat"><b id="stReq">0</b><span>Traduções · reservas</span></div>
-  </div>
+  <section class="ao-vivo">
+    <article class="cartao">
+      <h2><span>Português reconhecido</span><span class="dica" id="ptConta"></span></h2>
+      <div class="transcricao" id="ptLog"></div>
+    </article>
+    <article class="cartao">
+      <h2><span>O que a plateia vê</span><span class="dica">prévia ao vivo</span></h2>
+      <div class="previa" id="previa"></div>
+    </article>
+  </section>
 
-  <details class="card" id="config">
-    <summary>Configurações</summary>
-    <div class="form">
-      <div class="field">
-        <label for="cfgChave">Chave da API Anthropic</label>
-        <input type="password" id="cfgChave" autocomplete="off" placeholder="sk-ant-…">
-        <div class="row">
-          <label class="check"><input type="checkbox" id="cfgLembrar" checked> Lembrar neste navegador</label>
-          <button class="btn" id="btnTestar" type="button">Testar</button>
+  <details class="config" id="config">
+    <summary><svg class="icone"><use href="#i-ajustes"/></svg>Configurações</summary>
+    <div class="grupos">
+      <section class="grupo">
+        <h3>Legenda na tela</h3>
+        <div class="campo">
+          <label for="cfgTitulo">Título mostrado no telão</label>
+          <input type="text" id="cfgTitulo" maxlength="80">
         </div>
-        <small id="testeRes">A chave fica só neste navegador e vai direto para a API da Anthropic.</small>
-      </div>
-      <div class="field">
-        <label for="cfgModelo">Motor de tradução</label>
-        <select id="cfgModelo">
-          <option value="claude-haiku-4-5">Claude Haiku 4.5 — mais rápido</option>
-          <option value="claude-sonnet-5-5">Claude Sonnet 5.5 — mais nuance, um pouco mais lento</option>
-          <option value="claude-opus-5-5">Claude Opus 5.5 — melhor qualidade, mais atraso</option>
-          <option value="chrome">Tradutor do Chrome — grátis, offline (padrão)</option>
-        </select>
-        <small>Se o Claude falhar, o tradutor do Chrome assume na hora.</small>
-        <div class="row">
-          <button class="btn" id="btnOffline" type="button">Preparar modo offline</button>
-          <small id="offlineRes"></small>
+        <div class="campo">
+          <span class="rotulo" id="rotFundo">Fundo</span>
+          <div class="amostras" role="radiogroup" aria-labelledby="rotFundo">
+            <label class="amostra"><input type="radio" name="fundo" value="carvao"><span style="--a-bg:#1D1E21;--a-fg:#fff">Aa</span>Carvão</label>
+            <label class="amostra"><input type="radio" name="fundo" value="grafite"><span style="--a-bg:#54565B;--a-fg:#fff">Aa</span>Grafite</label>
+            <label class="amostra"><input type="radio" name="fundo" value="preto"><span style="--a-bg:#000;--a-fg:#fff">Aa</span>Preto</label>
+            <label class="amostra"><input type="radio" name="fundo" value="verde"><span style="--a-bg:#00B140;--a-fg:#fff">Aa</span>Chroma</label>
+          </div>
         </div>
-      </div>
-      <div class="field">
-        <span class="lbl">Aparência da legenda</span>
-        <div class="row">
-          <label class="check">Tamanho <input type="range" id="cfgEscala" min="0.6" max="1.5" step="0.05"></label>
+        <div class="campo">
+          <span class="rotulo" id="rotCor">Cor do texto</span>
+          <div class="amostras" role="radiogroup" aria-labelledby="rotCor">
+            <label class="amostra"><input type="radio" name="cor" value="branco"><span style="--a-bg:#1D1E21;--a-fg:#fff">Aa</span>Branco</label>
+            <label class="amostra"><input type="radio" name="cor" value="ouro"><span style="--a-bg:#1D1E21;--a-fg:#F0CB5C">Aa</span>Dourado</label>
+          </div>
         </div>
-        <div class="row">
-          <label class="check">Linhas no projetor
-            <select id="cfgLinhasProj"><option>2</option><option>3</option><option>4</option></select></label>
-          <label class="check">Linhas na faixa
+        <div class="campo">
+          <label for="cfgEscala">Tamanho da letra</label>
+          <div class="linha"><input type="range" id="cfgEscala" min="0.6" max="1.5" step="0.05"><output id="escalaVal" for="cfgEscala"></output></div>
+        </div>
+        <div class="linha">
+          <label class="check" style="align-items:center">Linhas no telão
+            <select id="cfgLinhasProj"><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
+          <label class="check" style="align-items:center">Linhas na faixa
             <select id="cfgLinhasFaixa"><option>1</option><option>2</option><option>3</option></select></label>
         </div>
-        <div class="row">
-          <label class="check">Fundo
-            <select id="cfgFundo">
-              <option value="preto">Preto</option>
-              <option value="azul">Azul-escuro</option>
-              <option value="verde">Verde (chroma key / OBS)</option>
-            </select></label>
-          <label class="check">Texto
-            <select id="cfgCor">
-              <option value="branco">Branco</option>
-              <option value="amarelo">Amarelo</option>
-            </select></label>
+        <div class="campo">
+          <label for="cfgPosicao">Posição da legenda no telão</label>
+          <select id="cfgPosicao">
+            <option value="centro">No centro (visível por cima das cabeças)</option>
+            <option value="embaixo">Embaixo</option>
+          </select>
         </div>
+        <label class="check"><input type="checkbox" id="cfgLinhaPorPausa"> Nova linha a cada pausa na fala</label>
+        <label class="check"><input type="checkbox" id="cfgDestaque"> Destacar a frase atual (as anteriores ficam mais apagadas)</label>
+        <label class="check"><input type="checkbox" id="cfgPontuar"> Maiúscula no início e ponto no fim de cada frase</label>
+        <label class="check"><input type="checkbox" id="cfgTopo"> Faixa dourada com o título no telão</label>
+        <label class="check"><input type="checkbox" id="cfgSilencio"> Esmaecer a legenda depois de 15 s de silêncio</label>
         <label class="check"><input type="checkbox" id="cfgMostrarPt"> Mostrar também o português (menor)</label>
-        <label class="check"><input type="checkbox" id="cfgProv"> Esmaecer o texto provisório</label>
-      </div>
-      <div class="field">
-        <span class="lbl">Reconhecimento de voz</span>
+      </section>
+
+      <section class="grupo">
+        <h3>Tradução</h3>
+        <div class="campo">
+          <label for="cfgModelo">Motor de tradução</label>
+          <select id="cfgModelo">
+            <option value="chrome">Tradutor do Chrome: grátis e offline (padrão)</option>
+            <option value="claude-haiku-4-5">Claude Haiku 4.5: mais rápido</option>
+            <option value="claude-sonnet-5-5">Claude Sonnet 5.5: mais nuance, um pouco mais lento</option>
+            <option value="claude-opus-5-5">Claude Opus 5.5: melhor qualidade, mais atraso</option>
+          </select>
+          <small>O tradutor do Chrome não usa glossário. Com o Claude, se ele falhar, o Chrome assume na hora.</small>
+        </div>
+        <div id="grupoClaude" class="grupo" style="padding:0;background:none" hidden>
+          <div class="campo">
+            <label for="cfgChave">Chave da API Anthropic</label>
+            <input type="password" id="cfgChave" autocomplete="off" placeholder="sk-ant-…">
+            <div class="linha">
+              <label class="check"><input type="checkbox" id="cfgLembrar" checked> Lembrar neste navegador</label>
+              <button class="btn mini" id="btnTestar" type="button">Testar</button>
+            </div>
+            <small id="testeRes">A chave fica só neste navegador e vai direto para a API da Anthropic.</small>
+          </div>
+          <div class="campo">
+            <label for="cfgGlossario">Glossário (<code>português = español</code>, uma linha por termo)</label>
+            <textarea id="cfgGlossario" spellcheck="false"></textarea>
+            <div class="linha"><button class="btn mini" id="btnRestaurar" type="button">Restaurar glossário e contexto do tema</button></div>
+          </div>
+          <div class="campo">
+            <label for="cfgContexto">Contexto da palestra</label>
+            <textarea id="cfgContexto" spellcheck="false" style="min-height:90px"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <section class="grupo">
+        <h3>Reconhecimento de voz</h3>
         <label class="check"><input type="checkbox" id="cfgFrases"> Reforçar nomes do glossário (se o Chrome suportar)</label>
         <label class="check"><input type="checkbox" id="cfgLocal"> Reconhecer no dispositivo, sem internet (se houver para pt-BR)</label>
-        <small id="localRes">O microfone usado é o padrão do sistema operacional.</small>
-      </div>
-      <div class="field span2">
-        <label for="cfgGlossario">Glossário (uma linha por termo: <code>português = español</code>, ou só o nome)</label>
-        <textarea id="cfgGlossario" spellcheck="false"></textarea>
-        <div class="row"><button class="btn" id="btnRestaurar" type="button">Restaurar glossário e contexto do tema (Planejamento da Visão)</button></div>
-      </div>
-      <div class="field span2">
-        <label for="cfgContexto">Contexto da palestra (título, tema, roteiro: ajuda a traduzir termos e corrigir nomes)</label>
-        <textarea id="cfgContexto" spellcheck="false" style="min-height:90px"></textarea>
-      </div>
+        <small id="localRes">O microfone usado é o padrão do sistema operacional. Para trocar, mude o microfone padrão do computador.</small>
+      </section>
     </div>
   </details>
 
-  <footer>Atalhos: <kbd>Espaço</kbd> iniciar/pausar · <kbd>Esc</kbd> limpar tela · <kbd>P</kbd> projetor · <kbd>B</kbd> faixa flutuante · na janela do projetor, duplo clique ou <kbd>F</kbd> = tela cheia. Teste sem microfone: <a href="?demo=1">modo demonstração</a>.</footer>
-</div>
+  <footer class="rodape">
+    <span><kbd>Espaço</kbd> iniciar/pausar</span>
+    <span><kbd>Esc</kbd> limpar tela</span>
+    <span><kbd>P</kbd> telão</span>
+    <span><kbd>B</kbd> faixa sobre os slides</span>
+    <span>No telão: duplo clique ou <kbd>F</kbd> = tela cheia</span>
+    <a href="?demo=1">Modo demonstração</a>
+  </footer>
+</main>
 
 <script type="module">
 // ─────────────────────────────── Configuração ───────────────────────────────
@@ -218,7 +348,7 @@ const PRECOS = { // US$ por milhão de tokens
 };
 const NOMES_MOTOR = {
   'claude-haiku-4-5': 'Haiku 4.5', 'claude-sonnet-5-5': 'Sonnet 5.5', 'claude-opus-5-5': 'Opus 5.5',
-  chrome: 'Chrome offline', pt: 'sem tradução', falso: 'simulado',
+  chrome: 'Chrome', pt: 'sem tradução', falso: 'simulado', exemplo: 'exemplo',
 };
 const GLOSSARIO_PADRAO = `# Planejamento da Visão (Auxano) — termos oficiais do material em espanhol
 Planejamento da Visão = Planeación de la Visión
@@ -313,9 +443,13 @@ Atos = Hechos
 transfiguração = transfiguración`;
 const CONTEXTO_PADRAO = `Palestra sobre Planejamento da Visão (Plataforma Estratégica, metodologia Auxano) para líderes e pastores de igrejas. Temas: visão adequada de longo e curto prazo; a Trilha do Horizonte com seus quatro horizontes (Além do Horizonte 5–20 anos, Horizonte Mensurável 3 anos, Caminho para o Horizonte 1 ano, Próximos Passos no Horizonte 90 dias); Moldura da Visão (missão, valores, estratégia, medidas de missão); os 12 modelos de visão; visão genérica × visão vigorosa; Comprimento de Onda do Pensamento (Tom Paterson); Mapa da Vida da Igreja; ênfase e meta de 1 ano; 4 iniciativas de 90 dias; Esboço de Guardanapo 1:4:1:4. O material oficial em espanhol usa "Planeación de la Visión", "Trama del Horizonte" e "Encuadre de la Visión": use sempre esses termos.`;
 const VERSAO_GLOSSARIO = 2;
+
+const VERSAO_VISUAL = 3;
 const PADRAO = {
-  modelo: 'chrome', escala: 1, linhasProj: 3, linhasFaixa: 2, fundo: 'preto', cor: 'branco',
-  mostrarPt: false, prov: true, frases: true, local: false, glossario: GLOSSARIO_PADRAO, contexto: CONTEXTO_PADRAO, versaoGlossario: VERSAO_GLOSSARIO,
+  modelo: 'chrome', escala: 1, linhasProj: 3, linhasFaixa: 2, fundo: 'carvao', cor: 'branco',
+  titulo: 'Planeación de la Visión', posicao: 'centro', topo: true, linhaPorPausa: true, destaque: true,
+  pontuar: true, silencio: true, mostrarPt: false, frases: true, local: false,
+  glossario: GLOSSARIO_PADRAO, contexto: CONTEXTO_PADRAO, versaoGlossario: VERSAO_GLOSSARIO, versaoVisual: VERSAO_VISUAL,
 };
 const params = new URLSearchParams(location.search);
 const DEMO = params.has('demo');
@@ -333,6 +467,11 @@ if ((salvo.versaoGlossario || 1) < VERSAO_GLOSSARIO) {
   // Glossário e contexto do tema da palestra substituem os de versões anteriores.
   Object.assign(cfg, { glossario: GLOSSARIO_PADRAO, contexto: CONTEXTO_PADRAO, versaoGlossario: VERSAO_GLOSSARIO });
 }
+if ((salvo.versaoVisual || 1) < VERSAO_VISUAL) {
+  // Novo visual: cores do material, uma linha por pausa e a frase atual em destaque.
+  Object.assign(cfg, { fundo: cfg.fundo === 'verde' ? 'verde' : 'carvao', cor: 'branco', linhaPorPausa: true,
+    destaque: true, pontuar: true, posicao: 'centro', topo: true, versaoVisual: VERSAO_VISUAL });
+}
 let chave = armazenar.ler('legendas.chave') || '';
 const salvarCfg = () => armazenar.gravar('legendas.cfg', JSON.stringify(cfg));
 
@@ -345,6 +484,8 @@ const estado = {
   rodando: false,
   trechos: [],        // {id, pt, final, es, esFinal, motor, tPt, tCriado, voo, palavrasEnviadas}
   limparDesde: 0,     // índice a partir do qual a tela mostra
+  exemplo: null,      // texto de exemplo para ajustar o tamanho da letra
+  ultimaMudanca: 0,
   latencias: [],
   custo: 0, tokensIn: 0, tokensOut: 0,
   traducoes: 0, reservas: 0,
@@ -352,7 +493,7 @@ const estado = {
 };
 let proxId = 1;
 
-// ─────────────────────────────── Interface: status e alertas ───────────────────────────────
+// ─────────────────────────────── Interface: status e avisos ───────────────────────────────
 function status(s, texto) {
   const el = $('status');
   el.dataset.s = s;
@@ -361,91 +502,242 @@ function status(s, texto) {
 let alertaTimer;
 function alerta(msg, tipo = 'erro', ms = 0) {
   const el = $('alerta');
-  el.textContent = msg;
-  el.className = 'alert show' + (tipo === 'info' ? ' info' : '');
+  $('alertaTxt').textContent = msg;
+  el.className = 'aviso mostrar' + (tipo === 'info' ? ' info' : '');
   clearTimeout(alertaTimer);
-  if (ms) alertaTimer = setTimeout(() => el.classList.remove('show'), ms);
+  if (ms) alertaTimer = setTimeout(fecharAlerta, ms);
 }
-const fecharAlerta = () => $('alerta').classList.remove('show');
+function fecharAlerta() { $('alerta').classList.remove('mostrar'); }
+$('alertaFechar').addEventListener('click', fecharAlerta);
 
 // ─────────────────────────────── Legendas: CSS compartilhado pelas superfícies ───────────────────────────────
+const HEX = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34.64' height='60' viewBox='0 0 34.64 60'%3E%3Cg fill='none' stroke='%23DAAD28' stroke-opacity='.08' stroke-width='1.1'%3E%3Cpath d='M17.32 0L34.64 10V30L17.32 40L0 30V10Z'/%3E%3Cpath d='M0 30L17.32 40V60L0 70L-17.32 60V40Z'/%3E%3Cpath d='M34.64 30L51.96 40V60L34.64 70L17.32 60V40Z'/%3E%3Cpath d='M0 -30L17.32 -20V0L0 10L-17.32 0V-20Z'/%3E%3Cpath d='M34.64 -30L51.96 -20V0L34.64 10L17.32 0V-20Z'/%3E%3C/g%3E%3C/svg%3E")`;
 const CSS_LEGENDA = `
-.cap{container-type:size;position:absolute;inset:0;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;
-  padding:3cqh 4cqw;background:var(--cap-bg);color:var(--cap-fg);
-  font-family:"Atkinson Hyperlegible",system-ui,"Segoe UI",Roboto,Arial,sans-serif;font-weight:700;
-  --pt-h:0cqh;--fs:min(calc((94cqh - var(--pt-h)) / (var(--lines) * 1.2) * var(--scale)), calc(6.2cqw * var(--scale)))}
-.cap.com-pt{--pt-h:16cqh}
-.cap-pt{display:none;font-weight:400;opacity:.7;font-size:calc(var(--fs) * .42);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:.3em}
-.cap.com-pt .cap-pt{display:block}
-.cap-box{font-size:var(--fs);line-height:1.2;height:calc(var(--lines) * 1.2em);overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end}
-.cap-es{margin:0;text-wrap:pretty}
-.cap.esmaecer .l{opacity:.72}
-.cap .l{transition:opacity .2s}
+.cap{container-type:size;position:absolute;inset:0;overflow:hidden;display:flex;flex-direction:column;
+  background:var(--cap-bg,#1D1E21);color:var(--cap-fg,#fff);
+  --c-ouro:#DAAD28;--c-tinta:#1D1E21;
+  --cap-ant:color-mix(in srgb,var(--cap-fg,#fff) 80%,var(--cap-bg,#1D1E21));
+  --cap-velho:color-mix(in srgb,var(--cap-fg,#fff) 58%,var(--cap-bg,#1D1E21));
+  --lh:1.24;--gap:.2em;--topo-h:0cqh;--pt-h:0cqh;--pad-y:5cqh;--pad-x:5.5cqw;
+  --fs:calc(min((100cqh - var(--topo-h) - var(--pt-h) - 2 * var(--pad-y)) / (var(--lines) * var(--lh) + .2), 5.6cqw) * var(--scale,1));
+  font-family:"Atkinson Hyperlegible Next","Atkinson Hyperlegible",system-ui,"Segoe UI",Roboto,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased}
+.cap.com-topo{--topo-h:7cqh}
+.cap.com-pt{--pt-h:11cqh}
+.cap.faixa{--pad-y:3cqh;--pad-x:3cqw;border-top:max(3px,1.4cqh) solid var(--c-ouro)}
+.cap-topo{display:none;flex:none;height:var(--topo-h);align-items:center;gap:2.4cqw;padding:0 var(--pad-x);
+  background:var(--c-ouro);color:var(--c-tinta);font-family:"Archivo",system-ui,sans-serif;font-stretch:82%;font-weight:800;
+  font-size:2.7cqh;letter-spacing:.07em;text-transform:uppercase;white-space:nowrap;overflow:hidden}
+.cap.com-topo .cap-topo{display:flex}
+.cap-vivo{display:inline-flex;align-items:center;gap:.55em}
+.cap-vivo i{width:.75em;height:.75em;border-radius:50%;background:currentColor;opacity:.35}
+.cap.ao-vivo .cap-vivo i{background:#C62F25;opacity:1;animation:cap-pulso 2s ease-in-out infinite}
+.cap-titulo{flex:1;text-align:center;overflow:hidden;text-overflow:ellipsis}
+.cap-nota{font-weight:700;opacity:.72}
+@keyframes cap-pulso{50%{opacity:.35}}
+.cap-area{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:flex-end;padding:var(--pad-y) var(--pad-x)}
+.cap.pos-centro .cap-area{justify-content:center}
+.cap-bloco{width:100%;max-width:calc(var(--fs) * 24);margin-inline:auto}
+.cap-pt{display:none;font-size:calc(var(--fs) * .4);line-height:1.3;font-weight:500;opacity:.66;margin-bottom:.6em;
+  overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+.cap.com-pt .cap-pt{display:-webkit-box}
+.cap-box{font-size:var(--fs);line-height:var(--lh);height:calc((var(--lines) * var(--lh) + .2) * 1em);overflow:hidden;
+  display:flex;flex-direction:column;justify-content:flex-end;transition:opacity .3s ease;
+  -webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,.25),#000 .7em);mask-image:linear-gradient(to bottom,rgba(0,0,0,.25),#000 .7em)}
+.cap-es{font-weight:650;letter-spacing:.004em;text-wrap:pretty;overflow-wrap:break-word}
+.cap.por-pausa .seg{display:block}
+.cap.por-pausa .seg+.seg{margin-top:var(--gap)}
+.cap.destaque .seg.anterior{color:var(--cap-ant)}
+.cap.destaque .seg.antigo{color:var(--cap-velho)}
+.cap .seg{transition:color .4s ease,opacity .3s ease}
+.cap .seg.cortado{opacity:.28}
+.cap .novo{animation:cap-entra .26s ease-out both}
+@keyframes cap-entra{from{opacity:.1}to{opacity:1}}
+.cap.silencio .cap-box{opacity:.4;transition:opacity 1.8s ease}
+.cap-ocioso{display:none;flex:1;min-height:0;flex-direction:column;align-items:center;justify-content:center;gap:2.4cqh;
+  text-align:center;padding:4cqh 6cqw;background-image:${HEX};background-size:auto 17cqh;background-position:center}
+.cap.ocioso .cap-ocioso{display:flex}
+.cap.ocioso .cap-area{display:none}
+.cap.tema-verde .cap-ocioso{background-image:none}
+.cap-selo{width:23cqh;height:23cqh}
+.cap-ocioso h2{margin:0;max-width:92%;font-family:"Archivo",system-ui,sans-serif;font-stretch:75%;font-weight:800;font-size:8.5cqh;
+  line-height:1;letter-spacing:.03em;text-transform:uppercase;color:var(--cap-fg,#fff)}
+.cap-mao{font-family:"Caveat","Archivo",system-ui,sans-serif;font-weight:600;font-size:7cqh;line-height:1;color:var(--c-ouro)}
+.cap-ocioso p{margin:0;max-width:62ch;font-size:3.1cqh;line-height:1.35;color:#CECCCD}
+.cap.faixa .cap-selo,.cap.faixa .cap-ocioso h2,.cap.faixa .cap-ocioso p{display:none}
+.cap.faixa .cap-ocioso{background:none;padding:0}
+.cap.faixa .cap-mao{font-size:min(28cqh,6cqw);opacity:.8}
+@media (prefers-reduced-motion:reduce){.cap .novo,.cap.ao-vivo .cap-vivo i{animation:none}}
 `;
 const CSS_JANELA = `
-html,body{margin:0;height:100%;background:#000;overflow:hidden}
+html,body{margin:0;height:100%;overflow:hidden;background:#1D1E21}
 body{position:relative}
 body.sem-cursor{cursor:none}
-.dica{position:fixed;top:10px;left:50%;transform:translateX(-50%);font:13px system-ui,sans-serif;color:#bbb;background:rgba(0,0,0,.6);
-  padding:6px 12px;border-radius:6px;transition:opacity .4s;pointer-events:none;z-index:2}
+.dica{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:2;pointer-events:none;white-space:nowrap;
+  font:700 13px "Archivo",system-ui,sans-serif;color:#1D1E21;background:#DAAD28;padding:7px 14px;border-radius:999px;
+  box-shadow:0 4px 18px rgba(0,0,0,.35);transition:opacity .4s}
 body.sem-cursor .dica{opacity:0}
 `;
-const FUNDOS = { preto: '#000000', azul: '#0B1020', verde: '#00B140' };
-const CORES = { branco: '#FFFFFF', amarelo: '#FFE15A' };
+const SELO = `<svg class="cap-selo" viewBox="0 0 120 120" aria-hidden="true">
+  <polygon points="60,5 107.6,32.5 107.6,87.5 60,115 12.4,87.5 12.4,32.5" fill="rgba(218,173,40,.1)" stroke="#DAAD28" stroke-width="4.5" stroke-linejoin="round"/>
+  <path d="M28 84 L50 52 L60 66 L71 52 L92 84" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M71 52 V31 L86 37 L71 43" fill="#DAAD28" stroke="#DAAD28" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M22 84 H98" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/></svg>`;
+const FUNDOS = { carvao: '#1D1E21', grafite: '#54565B', preto: '#000000', verde: '#00B140' };
+const CORES = { branco: '#FFFFFF', ouro: '#F0CB5C' };
+const reduzirMovimento = matchMedia('(prefers-reduced-motion: reduce)');
 
 document.head.insertAdjacentHTML('beforeend', `<style>${CSS_LEGENDA}</style>`);
 
-// Superfícies: {tipo, doc, cap, pt, es, janela}
+// Superfícies: {tipo, doc, cap, pt, es, titulo, tituloOcioso, textos, janela}
 const superficies = [];
 function criarLegenda(doc, tipo) {
   const cap = doc.createElement('div');
   cap.className = 'cap';
-  cap.innerHTML = '<div class="cap-pt"></div><div class="cap-box"><p class="cap-es"></p></div>';
-  const sup = { tipo, doc, cap, pt: cap.querySelector('.cap-pt'), es: cap.querySelector('.cap-es') };
+  cap.innerHTML = `
+    <div class="cap-topo"><span class="cap-vivo"><i></i>Subtítulos en vivo</span><span class="cap-titulo"></span><span class="cap-nota">Traducción automática</span></div>
+    <div class="cap-ocioso">${SELO}<h2 class="cap-titulo-ocioso"></h2><div class="cap-mao">Subtítulos en español</div>
+      <p>La traducción aparecerá aquí mientras el conferencista habla.</p></div>
+    <div class="cap-area"><div class="cap-bloco"><div class="cap-pt" lang="pt-BR"></div><div class="cap-box"><div class="cap-es" lang="es"></div></div></div></div>`;
+  const q = (s) => cap.querySelector(s);
+  const sup = { tipo, doc, cap, pt: q('.cap-pt'), es: q('.cap-es'), titulo: q('.cap-titulo'), tituloOcioso: q('.cap-titulo-ocioso'), textos: new Map() };
   aplicarAparencia(sup);
   return sup;
 }
 function aplicarAparencia(sup) {
-  const s = sup.cap.style;
-  s.setProperty('--cap-bg', FUNDOS[cfg.fundo] || '#000');
-  s.setProperty('--cap-fg', CORES[cfg.cor] || '#fff');
+  const c = sup.cap, s = c.style, faixa = sup.tipo === 'faixa';
+  const bg = FUNDOS[cfg.fundo] || FUNDOS.carvao;
+  s.setProperty('--cap-bg', bg);
+  s.setProperty('--cap-fg', CORES[cfg.cor] || CORES.branco);
   s.setProperty('--scale', cfg.escala);
-  s.setProperty('--lines', sup.tipo === 'faixa' ? cfg.linhasFaixa : cfg.linhasProj);
-  sup.cap.classList.toggle('com-pt', !!cfg.mostrarPt);
-  sup.cap.classList.toggle('esmaecer', !!cfg.prov);
-  if (sup.doc !== document) sup.doc.body.style.background = FUNDOS[cfg.fundo] || '#000';
+  s.setProperty('--lines', faixa ? cfg.linhasFaixa : cfg.linhasProj);
+  c.classList.toggle('faixa', faixa);
+  c.classList.toggle('com-topo', !faixa && !!cfg.topo);
+  c.classList.toggle('pos-centro', !faixa && cfg.posicao === 'centro');
+  c.classList.toggle('com-pt', !!cfg.mostrarPt);
+  c.classList.toggle('por-pausa', !!cfg.linhaPorPausa);
+  c.classList.toggle('destaque', !!cfg.destaque);
+  c.classList.toggle('tema-verde', cfg.fundo === 'verde');
+  sup.titulo.textContent = cfg.titulo;
+  sup.tituloOcioso.textContent = cfg.titulo;
+  if (sup.doc !== document) sup.doc.body.style.background = bg;
+}
+
+// Maiúscula inicial e ponto final nas frases do tradutor do Chrome (que não pontua sozinho).
+function textoExibido(t) {
+  let s = t.es;
+  if (cfg.pontuar && (t.motor === 'chrome' || t.motor === 'pt')) {
+    s = s.replace(/^([¿¡"“«(\s]*)(\p{L})/u, (m, a, l) => a + l.toLocaleUpperCase('es'));
+    if (t.esFinal && !/[.!?…:;]["”»)]?$/.test(s)) s += '.';
+  }
+  return s;
+}
+// Quantos caracteres do início não mudaram (até o começo da palavra que mudou).
+function prefixoEstavel(a, b) {
+  let n = 0;
+  const m = Math.min(a.length, b.length);
+  while (n < m && a[n] === b[n]) n++;
+  if (n === b.length || (n === a.length && b[n] === ' ')) return n;
+  while (n > 0 && b[n - 1] !== ' ') n--;
+  return n;
 }
 
 function desenharLegendas() {
-  const visiveis = estado.trechos.slice(estado.limparDesde).filter((t) => t.es).slice(-14);
-  const ultimoPt = estado.trechos.slice(estado.limparDesde).filter((t) => t.pt).slice(-2).map((t) => t.pt).join(' ');
-  for (const sup of superficies) {
-    const d = sup.doc;
-    const frag = d.createDocumentFragment();
-    visiveis.forEach((t, i) => {
-      const span = d.createElement('span');
-      if (!t.esFinal) span.className = 'l';
-      span.textContent = (i ? ' ' : '') + t.es;
-      frag.append(span);
-    });
-    sup.es.replaceChildren(frag);
-    sup.pt.textContent = ultimoPt.length > 140 ? '…' + ultimoPt.slice(-140) : ultimoPt;
+  const lista = estado.exemplo || estado.trechos.slice(estado.limparDesde).filter((t) => t.es).slice(-12);
+  const ultimoPt = estado.exemplo ? '' : estado.trechos.slice(estado.limparDesde).filter((t) => t.pt).slice(-1).map((t) => t.pt).join('');
+  const ocioso = !lista.length && !estado.rodando;
+  estado.ultimaMudanca = agora();
+  for (const sup of superficies) desenharSuperficie(sup, lista, ultimoPt, ocioso);
+}
+function desenharSuperficie(sup, lista, ultimoPt, ocioso) {
+  const d = sup.doc;
+  sup.cap.classList.toggle('ocioso', ocioso);
+  sup.cap.classList.toggle('ao-vivo', estado.rodando);
+  sup.cap.classList.remove('silencio');
+  // Posição atual dos últimos trechos (para a rolagem suave).
+  const antes = [];
+  for (let i = sup.es.children.length - 1; i >= 0 && antes.length < 3; i--) {
+    const el = sup.es.children[i];
+    antes.push([el.dataset.id, el.getBoundingClientRect().top]);
+  }
+  sup.es.getAnimations().forEach((a) => a.cancel());
+
+  const frag = d.createDocumentFragment();
+  const textos = new Map();
+  const ult = lista.length - 1;
+  lista.forEach((t, i) => {
+    const texto = textoExibido(t);
+    const span = d.createElement('span');
+    span.dataset.id = t.id;
+    span.className = 'seg' + (i === ult ? ' atual' : i === ult - 1 ? ' anterior' : ' antigo');
+    const anterior = sup.textos.get(String(t.id));
+    const n = anterior == null ? 0 : prefixoEstavel(anterior, texto);
+    span.append((i && !cfg.linhaPorPausa ? ' ' : '') + texto.slice(0, n));
+    if (n < texto.length) {
+      const novo = d.createElement('span');
+      novo.className = 'novo';
+      novo.textContent = texto.slice(n);
+      span.append(novo);
+    }
+    frag.append(span);
+    textos.set(String(t.id), texto);
+  });
+  sup.es.replaceChildren(frag);
+  sup.textos = textos;
+  sup.pt.textContent = ultimoPt;
+  marcarCortados(sup);
+
+  // Rolagem suave: o texto sobe em vez de pular quando uma linha nova aparece.
+  if (reduzirMovimento.matches) return;
+  for (const [id, topoAntes] of antes) {
+    const el = sup.es.querySelector(`[data-id="${id}"]`);
+    if (!el) continue;
+    const delta = topoAntes - el.getBoundingClientRect().top;
+    if (Math.abs(delta) > 1 && Math.abs(delta) < sup.es.parentElement.clientHeight * 1.5) {
+      sup.es.animate([{ transform: `translateY(${delta}px)` }, { transform: 'none' }],
+        { duration: 300, easing: 'cubic-bezier(.2,.75,.25,1)' });
+    }
+    break;
   }
 }
+
+// Frase de cima que não cabe inteira fica bem apagada, para ninguém ler um pedaço solto.
+function marcarCortados(sup) {
+  const topoCaixa = sup.es.parentElement.getBoundingClientRect().top;
+  for (const el of sup.es.children) {
+    el.classList.toggle('cortado', !el.classList.contains('atual') && el.getBoundingClientRect().top < topoCaixa - 1);
+  }
+}
+// Fonte carregada ou janela redimensionada mudam as quebras de linha: recalcula sem animar.
+function vigiarLayout(sup, win) {
+  const refazer = () => requestAnimationFrame(() => marcarCortados(sup));
+  new win.ResizeObserver(refazer).observe(sup.cap);
+  sup.doc.fonts?.addEventListener('loadingdone', refazer);
+}
+
+// Legenda some aos poucos depois de um silêncio longo (volta na hora quando há fala).
+setInterval(() => {
+  const silencio = !!cfg.silencio && !estado.exemplo && agora() - estado.ultimaMudanca > 15000;
+  for (const sup of superficies) sup.cap.classList.toggle('silencio', silencio);
+}, 1000);
 
 // Prévia no painel
 superficies.push(criarLegenda(document, 'previa'));
 $('previa').append(superficies[0].cap);
+vigiarLayout(superficies[0], window);
 
 function prepararJanela(w, tipo) {
   const d = w.document;
-  d.title = tipo === 'faixa' ? 'Legenda' : 'Legendas — projetor';
-  d.head.innerHTML = `<meta charset="utf-8"><link rel="stylesheet" href="${$('fontes').href}"><style>${CSS_JANELA}${CSS_LEGENDA}</style>`;
+  d.documentElement.lang = 'es';
+  d.title = tipo === 'faixa' ? 'Subtítulos' : 'Subtítulos — telão';
+  d.head.innerHTML = `<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="${$('fontes').href}"><style>${CSS_JANELA}${CSS_LEGENDA}</style>`;
   d.body.innerHTML = tipo === 'projetor'
-    ? '<div class="dica">Arraste esta janela para o projetor e dê duplo clique (ou F) para tela cheia</div>' : '';
+    ? '<div class="dica" lang="pt-BR">Arraste para o telão · duplo clique ou F = tela cheia</div>' : '';
   const sup = criarLegenda(d, tipo);
   sup.janela = w;
   d.body.append(sup.cap);
+  vigiarLayout(sup, w);
   let t;
   const mexeu = () => { d.body.classList.remove('sem-cursor'); clearTimeout(t); t = setTimeout(() => d.body.classList.add('sem-cursor'), 2500); };
   d.addEventListener('mousemove', mexeu); mexeu();
@@ -457,40 +749,58 @@ function prepararJanela(w, tipo) {
   w.addEventListener('pagehide', () => {
     const i = superficies.indexOf(sup);
     if (i >= 0) superficies.splice(i, 1);
+    atualizarPreparo();
   });
   superficies.push(sup);
   desenharLegendas();
+  atualizarPreparo();
   return sup;
 }
 
+function janelaAberta(tipo) {
+  return superficies.find((s) => s.tipo === tipo && s.janela && !s.janela.closed);
+}
 function abrirProjetor() {
-  const existente = superficies.find((s) => s.tipo === 'projetor' && !s.janela.closed);
+  const existente = janelaAberta('projetor');
   if (existente) { existente.janela.focus(); return; }
   const w = window.open('', 'legendas-projetor', 'popup,width=1280,height=720');
-  if (!w) { alerta('O navegador bloqueou a janela do projetor. Permita pop-ups para este site e tente de novo.'); return; }
+  if (!w) { alerta('O navegador bloqueou a janela do telão. Permita pop-ups para este site e tente de novo.'); return; }
   prepararJanela(w, 'projetor');
 }
 
 async function abrirFaixa() {
-  const existente = superficies.find((s) => s.tipo === 'faixa' && !s.janela.closed);
+  const existente = janelaAberta('faixa');
   if (existente) { existente.janela.focus(); return; }
   if ('documentPictureInPicture' in window) {
     try {
       const largura = Math.min(Math.round(screen.availWidth * 0.9), 1600);
-      const altura = Math.round(largura * (cfg.linhasFaixa + 0.6) * 0.075);
+      const altura = Math.round(largura * (cfg.linhasFaixa + 0.7) * 0.075);
       const w = await documentPictureInPicture.requestWindow({ width: largura, height: altura });
       prepararJanela(w, 'faixa');
       alerta('Faixa aberta: arraste-a para a parte de baixo do projetor e ajuste o tamanho. O Chrome lembra a posição.', 'info', 8000);
       return;
     } catch (e) { console.warn('PiP indisponível', e); }
   }
-  const w = window.open('', 'legendas-faixa', 'popup,width=1400,height=220');
+  const w = window.open('', 'legendas-faixa', 'popup,width=1400,height=240');
   if (!w) { alerta('O navegador bloqueou a janela. Permita pop-ups para este site.'); return; }
   prepararJanela(w, 'faixa');
   alerta('Este navegador não tem janela "sempre no topo"; abri uma janela comum. Use o Chrome atualizado para a faixa flutuante.', 'info', 8000);
 }
 
-// ─────────────────────────────── Painel: transcrição e métricas ───────────────────────────────
+// Texto fixo para ajustar tamanho e linhas antes da palestra, sem precisar falar.
+const EXEMPLO = [
+  'Buenas noches a todos. Es una gran alegría estar aquí con ustedes.',
+  'Hoy vamos a hablar sobre la planeación de la visión.',
+  '¿Hacia dónde Dios nos está llevando?',
+  'La misión es la brújula y la visión es la guía de viaje.',
+];
+function alternarExemplo(ligar = !estado.exemplo) {
+  estado.exemplo = ligar ? EXEMPLO.map((es, i) => ({ id: 'ex' + i, es, esFinal: true, motor: 'exemplo' })) : null;
+  $('btnExemplo').setAttribute('aria-pressed', String(!!estado.exemplo));
+  desenharLegendas();
+}
+
+// ─────────────────────────────── Painel: transcrição, métricas e preparação ───────────────────────────────
 let painelPendente = false;
 function atualizarPainel() {
   if (painelPendente) return;
@@ -514,21 +824,91 @@ function atualizarPainel() {
     }
     log.replaceChildren(frag);
     if (pertoDoFim) log.scrollTop = log.scrollHeight;
-    $('ptConta').textContent = estado.trechos.length ? `${estado.trechos.length} trechos` : '';
+    $('ptConta').textContent = estado.trechos.length ? `${estado.trechos.length} frases` : 'uma linha por pausa';
     const lat = [...estado.latencias].sort((a, b) => a - b);
     $('stLat').textContent = lat.length ? (lat[Math.floor(lat.length / 2)] / 1000).toFixed(1).replace('.', ',') + ' s' : '–';
     $('stCusto').textContent = 'US$ ' + estado.custo.toFixed(2).replace('.', ',');
+    $('mCusto').hidden = cfg.modelo === 'chrome' && estado.custo === 0;
     $('stReq').textContent = `${estado.traducoes} · ${estado.reservas}`;
     $('stMotor').textContent = rotuloMotor();
   });
 }
 function rotuloMotor() {
   if (MOTOR_FALSO) return 'Simulado';
-  if (cfg.modelo === 'chrome') return 'Chrome offline';
+  if (cfg.modelo === 'chrome') return chromeTradutor ? 'Chrome' : 'Chrome (preparando)';
   if (!claudeUtilizavel()) return chromeTradutor ? 'Chrome (reserva)' : 'Sem tradução';
   return NOMES_MOTOR[cfg.modelo];
 }
 function atualizar() { desenharLegendas(); atualizarPainel(); }
+
+const passos = {
+  mic: { el: $('pMic'), txt: $('chkMic') },
+  trad: { el: $('pTrad'), txt: $('chkTrad'), btn: $('btnOffline') },
+  proj: { el: $('pProj'), txt: $('chkProj'), btn: $('btnProjetor') },
+  faixa: { el: $('pFaixa'), txt: $('chkFaixa'), btn: $('btnFaixa') },
+};
+function marcarPasso(nome, e, texto) {
+  const p = passos[nome];
+  p.el.dataset.e = e;
+  p.txt.textContent = texto;
+  p.txt.title = texto;
+  p.el.querySelector('.passo-n').textContent = e === 'ok' ? '✓' : e === 'erro' ? '!' : p.el.dataset.n;
+}
+let permMic = 'desconhecido', nomeMic = '';
+let dispChrome = null, progressoChrome = null;
+function atualizarPreparo() {
+  // 1. Microfone
+  if (DEMO) marcarPasso('mic', 'ok', 'Demonstração: fala simulada');
+  else if (!SR) marcarPasso('mic', 'erro', 'Use o Google Chrome no computador');
+  else if (permMic === 'denied') marcarPasso('mic', 'erro', 'Bloqueado: libere no cadeado da barra de endereço');
+  else if (medidor.stream) marcarPasso('mic', medidor.semSinal ? 'aviso' : 'ok', (medidor.semSinal ? 'Sem som: ' : 'Captando: ') + (nomeMic || 'microfone padrão'));
+  else if (permMic === 'granted') marcarPasso('mic', 'ok', 'Permitido · usa o microfone padrão');
+  else marcarPasso('mic', 'pendente', 'O Chrome pede permissão ao iniciar');
+
+  // 2. Tradutor
+  const b = passos.trad.btn;
+  b.hidden = true;
+  if (MOTOR_FALSO) marcarPasso('trad', 'ok', 'Tradução simulada (teste)');
+  else if (cfg.modelo !== 'chrome') {
+    const nome = NOMES_MOTOR[cfg.modelo];
+    if (estado.claudeDesativado) marcarPasso('trad', 'erro', `${nome}: chave recusada`);
+    else if (!chave) {
+      b.hidden = false; b.dataset.acao = 'config'; b.querySelector('.rotulo').textContent = 'Configurar';
+      marcarPasso('trad', 'aviso', `${nome}: falta a chave da API`);
+    } else marcarPasso('trad', 'ok', `${nome} · reserva: Chrome`);
+  } else if (chromeTradutor || dispChrome === 'available') marcarPasso('trad', 'ok', 'Chrome: pronto (offline)');
+  else if (progressoChrome != null) marcarPasso('trad', 'aviso', `Baixando o tradutor… ${progressoChrome}%`);
+  else if (dispChrome === 'downloadable' || dispChrome === 'downloading') {
+    b.hidden = false; b.dataset.acao = 'baixar'; b.querySelector('.rotulo').textContent = 'Baixar';
+    marcarPasso('trad', 'aviso', 'Baixe o tradutor (1 vez)');
+  } else if (dispChrome === 'unavailable') marcarPasso('trad', 'erro', 'Chrome: PT→ES indisponível aqui');
+  else if (dispChrome === 'sem-api') marcarPasso('trad', 'erro', 'Este navegador não tem tradutor embutido');
+  else marcarPasso('trad', 'pendente', 'Verificando…');
+
+  // 3 e 4. Janelas
+  const proj = janelaAberta('projetor'), faixa = janelaAberta('faixa');
+  passos.proj.btn.querySelector('.rotulo').textContent = proj ? 'Mostrar' : 'Abrir';
+  marcarPasso('proj', proj ? 'ok' : 'pendente', proj ? 'Aberto · duplo clique: tela cheia' : 'Tela só de legendas');
+  passos.faixa.btn.querySelector('.rotulo').textContent = faixa ? 'Mostrar' : 'Abrir';
+  marcarPasso('faixa', faixa ? 'ok' : 'pendente', faixa ? 'Aberta · leve até a base' : 'Fica por cima dos slides');
+  atualizarPainel();
+}
+async function vigiarPermissaoMic() {
+  try {
+    const st = await navigator.permissions.query({ name: 'microphone' });
+    permMic = st.state;
+    st.onchange = () => { permMic = st.state; atualizarPreparo(); };
+  } catch {}
+  atualizarPreparo();
+}
+async function consultarChrome() {
+  if (!('Translator' in self)) dispChrome = 'sem-api';
+  else {
+    try { dispChrome = await Translator.availability({ sourceLanguage: 'pt', targetLanguage: 'es' }); }
+    catch { dispChrome = 'unavailable'; }
+  }
+  atualizarPreparo();
+}
 
 // ─────────────────────────────── Motor: Claude ───────────────────────────────
 let Anthropic = null, sdkErro = null, sdkCarregando = null;
@@ -660,11 +1040,13 @@ async function preAquecer() {
 function tratarErroClaude(e) {
   if (Anthropic && e instanceof Anthropic.AuthenticationError) {
     estado.claudeDesativado = true;
+    atualizarPreparo();
     alerta('A chave da API foi recusada (401). Usando o tradutor do Chrome. Confira a chave em Configurações.');
     return;
   }
   if (Anthropic && e instanceof Anthropic.PermissionDeniedError) {
     estado.claudeDesativado = true;
+    atualizarPreparo();
     alerta('A chave da API não tem permissão para este modelo (403). Usando o tradutor do Chrome.');
     return;
   }
@@ -686,17 +1068,19 @@ async function prepararChrome(baixar) {
     try {
       const opts = { sourceLanguage: 'pt', targetLanguage: 'es' };
       const disp = await Translator.availability(opts);
+      dispChrome = disp;
       if (disp === 'unavailable') return null;
       if (disp !== 'available' && !baixar) return null;
       chromeTradutor = await Translator.create({
         ...opts,
         monitor(m) {
-          m.addEventListener('downloadprogress', (e) => { $('offlineRes').textContent = `Baixando… ${Math.round(e.loaded * 100)}%`; });
+          m.addEventListener('downloadprogress', (e) => { progressoChrome = Math.round(e.loaded * 100); atualizarPreparo(); });
         },
       });
+      dispChrome = 'available';
       return chromeTradutor;
     } catch (e) { console.warn('Tradutor do Chrome indisponível', e); return null; }
-    finally { chromeCriando = null; }
+    finally { chromeCriando = null; progressoChrome = null; atualizarPreparo(); }
   })();
   return chromeCriando;
 }
@@ -857,7 +1241,7 @@ const reconhecedor = {
       try { r.phrases = termosDoGlossario().map((p) => new SpeechRecognitionPhrase(p, 3)); } catch { this.frasesOk = false; }
     }
     if (cfg.local && this.localOk && 'processLocally' in r) r.processLocally = true;
-    r.onstart = () => { this.ultimoEvento = agora(); status('ouvindo', 'Ouvindo'); };
+    r.onstart = () => { this.ultimoEvento = agora(); status('ouvindo', 'Ao vivo'); };
     r.onresult = (e) => {
       this.ultimoEvento = agora();
       this.espera = 250;
@@ -940,26 +1324,36 @@ const simulador = {
 
 // ─────────────────────────────── Medidor do microfone ───────────────────────────────
 const medidor = {
-  stream: null, ctx: null, timer: null, ultimaFala: 0,
+  stream: null, ctx: null, timer: null, ultimaFala: 0, semSinal: false,
   async iniciar() {
     try {
       this.stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false } });
       const trilha = this.stream.getAudioTracks()[0];
-      $('micNome').textContent = trilha.label || 'padrão do sistema';
+      nomeMic = trilha.label || 'microfone padrão';
+      $('micNome').textContent = nomeMic;
       this.ctx = new AudioContext();
       const an = this.ctx.createAnalyser();
       an.fftSize = 1024;
       this.ctx.createMediaStreamSource(this.stream).connect(an);
       const buf = new Float32Array(an.fftSize);
+      this.ultimaFala = agora();
+      this.semSinal = false;
       this.timer = setInterval(() => {
         an.getFloatTimeDomainData(buf);
         let s = 0;
         for (const v of buf) s += v * v;
         const rms = Math.sqrt(s / buf.length);
-        const nivel = Math.min(1, rms * 8);
-        $('micNivel').style.width = (nivel * 100).toFixed(0) + '%';
-        if (rms > 0.02) this.ultimaFala = agora();
+        $('micNivel').style.width = (Math.min(1, rms * 8) * 100).toFixed(0) + '%';
+        if (rms > 0.012) {
+          this.ultimaFala = agora();
+          if (this.semSinal) { this.semSinal = false; fecharAlerta(); atualizarPreparo(); }
+        } else if (estado.rodando && !this.semSinal && agora() - this.ultimaFala > 20000) {
+          this.semSinal = true;
+          alerta('Não chega som do microfone há 20 s. Confira se ele está ligado e se é o microfone padrão do computador.', 'info');
+          atualizarPreparo();
+        }
       }, 100);
+      atualizarPreparo();
       return true;
     } catch (e) {
       console.warn('microfone', e);
@@ -971,11 +1365,19 @@ const medidor = {
     this.stream?.getTracks().forEach((t) => t.stop());
     this.ctx?.close().catch(() => {});
     this.stream = this.ctx = null;
+    this.semSinal = false;
     $('micNivel').style.width = '0';
+    atualizarPreparo();
   },
 };
 
 // ─────────────────────────────── Iniciar / parar ───────────────────────────────
+function botaoIniciar(rodando) {
+  const b = $('btnIniciar');
+  b.setAttribute('aria-pressed', String(rodando));
+  b.querySelector('use').setAttribute('href', rodando ? '#i-pausa' : '#i-play');
+  b.querySelector('.rotulo').textContent = rodando ? 'Pausar legendas' : 'Iniciar legendas';
+}
 async function iniciarTudo() {
   if (estado.rodando) return;
   fecharAlerta();
@@ -984,13 +1386,13 @@ async function iniciarTudo() {
     return;
   }
   estado.rodando = true;
-  $('btnIniciar').setAttribute('aria-pressed', 'true');
-  $('btnIniciar').firstChild.textContent = 'Pausar legendas ';
+  if (estado.exemplo) alternarExemplo(false);
+  botaoIniciar(true);
   prepararChrome(cfg.modelo === 'chrome'); // dentro do clique: pode baixar o pacote se preciso
   if (cfg.modelo === 'chrome' && !MOTOR_FALSO) {
     setTimeout(() => {
       if (estado.rodando && !chromeTradutor) {
-        alerta('O tradutor do Chrome ainda não está pronto (baixando ou indisponível): por enquanto a tela mostra o português. Antes da palestra, use Configurações → Preparar modo offline.', 'info');
+        alerta('O tradutor do Chrome ainda não está pronto (baixando ou indisponível): por enquanto a tela mostra o português. Antes da palestra, use o passo 2 → Baixar.', 'info');
       }
     }, 1500);
   }
@@ -1003,29 +1405,31 @@ async function iniciarTudo() {
   else {
     status('reconectando', 'Iniciando');
     const ok = await medidor.iniciar();
-    if (!ok) { alerta('Não consegui acessar o microfone. Permita o microfone para este site.'); pararTudo(); return; }
+    if (!ok) { alerta('Não consegui acessar o microfone. Permita o microfone para este site (ícone na barra de endereço).'); pararTudo(); return; }
     if (estado.rodando) reconhecedor.iniciar();
   }
-  atualizarPainel();
+  atualizar();
 }
 function pararTudo() {
   if (!estado.rodando) return;
   estado.rodando = false;
-  $('btnIniciar').setAttribute('aria-pressed', 'false');
-  $('btnIniciar').firstChild.textContent = 'Iniciar legendas ';
+  botaoIniciar(false);
   if (DEMO) simulador.parar(); else reconhecedor.parar();
   medidor.parar();
   status('parado', 'Parado');
+  atualizar();
 }
 function limparTela() {
   estado.limparDesde = estado.trechos.length;
+  if (estado.exemplo) alternarExemplo(false);
   atualizar();
 }
 function baixarTranscricao() {
   const linhas = estado.trechos.filter((t) => t.pt).map((t) => {
     const h = new Date(t.tCriado).toLocaleTimeString('pt-BR');
-    return `[${h}] PT: ${t.pt}\n${' '.repeat(h.length + 3)}ES: ${t.es || ''}`;
+    return `[${h}] PT: ${t.pt}\n${' '.repeat(h.length + 3)}ES: ${t.es ? textoExibido(t) : ''}`;
   });
+  if (!linhas.length) { alerta('Ainda não há nada para baixar.', 'info', 4000); return; }
   const blob = new Blob([linhas.join('\n\n') + '\n'], { type: 'text/plain;charset=utf-8' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -1038,53 +1442,79 @@ function baixarTranscricao() {
 function carregarFormulario() {
   $('cfgChave').value = chave;
   $('cfgModelo').value = cfg.modelo;
+  $('cfgTitulo').value = cfg.titulo;
   $('cfgEscala').value = cfg.escala;
+  $('escalaVal').textContent = Math.round(cfg.escala * 100) + '%';
   $('cfgLinhasProj').value = cfg.linhasProj;
   $('cfgLinhasFaixa').value = cfg.linhasFaixa;
-  $('cfgFundo').value = cfg.fundo;
-  $('cfgCor').value = cfg.cor;
-  $('cfgMostrarPt').checked = cfg.mostrarPt;
-  $('cfgProv').checked = cfg.prov;
-  $('cfgFrases').checked = cfg.frases;
-  $('cfgLocal').checked = cfg.local;
+  $('cfgPosicao').value = cfg.posicao;
+  for (const id of ['LinhaPorPausa', 'Destaque', 'Pontuar', 'Topo', 'Silencio', 'MostrarPt', 'Frases', 'Local']) {
+    $('cfg' + id).checked = !!cfg[id[0].toLowerCase() + id.slice(1)];
+  }
+  for (const nome of ['fundo', 'cor']) {
+    const r = document.querySelector(`input[name="${nome}"][value="${cfg[nome]}"]`);
+    if (r) r.checked = true;
+  }
   $('cfgGlossario').value = cfg.glossario;
   $('cfgContexto').value = cfg.contexto;
+  $('grupoClaude').hidden = cfg.modelo === 'chrome';
+}
+function aplicarConfig() {
+  salvarCfg();
+  superficies.forEach(aplicarAparencia);
+  desenharLegendas();
+  atualizarPreparo();
 }
 const ligar = (id, campo, conv = (v) => v, ev = 'change') => $(id).addEventListener(ev, (e) => {
   cfg[campo] = conv(e.target.type === 'checkbox' ? e.target.checked : e.target.value);
-  salvarCfg();
-  superficies.forEach(aplicarAparencia);
-  atualizarPainel();
+  aplicarConfig();
 });
 ligar('cfgModelo', 'modelo');
+ligar('cfgTitulo', 'titulo', (v) => v.trim() || PADRAO.titulo, 'input');
 ligar('cfgEscala', 'escala', Number, 'input');
 ligar('cfgLinhasProj', 'linhasProj', Number);
 ligar('cfgLinhasFaixa', 'linhasFaixa', Number);
-ligar('cfgFundo', 'fundo');
-ligar('cfgCor', 'cor');
+ligar('cfgPosicao', 'posicao');
+ligar('cfgLinhaPorPausa', 'linhaPorPausa');
+ligar('cfgDestaque', 'destaque');
+ligar('cfgPontuar', 'pontuar');
+ligar('cfgTopo', 'topo');
+ligar('cfgSilencio', 'silencio');
 ligar('cfgMostrarPt', 'mostrarPt');
-ligar('cfgProv', 'prov');
 ligar('cfgFrases', 'frases');
 ligar('cfgLocal', 'local');
 ligar('cfgGlossario', 'glossario', String, 'input');
 ligar('cfgContexto', 'contexto', String, 'input');
-$('cfgModelo').addEventListener('change', () => { estado.claudeDesativado = false; estado.claudeForaAte = 0; });
+for (const nome of ['fundo', 'cor']) {
+  document.querySelectorAll(`input[name="${nome}"]`).forEach((r) => r.addEventListener('change', () => {
+    cfg[nome] = r.value;
+    aplicarConfig();
+  }));
+}
+$('cfgEscala').addEventListener('input', () => { $('escalaVal').textContent = Math.round(cfg.escala * 100) + '%'; });
+$('cfgModelo').addEventListener('change', () => {
+  estado.claudeDesativado = false;
+  estado.claudeForaAte = 0;
+  $('grupoClaude').hidden = cfg.modelo === 'chrome';
+  if (cfg.modelo !== 'chrome' && chave) carregarSDK();
+  atualizarPreparo();
+});
 
 function salvarChave() {
   chave = $('cfgChave').value.trim();
   armazenar.gravar('legendas.chave', $('cfgLembrar').checked && chave ? chave : null);
   estado.claudeDesativado = false;
   estado.claudeForaAte = 0;
-  atualizarPainel();
+  atualizarPreparo();
 }
 $('cfgChave').addEventListener('change', salvarChave);
+$('cfgLembrar').addEventListener('change', salvarChave);
 $('btnRestaurar').addEventListener('click', () => {
   if (!confirm('Substituir o glossário e o contexto atuais pelos padrões do tema?')) return;
   Object.assign(cfg, { glossario: GLOSSARIO_PADRAO, contexto: CONTEXTO_PADRAO, versaoGlossario: VERSAO_GLOSSARIO });
   salvarCfg();
   carregarFormulario();
 });
-$('cfgLembrar').addEventListener('change', salvarChave);
 
 $('btnTestar').addEventListener('click', async () => {
   salvarChave();
@@ -1103,23 +1533,26 @@ $('btnTestar').addEventListener('click', async () => {
   } catch (e) {
     res.textContent = 'Falhou: ' + (e?.status ? `HTTP ${e.status} — ` : '') + (e?.message || e);
   }
-  atualizarPainel();
+  atualizarPreparo();
 });
 
 $('btnOffline').addEventListener('click', async () => {
-  const res = $('offlineRes');
-  if (!('Translator' in self)) { res.textContent = 'Este navegador não tem o tradutor embutido (use o Chrome 138+ no computador).'; return; }
-  res.textContent = 'Preparando…';
+  if ($('btnOffline').dataset.acao === 'config') {
+    $('config').open = true;
+    $('cfgChave').focus();
+    return;
+  }
+  progressoChrome = 0;
+  atualizarPreparo();
   const tr = await prepararChrome(true);
-  res.textContent = tr ? 'Pronto: o tradutor offline PT→ES está instalado.' : 'Não foi possível instalar o tradutor PT→ES neste Chrome.';
-  atualizarPainel();
+  if (!tr) alerta('Não foi possível instalar o tradutor português → espanhol neste Chrome. Confira a internet e tente de novo.');
 });
 
 async function verificarLocal() {
   if (!SR || typeof SR.available !== 'function') { $('cfgLocal').disabled = true; return; }
   try {
     const d = await SR.available({ langs: ['pt-BR'], processLocally: true });
-    if (d === 'unavailable') { $('cfgLocal').disabled = true; $('localRes').textContent = 'Reconhecimento offline indisponível para pt-BR neste Chrome.'; }
+    if (d === 'unavailable') { $('cfgLocal').disabled = true; $('localRes').textContent = 'Reconhecimento offline indisponível para pt-BR neste Chrome. O microfone usado é o padrão do sistema.'; }
     else if (d !== 'available') $('localRes').textContent = 'Reconhecimento offline para pt-BR pode ser baixado (marque a opção e inicie).';
   } catch { $('cfgLocal').disabled = true; }
 }
@@ -1129,6 +1562,7 @@ $('btnIniciar').addEventListener('click', () => (estado.rodando ? pararTudo() : 
 $('btnProjetor').addEventListener('click', abrirProjetor);
 $('btnFaixa').addEventListener('click', abrirFaixa);
 $('btnLimpar').addEventListener('click', limparTela);
+$('btnExemplo').addEventListener('click', () => alternarExemplo());
 $('btnBaixar').addEventListener('click', baixarTranscricao);
 document.addEventListener('keydown', (e) => {
   if (e.target.closest('input,textarea,select,button,summary') || e.ctrlKey || e.metaKey || e.altKey) return;
@@ -1141,13 +1575,14 @@ window.addEventListener('beforeunload', (e) => { if (estado.rodando) { e.prevent
 
 carregarFormulario();
 verificarLocal();
-prepararChrome(false);
+vigiarPermissaoMic();
+consultarChrome().then(() => prepararChrome(false));
 if (chave && cfg.modelo !== 'chrome') carregarSDK();
-if (DEMO) alerta('Modo demonstração: o texto em português é simulado (sem microfone).' + (MOTOR_FALSO ? ' A tradução também é simulada.' : ''), 'info');
+if (DEMO) alerta('Modo demonstração: o português é simulado (sem microfone).' + (MOTOR_FALSO ? ' A tradução também é simulada.' : ''), 'info');
 atualizar();
 
 // Ganchos para testes automatizados
-window.__legendas = { estado, falso, superficies, cfg, abrirProjetor, iniciarTudo, pararTudo, resultado, fimDeSessao };
+window.__legendas = { estado, falso, superficies, cfg, abrirProjetor, iniciarTudo, pararTudo, resultado, fimDeSessao, alternarExemplo };
 </script>
 </body>
 </html>
