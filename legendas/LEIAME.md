@@ -8,17 +8,14 @@ Não há servidor: a página reconhece a sua voz, manda o texto para o Claude e 
 
 ## Antes da primeira vez
 
-1. **Chave da API Anthropic.** Crie uma chave em <https://platform.claude.com> (Console → API keys).
-   Use uma chave só para este uso e defina um limite de gasto mensal. Com o Claude Haiku 4.5, o custo
-   estimado é de US$ 3 a 5 por hora de fala, e o painel mostra o custo real da sessão.
-2. Abra a página, clique em **Configurações**, cole a chave e clique em **Testar**. O teste mostra
-   uma frase traduzida e quanto tempo levou.
-3. Ainda em Configurações, clique em **Preparar modo offline**. Isso baixa o tradutor embutido do
-   Chrome, que entra em ação sozinho se a internet ou o Claude falharem.
-4. Revise o **glossário**. Ele já vem com termos de missiologia (Newbigin, Goheen, Padilla, missio
-   Dei, misión integral…). Acrescente os nomes e termos da sua palestra, um por linha, no formato
-   `português = español` ou só o nome. Em **Contexto da palestra**, escreva o título e o roteiro.
-   Isso ajuda a acertar nomes que o reconhecimento de voz erra.
+1. Abra a página no Chrome, clique em **Configurações** → **Preparar modo offline** e espere aparecer
+   "Pronto". Isso baixa o tradutor português → espanhol embutido no Chrome, que é o motor padrão:
+   **grátis, sem chave e funciona offline**. Faça isso com antecedência: enquanto o pacote não estiver
+   baixado, a tela mostra o português.
+2. (Opcional) Para mais qualidade, dá para trocar o motor para o **Claude** em Configurações (precisa de
+   uma chave da API da Anthropic, criada em <https://platform.claude.com>, com custo de alguns dólares
+   por hora de fala). Com o Claude, o glossário e o contexto da palestra são usados; com o tradutor do
+   Chrome, eles são ignorados.
 
 A chave e as configurações ficam salvas só neste navegador.
 

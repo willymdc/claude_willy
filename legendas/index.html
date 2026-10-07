@@ -146,10 +146,10 @@ footer a{color:var(--gold)}
       <div class="field">
         <label for="cfgModelo">Motor de tradução</label>
         <select id="cfgModelo">
-          <option value="claude-haiku-4-5">Claude Haiku 4.5 — mais rápido (padrão)</option>
+          <option value="claude-haiku-4-5">Claude Haiku 4.5 — mais rápido</option>
           <option value="claude-sonnet-5-5">Claude Sonnet 5.5 — mais nuance, um pouco mais lento</option>
           <option value="claude-opus-5-5">Claude Opus 5.5 — melhor qualidade, mais atraso</option>
-          <option value="chrome">Só o tradutor do Chrome (grátis, offline)</option>
+          <option value="chrome">Tradutor do Chrome — grátis, offline (padrão)</option>
         </select>
         <small>Se o Claude falhar, o tradutor do Chrome assume na hora.</small>
         <div class="row">
@@ -314,7 +314,7 @@ transfiguração = transfiguración`;
 const CONTEXTO_PADRAO = `Palestra sobre Planejamento da Visão (Plataforma Estratégica, metodologia Auxano) para líderes e pastores de igrejas. Temas: visão adequada de longo e curto prazo; a Trilha do Horizonte com seus quatro horizontes (Além do Horizonte 5–20 anos, Horizonte Mensurável 3 anos, Caminho para o Horizonte 1 ano, Próximos Passos no Horizonte 90 dias); Moldura da Visão (missão, valores, estratégia, medidas de missão); os 12 modelos de visão; visão genérica × visão vigorosa; Comprimento de Onda do Pensamento (Tom Paterson); Mapa da Vida da Igreja; ênfase e meta de 1 ano; 4 iniciativas de 90 dias; Esboço de Guardanapo 1:4:1:4. O material oficial em espanhol usa "Planeación de la Visión", "Trama del Horizonte" e "Encuadre de la Visión": use sempre esses termos.`;
 const VERSAO_GLOSSARIO = 2;
 const PADRAO = {
-  modelo: 'claude-haiku-4-5', escala: 1, linhasProj: 3, linhasFaixa: 2, fundo: 'preto', cor: 'branco',
+  modelo: 'chrome', escala: 1, linhasProj: 3, linhasFaixa: 2, fundo: 'preto', cor: 'branco',
   mostrarPt: false, prov: true, frases: true, local: false, glossario: GLOSSARIO_PADRAO, contexto: CONTEXTO_PADRAO, versaoGlossario: VERSAO_GLOSSARIO,
 };
 const params = new URLSearchParams(location.search);
@@ -779,8 +779,13 @@ async function traduzir(trecho, tipo) {
   if (es == null) {
     // Reserva: tradutor do Chrome; sem ele, o próprio português.
     try {
-      const tr = await prepararChrome(false);
-      if (tr) { es = limparSaida(await tr.translate(voo.texto)); motor = 'chrome'; }
+      // Nunca espera o download do pacote: usa o tradutor só se já estiver pronto.
+      const tr = chromeTradutor;
+      if (!tr) prepararChrome(false);
+      if (tr) {
+        const r = await Promise.race([tr.translate(voo.texto), new Promise((x) => setTimeout(() => x(null), 3000))]);
+        if (r != null) { es = limparSaida(r); motor = 'chrome'; }
+      }
     } catch (e) { console.warn('Tradutor do Chrome falhou', e); }
     if (es == null && tipo === 'final') { es = voo.texto; motor = 'pt'; }
     if (es != null && !MOTOR_FALSO && cfg.modelo !== 'chrome') estado.reservas++;
@@ -982,6 +987,13 @@ async function iniciarTudo() {
   $('btnIniciar').setAttribute('aria-pressed', 'true');
   $('btnIniciar').firstChild.textContent = 'Pausar legendas ';
   prepararChrome(cfg.modelo === 'chrome'); // dentro do clique: pode baixar o pacote se preciso
+  if (cfg.modelo === 'chrome' && !MOTOR_FALSO) {
+    setTimeout(() => {
+      if (estado.rodando && !chromeTradutor) {
+        alerta('O tradutor do Chrome ainda não está pronto (baixando ou indisponível): por enquanto a tela mostra o português. Antes da palestra, use Configurações → Preparar modo offline.', 'info');
+      }
+    }, 1500);
+  }
   if (!MOTOR_FALSO && cfg.modelo !== 'chrome') {
     if (!chave) alerta('Sem chave da API: usando o tradutor do Chrome. Cole a chave em Configurações para usar o Claude.', 'info', 10000);
     else if (!(await carregarSDK())) alerta('Não consegui carregar o SDK do Claude (internet?). Usando o tradutor do Chrome.', 'info', 10000);
